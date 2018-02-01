@@ -7,17 +7,17 @@ typedef struct astlist astlist_t;
 struct astlist {
     ast_t *elem;
     astlist_t *next;
-}
+};
 
 struct paramlist {
     int name;
     struct paramlist *next;
-}
+};
 
 struct ast {
     enum {
         e_int, e_var,
-        e_block, e_list
+        e_block, e_list,
         e_funcall, e_bin,
         e_letvar, e_letfun
     } type;
@@ -32,7 +32,7 @@ struct ast {
         astlist_t *exprList;
         // e_funcall
         struct { ast_t *function;
-                 ast_t *expr; } exprFuncall;
+                 ast_t *expr; } exprFunCall;
         // e_bin
         struct { ast_t *left;
                  int op;

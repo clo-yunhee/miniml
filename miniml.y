@@ -1,4 +1,7 @@
 %{
+#include "names.h"
+#include "ast.h"
+
 extern int yylex(void);
 extern int yylineno;
 
@@ -67,8 +70,6 @@ parameter_list: NAME parameter_list
 infix_op: PLUS | MINUS | MUL | DIV ;
 
 %%
-
-#include "names.h"
 
 int main(int argc, char *argv[]) 
 {

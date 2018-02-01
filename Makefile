@@ -13,7 +13,7 @@ YACCOPTS=
 PROG=miniml
 
 $(PROG): lex.yy.o $(PROG).tab.o \
-	     names.c
+	     names.c ast_make.c
 	$(CC) $+ -o $@ $(LDFLAGS) 
 
 lex.yy.c: $(PROG).l $(PROG).tab.h

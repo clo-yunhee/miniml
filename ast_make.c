@@ -1,14 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "names.h"
 #include "ast.h"
 
-
 static inline ast_t *makeast(int type) {
-    ast_t *ast = malloc(sizeof(ast_t));
-    ast->type = type;
-    return ast;
+    ast_t *__ast = malloc(sizeof(ast_t));
+    __ast->type = type;
+    return __ast;
 }
 
 MAKEAST(integer) (int value) {
@@ -20,12 +18,12 @@ MAKEAST(integer) (int value) {
 MAKEAST(variable) (int name) {
     ast_t *ast = makeast(e_var);
     ast->exprVariable = name;
-    return ast
+    return ast;
 }
 
-MAKEAST(block) (ast_t *ast) {
+MAKEAST(block) (ast_t *block) {
     ast_t *ast = makeast(e_block);
-    ast->exprBlock = ast;
+    ast->exprBlock = block;
     return ast;
 }
 
@@ -37,31 +35,31 @@ MAKEAST(list) (astlist_t *list) {
 
 MAKEAST(funcall) (ast_t *fun, ast_t *expr) {
     ast_t *ast = makeast(e_funcall);
-    ast->function = fun;
-    ast->expr = expr;
+    ast->exprFunCall.function = fun;
+    ast->exprFunCall.expr = expr;
     return ast;
 }
 
 MAKEAST(binary) (ast_t *left, int op, ast_t *right) {
     ast_t *ast = makeast(e_bin);
-    ast->left = left;
-    ast->op = op;
-    ast->right = right;
+    ast->exprBinary.left = left;
+    ast->exprBinary.op = op;
+    ast->exprBinary.right = right;
     return ast;
 }
 
 MAKEAST(letvar) (int name, ast_t *expr) {
     ast_t *ast = makeast(e_letvar);
-    ast->name = name;
-    ast->expr = expr;
+    ast->exprLetVar.name = name;
+    ast->exprLetVar.expr = expr;
     return ast;
 }
 
 MAKEAST(letfun) (int name, struct paramlist *params, ast_t *expr) {
     ast_t *ast = makeast(e_letfun);
-    ast->name = name;
-    ast->params = params;
-    ast->expr = expr;
+    ast->exprLetFun.name = name;
+    ast->exprLetFun.params = params;
+    ast->exprLetFun.expr = expr;
     return ast;
 }
 

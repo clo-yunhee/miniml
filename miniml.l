@@ -1,8 +1,9 @@
 %option yylineno
 %{
-#include "miniml.tab.h"
-
 #include "names.h"
+#include "ast.h"
+
+#include "miniml.tab.h"
 
 char *strdup(const char *);
 
