@@ -1,3 +1,4 @@
+%option yylineno
 %{
 #include "miniml.tab.h"
 
@@ -38,15 +39,12 @@ identifier          [[:alpha:]][[:alnum:]]*
 {whitespace}        ;
 
 "(*"                { BEGIN(comment); }
-<comment>{
-    "(*"            { ++comdp; }
-    "*"+")"            { if (comdp == 0) BEGIN(INITIAL); else --comdp; }
-    "*"+            ;
-    [^(*\n]+        ;
-    [(]             ;
-    \n              ;
-}
-
+<comment>"(*"           { ++comdp; }
+<comment>"*"+")"        { if (comdp == 0) BEGIN(INITIAL); else --comdp; }
+<comment>"*"+           ;
+<comment>[^(*\n]+       ;
+<comment>[(]            ;
+<comment>\n             ;
 
 %%
 

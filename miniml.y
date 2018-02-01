@@ -1,7 +1,11 @@
 %{
 extern int yylex(void);
+extern int yylineno;
+
 void yyerror(const char *);
 %}
+
+/* token definitions */
 
 %token LET IN EQUAL
 %token TBEGIN TEND
@@ -9,6 +13,7 @@ void yyerror(const char *);
 %token TWOSEMI SEMI LPAREN RPAREN
 %token PLUS MINUS MUL DIV
 
+/* precendece rules */
 
 %precedence LET
 %right SEMI
@@ -23,11 +28,15 @@ void yyerror(const char *);
 %precedence PREFIX
 %left FUNCALL
 
+/* data holder */
 
 %union {
+    /* for lexer */
     int token;
     int ival;
     const char *sval;
+    /* parser */
+    ast_t *ast;
 }
 
 %%
@@ -59,7 +68,16 @@ infix_op: PLUS | MINUS | MUL | DIV ;
 
 %%
 
-void yyerror(const char *s) {
-    fprintf(stderr, "%s", s);
+#include "names.h"
+
+int main(int argc, char *argv[]) 
+{
+    //init code
+    names_init();
+
+    yyparse();
 }
 
+void yyerror(const char *s) {
+    fprintf(stderr, "line %d: %s", yylineno, s);
+}
