@@ -96,6 +96,13 @@ int main(int argc, char *argv[])
     names_init();
 
     yyparse();
+
+    astlist_t *prog = yylval.prog;
+
+    // do whatever with the AST
+
+    alist_free(prog);
+    names_free();
 }
 
 void yyerror(const char *s) {

@@ -35,11 +35,11 @@ $(PROG): $(PROG).yy.o $(PROG).tab.o \
 
 .PHONY: clean-all
 clean-all: clean
-	@$(RM) $(PROG)
+	@$(RM) $(PROG) *.dot
 
 .PHONY: clean
 clean:
-	@$(RM) *.o *.yy.* *.tab.* *.err *.output *.out *.dot
+	@$(RM) *.o *.yy.* *.tab.* *.err *.output *.out
 
 .PHONY: re
 re: clean-all all
