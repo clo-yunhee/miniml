@@ -11,7 +11,7 @@ astlist_t *alist_make(ast_t *head, astlist_t *tail) {
 
 params_t *plist_make(int head, params_t *tail) {
     params_t *lst = malloc(sizeof(params_t));
-    lst->elem = head;
+    lst->name = head;
     lst->next = tail;
     return lst;
 }

@@ -20,7 +20,7 @@ struct ast {
         e_int, e_var,
         e_block, e_list,
         e_funcall, e_bin,
-        e_letvar, e_letfun
+        e_let
     } type;
     union {
         // e_int

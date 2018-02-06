@@ -6,8 +6,6 @@ extern int yylex(void);
 extern int yylineno;
 
 void yyerror(const char *);
-
-#define SET_AST(type) $$ = ast_make_##type 
 %}
 
 /* token definitions */
@@ -61,12 +59,12 @@ program: %empty                     { $$ = NULL; }
        | expr TWOSEMI program       { $$ = alist_make($1, $3); }
        ;
 
-expr: INT                           { SET_AST(integer) ($1); }
-    | NAME                          { SET_AST(variable) ($1); }
-    | LPAREN expr RPAREN            { SET_AST(block) ($2); }
-    | TBEGIN expr TEND              { SET_AST(block) ($2); }
-    | expr expr %prec FUNCALL       { SET_AST(funcall) ($1, $2); }
-    | expr infix_op expr            { SET_AST(binary) ($1, $2, $3); }
+expr: INT                           { $$ = ast_make_integer($1); }
+    | NAME                          { $$ = ast_make_variable($1); }
+    | LPAREN expr RPAREN            { $$ = ast_make_block($2); }
+    | TBEGIN expr TEND              { $$ = ast_make_block($2); }
+    | expr expr %prec FUNCALL       { $$ = ast_make_funcall($1, $2); }
+    | expr infix_op expr            { $$ = ast_make_binary($1, $2, $3); }
     | expr SEMI expr                {
                                         astlist_t *tail;
                                         // if the tail is a list, append to that list
@@ -76,9 +74,9 @@ expr: INT                           { SET_AST(integer) ($1); }
                                         } else {
                                             tail = alist_make($3, NULL);
                                         }
-                                        SET_AST(list) (alist_make($1, tail));
+                                        $$ = ast_make_list(alist_make($1, tail));
                                     }
-    | LET let_binding IN expr       { SET_AST(let) ($2.name, $2.params, $2.expr, $4); }
+    | LET let_binding IN expr       { $$ = ast_make_let($2.name, $2.params, $2.expr, $4); }
     ;
 
 let_binding: NAME EQUAL expr                    { $$.name = $1; $$.params = NULL; $$.expr = $3; }
