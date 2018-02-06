@@ -2,6 +2,8 @@ SHELL=/bin/sh
 LEX=flex
 YACC=bison
 CC=gcc
+RM=rm -f
+MKDIR=mkdir -p
 CFLAGS=-g -std=c11 -pedantic -Wall
 LDFLAGS=-lfl
 # --nounput: ne génère pas la fonction yyunput() inutile
@@ -12,21 +14,33 @@ YACCOPTS=
 
 PROG=miniml
 
-$(PROG): lex.yy.o $(PROG).tab.o \
-	     names.c ast_make.c
+.PHONY: all
+all: $(PROG) clean
+
+$(PROG): $(PROG).yy.o $(PROG).tab.o \
+	     names.c ast_make.c ast_list_make.c
 	$(CC) $+ -o $@ $(LDFLAGS) 
 
-lex.yy.c: $(PROG).l $(PROG).tab.h
-	$(LEX) $(LEXOPTS) $<
+%.yy.c: %.l %.tab.h
+	$(LEX) $(LEXOPTS) --outfile=$@ $<
 
-lex.yy.h: $(PROG).l
-	$(LEX) $(LEXOPTS) --header-file=$@ $<
+%.yy.h: %.l
+	$(LEX) $(LEXOPTS) --header-file=$@ --outfile=/dev/null $<
 
-$(PROG).tab.c $(PROG).tab.h: $(PROG).y lex.yy.h
+%.tab.c %.tab.h: %.y %.yy.h
 	$(YACC) $(YACCOPTS) $< -d -v
 
 %.o: %.c
 	$(CC) -DYYDEBUG $(CFLAGS) $< -c
 
+.PHONY: clean-all
+clean-all: clean
+	@$(RM) $(PROG)
+
+.PHONY: clean
 clean:
-	-rm $(PROG) *.o lex.yy.* $(PROG).tab.* *.err *.output *.out *.dot
+	@$(RM) *.o *.yy.* *.tab.* *.err *.output *.out *.dot
+
+.PHONY: re
+re: clean-all all
+

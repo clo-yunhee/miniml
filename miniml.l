@@ -1,11 +1,11 @@
 %option yylineno
 %{
+#include <string.h>
+
 #include "names.h"
 #include "ast.h"
 
 #include "miniml.tab.h"
-
-char *strdup(const char *);
 
 #define TOKEN(tok)      (yylval.token = tok)
 #define ITOKEN(tok)     (yylval.ival = atoi(yytext), tok)

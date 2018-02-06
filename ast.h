@@ -3,10 +3,11 @@
 
 typedef struct ast ast_t;
 typedef struct astlist astlist_t;
+typedef struct paramlist params_t;
 
 struct astlist {
     ast_t *elem;
-    astlist_t *next;
+    struct astlist *next;
 };
 
 struct paramlist {
@@ -37,19 +38,21 @@ struct ast {
         struct { ast_t *left;
                  int op;
                  ast_t *right; } exprBinary;
-        // e_letvar
+        // e_let
         struct { int name;
-                 ast_t *expr; } exprLetVar;
-        // e_letfun
-        struct { int name;
-                 struct paramlist *params;
-                 ast_t *expr; } exprLetFun;
+                 params_t *params;
+                 ast_t *expr;
+                 ast_t *block; } exprLet;
     };
 };
 
 /* astlist */
 
+astlist_t *alist_make(ast_t *head, astlist_t *tail);
+
 /* paramlist */
+
+params_t *plist_make(int head, params_t *tail);
 
 /* ast */
 
@@ -61,8 +64,7 @@ MAKEAST(block) (ast_t *ast);
 MAKEAST(list) (astlist_t *list);
 MAKEAST(funcall) (ast_t *fun, ast_t *expr);
 MAKEAST(binary) (ast_t *left, int op, ast_t *right);
-MAKEAST(letvar) (int name, ast_t *expr);
-MAKEAST(letfun) (int name, struct paramlist *params, ast_t *expr);
-
+MAKEAST(let) (int name, params_t *params,
+              ast_t *expr, ast_t *block);
 
 #endif // _AST_H_

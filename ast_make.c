@@ -48,18 +48,13 @@ MAKEAST(binary) (ast_t *left, int op, ast_t *right) {
     return ast;
 }
 
-MAKEAST(letvar) (int name, ast_t *expr) {
-    ast_t *ast = makeast(e_letvar);
-    ast->exprLetVar.name = name;
-    ast->exprLetVar.expr = expr;
-    return ast;
-}
-
-MAKEAST(letfun) (int name, struct paramlist *params, ast_t *expr) {
-    ast_t *ast = makeast(e_letfun);
-    ast->exprLetFun.name = name;
-    ast->exprLetFun.params = params;
-    ast->exprLetFun.expr = expr;
+MAKEAST(let) (int name, struct paramlist *params,
+              ast_t *expr, ast_t *block) {
+    ast_t *ast = makeast(e_let);
+    ast->exprLet.name = name;
+    ast->exprLet.params = params;
+    ast->exprLet.expr = expr;
+    ast->exprLet.block = block;
     return ast;
 }
 
