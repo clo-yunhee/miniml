@@ -15,3 +15,18 @@ params_t *plist_make(int head, params_t *tail) {
     lst->next = tail;
     return lst;
 }
+
+void alist_free(astlist_t *list) {
+    if (list == NULL) return;
+
+    ast_free(list->elem);
+    alist_free(list->next);
+    free(list);
+}
+
+void plist_free(params_t *list) {
+    if (list == NULL) return;
+
+    plist_free(list->next);
+    free(list);
+}

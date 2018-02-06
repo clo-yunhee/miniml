@@ -1,0 +1,7 @@
+/miniml
+/*.swp
+/*.o
+/*.yy.*
+/*.tab.*
+/*.dot
+/*.output

@@ -49,10 +49,12 @@ struct ast {
 /* astlist */
 
 astlist_t *alist_make(ast_t *head, astlist_t *tail);
+void alist_free(astlist_t *list);
 
 /* paramlist */
 
 params_t *plist_make(int head, params_t *tail);
+void plist_free(params_t *list);
 
 /* ast */
 
@@ -66,5 +68,7 @@ MAKEAST(funcall) (ast_t *fun, ast_t *expr);
 MAKEAST(binary) (ast_t *left, int op, ast_t *right);
 MAKEAST(let) (int name, params_t *params,
               ast_t *expr, ast_t *block);
+
+void ast_free(ast_t *ast);
 
 #endif // _AST_H_

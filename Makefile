@@ -18,7 +18,7 @@ PROG=miniml
 all: $(PROG) clean
 
 $(PROG): $(PROG).yy.o $(PROG).tab.o \
-	     names.c ast_make.c ast_list_make.c
+	     names.c ast_make.c ast_free.c ast_list.c
 	$(CC) $+ -o $@ $(LDFLAGS) 
 
 %.yy.c: %.l %.tab.h
