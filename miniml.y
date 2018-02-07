@@ -52,6 +52,8 @@ void yyerror(const char *);
 %type <ival> PLUS MINUS MUL DIV
 %type <ival> INT NAME infix_op
 
+%expect 28
+
 %%
 
 program: %empty                     { $$ = NULL; }

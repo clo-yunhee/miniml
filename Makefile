@@ -10,7 +10,7 @@ LDFLAGS=-lfl
 # --DYY_NO_INPUT: ne prend pas en compte la fonction input() inutile
 # -D_POSIX_SOURCE: déclare la fonction fileno()
 LEXOPTS=-D_POSIX_SOURCE -DYY_NO_INPUT --nounput
-YACCOPTS=
+YACCOPTS=--verbose
 
 PROG=miniml
 
@@ -28,18 +28,23 @@ $(PROG): $(PROG).yy.o $(PROG).tab.o \
 	$(LEX) $(LEXOPTS) --header-file=$@ --outfile=/dev/null $<
 
 %.tab.c %.tab.h: %.y %.yy.h
-	$(YACC) $(YACCOPTS) $< -d -v
+	$(YACC) $(YACCOPTS) $< -d
 
 %.o: %.c
 	$(CC) -DYYDEBUG $(CFLAGS) $< -c
 
+.PHONY: graph
+graph:
+	$(YACC) $(YACCOPTS) $(PROG).y --graph
+	dot -Tpng $(PROG).dot -O
+
 .PHONY: clean-all
 clean-all: clean
-	@$(RM) $(PROG) *.dot
+	@$(RM) $(PROG) *.dot *.dot.png *.output *.out
 
 .PHONY: clean
 clean:
-	@$(RM) *.o *.yy.* *.tab.* *.err *.output *.out
+	@$(RM) *.o *.yy.* *.tab.* *.err
 
 .PHONY: re
 re: clean-all all
