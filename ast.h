@@ -50,11 +50,13 @@ struct ast {
 
 astlist_t *alist_make(ast_t *head, astlist_t *tail);
 void alist_free(astlist_t *list);
+void alist_print(astlist_t *list);
 
 /* paramlist */
 
 params_t *plist_make(int head, params_t *tail);
 void plist_free(params_t *list);
+void plist_print(params_t *list);
 
 /* ast */
 
@@ -70,5 +72,6 @@ MAKEAST(let) (int name, params_t *params,
               ast_t *expr, ast_t *block);
 
 void ast_free(ast_t *ast);
+void ast_print(ast_t *ast);
 
 #endif // _AST_H_

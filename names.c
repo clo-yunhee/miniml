@@ -13,6 +13,8 @@
  * an existing one.
  */
 
+// TODO: fix getnm not working
+
 typedef char * hkey_t;
 typedef int hvalue_t;
 
@@ -34,9 +36,9 @@ static unsigned int h_djb2(char *str);
 
 static size_t capacity = 16;
 static h_bucket **table = NULL;
-static int last_id = 0;
+static hfun_t hash = h_djb2; 
 
-static hfun_t hash = h_djb2;
+static int last_id = 0;
 
 // does not support resizing
 int names_settablecap(int cap) {
@@ -60,11 +62,32 @@ int names_getid(const char *name) {
     return id;
 }
 
+const char *names_getnm(int id) {
+    // TODO: might want to implement a reverse table
+    // but this function is only there for human-readable output
+    // we will scan through every the table
+
+    for (int i = 0; i < capacity; i++) {
+        h_bucket *bk = table[i];
+        while (bk != NULL) {
+            if (bk->value == id) {
+                return bk->key;
+            }
+            bk = bk->next;
+        }
+    }
+
+    return "<undefined>";
+}
+
 void names_init() {
     if (table != NULL) {
         fprintf(stderr, "Name table is already initialized");
     } else {
         table = calloc(capacity, sizeof(h_bucket));
+        if (table == NULL) {
+            fprintf(stderr, "Name table was not initialized");
+        }
     }
 }
 
@@ -119,8 +142,9 @@ static unsigned int h_djb2(char *str) {
     unsigned int hash = 5381;
     char c;
 
-    while (c = *str++)
-        hash = ((hash << 5) + hash) + c;
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
 
     return hash;
 }

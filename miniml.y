@@ -6,6 +6,8 @@ extern int yylex(void);
 extern int yylineno;
 
 void yyerror(const char *);
+
+extern astlist_t *prog;
 %}
 
 /* token definitions */
@@ -56,9 +58,9 @@ void yyerror(const char *);
 
 %%
 
-program: %empty                     { $$ = NULL; }
-       | TWOSEMI program            { $$ = $2; }
-       | expr TWOSEMI program       { $$ = alist_make($1, $3); }
+program: %empty                     { prog = NULL; }
+       | TWOSEMI program            { prog = prog; }
+       | expr TWOSEMI program       { prog = alist_make($1, prog); }
        ;
 
 expr: INT                           { $$ = ast_make_integer($1); }
@@ -91,21 +93,6 @@ parameter_list: NAME parameter_list             { $$ = plist_make($1, $2); }
 
 infix_op: PLUS | MINUS | MUL | DIV ;
 %%
-
-int main(int argc, char *argv[]) 
-{
-    //init code
-    names_init();
-
-    yyparse();
-
-    astlist_t *prog = yylval.prog;
-
-    // do whatever with the AST
-
-    alist_free(prog);
-    names_free();
-}
 
 void yyerror(const char *s) {
     fprintf(stderr, "line %d: %s\n", yylineno, s);

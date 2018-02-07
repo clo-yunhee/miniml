@@ -4,7 +4,7 @@ YACC=bison
 CC=gcc
 RM=rm -f
 MKDIR=mkdir -p
-CFLAGS=-g -std=c11 -pedantic -Wall
+CFLAGS=-g -std=c11 -pedantic -Wall -Werror
 LDFLAGS=-lfl
 # --nounput: ne génère pas la fonction yyunput() inutile
 # --DYY_NO_INPUT: ne prend pas en compte la fonction input() inutile
@@ -18,7 +18,9 @@ PROG=miniml
 all: $(PROG) clean
 
 $(PROG): $(PROG).yy.o $(PROG).tab.o \
-	     names.c ast_make.c ast_free.c ast_list.c
+		names.c \
+		ast_make.c ast_free.c ast_list.c ast_print.c \
+		main.c
 	$(CC) $+ -o $@ $(LDFLAGS) 
 
 %.yy.c: %.l %.tab.h
