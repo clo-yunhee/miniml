@@ -33,10 +33,10 @@ MAKEAST(list) (astlist_t *list) {
     return ast;
 }
 
-MAKEAST(funcall) (ast_t *fun, ast_t *expr) {
+MAKEAST(funcall) (ast_t *fun, astlist_t *args) {
     DECLAST(e_funcall);
     ast->exprFunCall.function = fun;
-    ast->exprFunCall.expr = expr;
+    ast->exprFunCall.args = args;
     return ast;
 }
 

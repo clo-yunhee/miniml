@@ -63,13 +63,13 @@ void plist_partprint(params_t *list) {
 //print
 
 void alist_print(astlist_t *list) {
-    printf("[");
+    printf("List [");
     alist_partprint(list);
     printf("]");
 }
 
 void plist_print(params_t *list) { 
-    printf("(");
+    printf("Params (");
     plist_partprint(list);
     printf(")");
 }

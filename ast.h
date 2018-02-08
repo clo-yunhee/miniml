@@ -33,7 +33,7 @@ struct ast {
         astlist_t *exprList;
         // e_funcall
         struct { ast_t *function;
-                 ast_t *expr; } exprFunCall;
+                 astlist_t *args; } exprFunCall;
         // e_bin
         struct { ast_t *left;
                  int op;
@@ -45,6 +45,10 @@ struct ast {
                  ast_t *block; } exprLet;
     };
 };
+
+/* token */
+const char *token_name(int t);
+void token_print(int t);
 
 /* astlist */
 
@@ -66,7 +70,7 @@ MAKEAST(integer) (int value);
 MAKEAST(variable) (int name);
 MAKEAST(block) (ast_t *ast);
 MAKEAST(list) (astlist_t *list);
-MAKEAST(funcall) (ast_t *fun, ast_t *expr);
+MAKEAST(funcall) (ast_t *fun, astlist_t *args);
 MAKEAST(binary) (ast_t *left, int op, ast_t *right);
 MAKEAST(let) (int name, params_t *params,
               ast_t *expr, ast_t *block);

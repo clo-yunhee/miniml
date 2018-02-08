@@ -14,7 +14,7 @@ void ast_free(ast_t *ast) {
         break;
     case e_funcall:
         ast_free(ast->exprFunCall.function);
-        ast_free(ast->exprFunCall.expr);
+        alist_free(ast->exprFunCall.args);
         break;
     case e_bin:
         ast_free(ast->exprBinary.left);
