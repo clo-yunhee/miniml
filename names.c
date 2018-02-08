@@ -99,9 +99,10 @@ void names_free() {
             h_bucket *bk = table[i];
             h_bucket *prev;
             while (bk != NULL) {
+                free(bk->key); // because we dup the keys
+
                 prev = bk;
                 bk = bk->next;
-                free(bk->key); // because we dup the keys
                 free(prev);
             }
         }
@@ -133,6 +134,11 @@ static int add_name(const char *name) {
     h_bucket *entry = malloc(sizeof(h_bucket));
     entry->key = strdup(name);
     entry->value = ++last_id;
+    
+    unsigned int k = hash((char *) name) % capacity;
+    entry->next = table[k];
+    table[k] = entry;
+    
     return last_id;
 }
 
