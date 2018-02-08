@@ -4,7 +4,7 @@ YACC=bison
 CC=gcc
 RM=rm -f
 MKDIR=mkdir -p
-CFLAGS=-g -std=c11 -pedantic -Wall -Werror
+CFLAGS=-g -std=c11 -pedantic -Wall -Werror -D_XOPEN_SOURCE=700
 LDFLAGS=-lfl
 # --nounput: ne génère pas la fonction yyunput() inutile
 # --DYY_NO_INPUT: ne prend pas en compte la fonction input() inutile
@@ -27,7 +27,7 @@ $(PROG): $(PROG).yy.o $(PROG).tab.o \
 	$(LEX) $(LEXOPTS) --outfile=$@ $<
 
 %.yy.h: %.l
-	$(LEX) $(LEXOPTS) --header-file=$@ --outfile=/dev/null $<
+	$(LEX) $(LEXOPTS) --header-file=$@ -t $< 1> /dev/null
 
 %.tab.c %.tab.h: %.y %.yy.h
 	$(YACC) $(YACCOPTS) $< -d

@@ -6,6 +6,9 @@ void ast_free(ast_t *ast) {
     if (ast == NULL) return;
 
     switch (ast->type) {
+    case e_string:
+        free(ast->exprString);
+        break;
     case e_block:
         ast_free(ast->exprBlock);
         break;
