@@ -15,10 +15,10 @@ void yyerror(const char *s);
 int stoi(const char *str);
 float stof(const char *str);
 
-#define TOKEN(tok)      (yylval.token = tok)
+#define TOKEN(tok)      (yylval.ival = tok)
 #define ITOKEN(tok)     (yylval.ival = stoi(yytext), tok)
 #define FTOKEN(tok)     (yylval.fval = stof(yytext), tok)
-#define STOKEN(tok)     (yylval.sval = strdup(yytext), tok)
+#define NTOKEN(tok)     (yylval.ival = names_getid(yytext), tok)
 
 int comdp = 0;
 %}
@@ -31,7 +31,7 @@ float               [[:digit:]]+("."[[:digit:]]*)?(("e"|"E")("+"|"-")?[[:digit:]
 boolean             "true"|"false"
 
 escape              \\([\\"'ntbr ])
-string              \"([^"]|{escape})+\"
+string              \"({escape}|[^"\\])*\"
 
 identifier          [[:alpha:]][[:alnum:]]*
 
@@ -50,8 +50,11 @@ identifier          [[:alpha:]][[:alnum:]]*
 {integer}           return ITOKEN(INT);
 {float}             return FTOKEN(FLOAT);
 {boolean}           return ITOKEN(BOOL);
-{string}            return STOKEN(STRING);
-{identifier}        { yylval.ival = names_getid(yytext); return NAME; }
+{string}            {
+                        yylval.sval = strndup(yytext + 1, strlen(yytext) - 2);
+                        return STRING;
+                    }
+{identifier}        return NTOKEN(NAME);
 
 ";;"                return TOKEN(TWOSEMI);
 ";"                 return TOKEN(SEMI);
@@ -59,19 +62,23 @@ identifier          [[:alpha:]][[:alnum:]]*
 ")"                 return TOKEN(RPAREN);
 "->"                return TOKEN(ARROW);
 
-"+"                 return TOKEN(PLUS);
-"-"                 return TOKEN(MINUS);
-"*"                 return TOKEN(MUL);
-"/"                 return TOKEN(DIV);
+"+"                 return NTOKEN(PLUS);
+"-"                 return NTOKEN(MINUS);
+"*"                 return NTOKEN(MUL);
+"/"                 return NTOKEN(DIV);
 
-"+."                return TOKEN(FPLUS);
-"-."                return TOKEN(FMINUS);
-"*."                return TOKEN(FMUL);
-"/."                return TOKEN(FDIV);
+"+."                return NTOKEN(FPLUS);
+"-."                return NTOKEN(FMINUS);
+"*."                return NTOKEN(FMUL);
+"/."                return NTOKEN(FDIV);
 
-"="                 return TOKEN(EQUAL);
-"<>"                return TOKEN(NOTEQU);
-"!"                 return TOKEN(NOT);
+"="                 return NTOKEN(EQUAL);
+"<>"                return NTOKEN(NOTEQU);
+"!"                 return NTOKEN(NOT);
+">"                 return NTOKEN(GT);
+">="                return NTOKEN(GTE);
+"<"                 return NTOKEN(LT);
+"<="                return NTOKEN(LTE);
 
 {whitespace}        ;
 

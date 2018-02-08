@@ -4,12 +4,6 @@
 #include "names.h"
 #include "ast.h"
 
-#include "miniml.tab.h"
-
-void token_print(int t) {
-    printf("%s", token_name(t));
-}
-
 void ast_print(ast_t *ast) {
     if (ast == NULL) {
         printf("<NULL>");
@@ -21,7 +15,7 @@ void ast_print(ast_t *ast) {
         printf("Int %d", ast->exprInteger);
         break;
     case e_float:
-        printf("Float %f", ast->exprFloat);
+        printf("Float %g", ast->exprFloat);
         break;
     case e_bool:
         printf("Bool %s", ast->exprBool ? "true" : "false");
@@ -38,7 +32,6 @@ void ast_print(ast_t *ast) {
         printf(")");
         break;
     case e_list:
-        printf("List ");
         alist_print(ast->exprList);
         break;
     case e_funcall:
@@ -49,17 +42,13 @@ void ast_print(ast_t *ast) {
         printf(")");
         break;
     case e_unary:
-        printf("Unary (");
-        token_print(ast->exprUnary.op);
-        printf(", ");
+        printf("Unary (%s, ", names_getnm(ast->exprUnary.op));
         ast_print(ast->exprUnary.right);
         printf(")");
     case e_bin:
         printf("Binary (");
         ast_print(ast->exprBinary.left);
-        printf(", ");
-        token_print(ast->exprBinary.op);
-        printf(", ");
+        printf(", %s, ", names_getnm(ast->exprBinary.op));
         ast_print(ast->exprBinary.right);
         printf(")");
         break;

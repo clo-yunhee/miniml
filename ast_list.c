@@ -45,7 +45,7 @@ void alist_partprint(astlist_t *list) {
 
     ast_print(list->elem);
     if (list->next != NULL)
-        printf(", ");
+        printf(", \n");
 
     alist_partprint(list->next);
 }
