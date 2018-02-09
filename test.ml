@@ -33,4 +33,4 @@ let rec fact n = if n = 0 then 1 else n * (fact (n - 1));;
 (function x -> x + 1) (fact a);;
 
 (* using operator as a name *)
-(*let ( + ) x y = x - y;;*)
+let x = 9 in let y = 1 in ( + ) x y;;

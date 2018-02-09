@@ -22,7 +22,31 @@ params_t *plist_make(int head, params_t *tail) {
     return lst;
 }
 
-//make
+//rev
+
+astlist_t *alist_revRec(astlist_t *list, astlist_t *acc) {
+    if (list == NULL) return acc;
+    astlist_t *revlst = alist_revRec(list->next, alist_make(list->elem, acc));
+    free(list);
+    return revlst;
+}
+
+astlist_t *alist_rev(astlist_t *list) {
+    return alist_revRec(list, NULL);
+}
+
+params_t *plist_revRec(params_t *list, params_t *acc) {
+    if (list == NULL) return acc;
+    params_t *revlst = plist_revRec(list->next, plist_make(list->name, acc));
+    free(list);
+    return revlst;
+}
+
+params_t *plist_rev(params_t *list) {
+    return plist_revRec(list, NULL);
+}
+
+//free
 
 void alist_free(astlist_t *list) {
     if (list == NULL) return;

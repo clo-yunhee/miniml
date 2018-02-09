@@ -70,12 +70,14 @@ void token_print(int t);
 /* astlist */
 
 astlist_t *alist_make(ast_t *head, astlist_t *tail);
+astlist_t *alist_rev(astlist_t *list);
 void alist_free(astlist_t *list);
 void alist_print(astlist_t *list);
 
 /* paramlist */
 
 params_t *plist_make(int head, params_t *tail);
+params_t *plist_rev(params_t *list);
 void plist_free(params_t *list);
 void plist_print(params_t *list);
 
