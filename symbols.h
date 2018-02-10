@@ -3,13 +3,12 @@
 
 #include <stdbool.h>
 
-typedef enum symbol_standard_type sym_typestd;
 typedef struct symbol symbol_t;
 typedef struct symlist symlist_t;
 
-enum symbol_standard_type {
+typedef enum symbol_standard_type {
     type_int, type_float, type_bool, type_string
-};
+} sym_typestd;
 
 struct symlist {
     unsigned int size;

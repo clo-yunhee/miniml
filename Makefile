@@ -1,27 +1,33 @@
-SHELL=/bin/sh
-LEX=flex
-YACC=bison
-CC=gcc
-RM=rm -f
-MKDIR=mkdir -p
-CFLAGS=-g -std=c11 -pedantic -Wall -Werror -D_XOPEN_SOURCE=700
-LDFLAGS=-lfl
-# --nounput: ne génère pas la fonction yyunput() inutile
+SHELL = /bin/sh
+LEX   = flex
+YACC  = bison
+CC    = gcc
+RM    = rm -f
+MKDIR = mkdir -p
+CFLAGS := -g -std=c11 -pedantic -Wall -Werror
+CFLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG 
+LDFLAGS = -lfl
+# --nounput: ne gÃ©nÃ¨re pas la fonction yyunput() inutile
 # --DYY_NO_INPUT: ne prend pas en compte la fonction input() inutile
-# -D_POSIX_SOURCE: déclare la fonction fileno()
-LEXOPTS=-D_POSIX_SOURCE -DYY_NO_INPUT --nounput
-YACCOPTS=--verbose
+# -D_POSIX_SOURCE: dÃ©clare la fonction fileno()
+LEXOPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
+YACCOPTS = --verbose
 
-PROG=miniml
 
-.PHONY: all
-all: $(PROG) clean
+CFILES := main.c
+CFILES += names.c
+CFILES += symbol_make.c symbol_free.c symbol_list.c symbol_table.c
+CFILES += ast_make.c ast_free.c ast_list.c ast_print.c
 
-$(PROG): $(PROG).yy.o $(PROG).tab.o \
-	        names.h names.c \
-                symbols.h symbol_make.c symbol_free.c symbol_list.c symbol_table.c \
-		ast.h ast_make.c ast_free.c ast_list.c ast_print.c \
-		main.c
+OBJFILES := $(subst .c,.o,$(CFILES))
+
+
+PROG := miniml
+
+
+.SECONDARY:
+
+$(PROG): $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
 	$(CC) $+ -o $@ $(LDFLAGS) 
 
 %.yy.c: %.l %.tab.h
@@ -34,12 +40,19 @@ $(PROG): $(PROG).yy.o $(PROG).tab.o \
 	$(YACC) $(YACCOPTS) $< -d
 
 %.o: %.c
-	$(CC) -DYYDEBUG $(CFLAGS) $< -c
+	$(CC) $(CFLAGS) $< -c
 
 .PHONY: graph
 graph:
 	$(YACC) $(YACCOPTS) $(PROG).y --graph
 	dot -Tpng $(PROG).dot -O
+
+.PHONY: test
+test: $(PROG)
+	$(CURDIR)/$(PROG) < test.ml
+
+.PHONY: all
+all: $(PROG)
 
 .PHONY: clean-all
 clean-all: clean

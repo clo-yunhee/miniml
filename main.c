@@ -21,8 +21,6 @@ int main(int argc, char *argv[]) {
     main_init();
     atexit(main_free);
 
-    astlist_t *instrs;
-
     switch (yyparse()) {
     case 0:
         // successful

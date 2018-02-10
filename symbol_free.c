@@ -13,6 +13,8 @@ void sym_free(symbol_t *sym) {
     case e_typetup:
         free(sym->symTypeTuple.types); // free array itself, not the elts
         break;
+    default:
+        break;
     }
 
     free(sym);

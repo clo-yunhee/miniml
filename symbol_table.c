@@ -60,14 +60,16 @@ void symbols_free() {
 
 // access functions
 
-bool symbols_search(int name, int depth, symbol_t **symref) {
+//TODO: write those
 
+bool symbols_search(int name, int depth, symbol_t **symref) {
+    return false;
 }
 
 symbol_t *symbols_define(symbol_t *sym) {
-    
+    return NULL;
 }
 
 symbol_t *symbols_find(int name) {
-
+    return NULL;
 }
