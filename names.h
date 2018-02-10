@@ -1,10 +1,10 @@
 #ifndef _NAMES_H_
 #define _NAMES_H_
 
-void names_init();
-void names_free();
+void names_init(void);
+void names_free(void);
 
-int names_settablecap(int capacity);
+void names_settablecap(int capacity);
 
 int names_getid(const char *name);
 const char *names_getnm(int id);

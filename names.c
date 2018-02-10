@@ -13,8 +13,6 @@
  * an existing one.
  */
 
-// TODO: fix getnm not working
-
 typedef char * hkey_t;
 typedef int hvalue_t;
 
@@ -25,7 +23,7 @@ struct bucket {
     hkey_t key;
     hvalue_t value;
     
-    h_bucket *next;
+    struct bucket *next;
 };
 
 static h_bucket *find_bucket(const char *name);
@@ -41,16 +39,13 @@ static hfun_t hash = h_djb2;
 static int last_id = 0;
 
 // does not support resizing
-int names_settablecap(int cap) {
+void names_settablecap(int cap) {
     if (table != NULL) {
         fprintf(stderr, "Cannot resize name table after use");
-        return -1;
     } else if (cap < 8) {
         fprintf(stderr, "Cannot set capacity lower than 8");
-        return -1;
     } else {
         capacity = cap;
-        return 0;
     }
 }
 
@@ -80,7 +75,7 @@ const char *names_getnm(int id) {
     return "<undefined>";
 }
 
-void names_init() {
+void names_init(void) {
     if (table != NULL) {
         fprintf(stderr, "Name table is already initialized");
     } else {
@@ -91,7 +86,7 @@ void names_init() {
     }
 }
 
-void names_free() {
+void names_free(void) {
     if (table == NULL) {
         fprintf(stderr, "Name table is not initialized");
     } else {

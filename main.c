@@ -3,6 +3,7 @@
 
 #include "names.h"
 #include "ast.h"
+#include "symbols.h"
 
 #include "miniml.tab.h"
 
@@ -46,9 +47,11 @@ int main(int argc, char *argv[]) {
 
 void main_init(void) {
     names_init();
+    symbols_init();
 }
 
 void main_free(void) {
     alist_free(prog);
     names_free();
+    symbols_free();
 }
