@@ -43,17 +43,6 @@ void ast_print(ast_t *ast) {
         alist_print(ast->exprFunCall.args);
         printf(")");
         break;
-    case e_unary:
-        printf("Unary (%s, ", names_getnm(ast->exprUnary.op));
-        ast_print(ast->exprUnary.right);
-        printf(")");
-    case e_bin:
-        printf("Binary (");
-        ast_print(ast->exprBinary.left);
-        printf(", %s, ", names_getnm(ast->exprBinary.op));
-        ast_print(ast->exprBinary.right);
-        printf(")");
-        break;
     case e_let:
         printf("Let");
         if (ast->exprLet.rec) {

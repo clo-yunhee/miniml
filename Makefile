@@ -18,6 +18,8 @@ CFILES := main.c
 CFILES += names.c
 CFILES += symbol_make.c symbol_free.c symbol_list.c symbol_table.c
 CFILES += ast_make.c ast_free.c ast_list.c ast_print.c
+CFILES += visit_eval.c value_make.c value_print.c environment.c
+CFILES += natives.c
 
 OBJFILES := $(subst .c,.o,$(CFILES))
 

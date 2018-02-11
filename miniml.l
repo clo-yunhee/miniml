@@ -33,7 +33,7 @@ boolean             "true"|"false"
 escape              \\([\\"'ntbr ])
 string              \"({escape}|[^"\\])*\"
 
-identifier          [[:alpha:]][[:alnum:]]*
+identifier          [[:alpha:]_][[:alnum:]_]*
 
 %%
 

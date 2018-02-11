@@ -25,7 +25,7 @@ struct ast {
         e_int, e_float, e_bool,
         e_string, e_var,
         e_block, e_list,
-        e_funcall, e_unary, e_bin,
+        e_funcall,
         e_let, e_if, e_tuple
     } type;
     union {
@@ -46,13 +46,6 @@ struct ast {
         // e_funcall
         struct { ast_t *function;
                  astlist_t *args; } exprFunCall;
-        // e_unary
-        struct { ast_t *right;
-                 int op; } exprUnary;
-        // e_bin
-        struct { ast_t *left;
-                 int op;
-                 ast_t *right; } exprBinary;
         // e_let
         struct { int name;
                  bool rec;

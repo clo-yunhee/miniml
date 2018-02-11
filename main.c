@@ -4,6 +4,9 @@
 #include "names.h"
 #include "ast.h"
 #include "symbols.h"
+#include "environment.h"
+#include "values.h"
+#include "visit.h"
 
 #include "miniml.tab.h"
 
@@ -37,8 +40,23 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    alist_print(prog);
-    printf("\n");
+    env_t *global_env = env_init();    
+
+    // usage example for visitor functions
+    astlist_t *list = prog;
+    while (list != NULL) {
+        //type_t *type = visit_types(expr);
+        value_t *value = visit_eval(global_env, list->elem);
+
+        value_print(value);
+        printf("\n");
+        //printf("%s : %s = %s", names_getnm(value->name), ttos(type), vtos(value->val));
+        // e.g.
+        // - : int = 1
+        // f : int -> int = <fun>
+
+        list = list->next;
+    }
     
     return EXIT_SUCCESS;
 }

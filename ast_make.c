@@ -59,18 +59,13 @@ MAKEAST(funcall) (ast_t *fun, astlist_t *args) {
 }
 
 MAKEAST(unary) (int op, ast_t *right) {
-    DECLAST(e_unary);
-    ast->exprUnary.op = op;
-    ast->exprUnary.right = right;
-    return ast;
+    // an unary operator is an infix function with one parameter
+    return ast_make_funcall(ast_make_variable(op), alist_make(right, NULL));
 }
 
 MAKEAST(binary) (ast_t *left, int op, ast_t *right) {
-    DECLAST(e_bin);
-    ast->exprBinary.left = left;
-    ast->exprBinary.op = op;
-    ast->exprBinary.right = right;
-    return ast;
+    // a binary operator is an infix function with two parameters
+    return ast_make_funcall(ast_make_variable(op), alist_make(left, alist_make(right, NULL)));
 }
 
 MAKEAST(let) (int name,

@@ -19,10 +19,6 @@ void ast_free(ast_t *ast) {
         ast_free(ast->exprFunCall.function);
         alist_free(ast->exprFunCall.args);
         break;
-    case e_bin:
-        ast_free(ast->exprBinary.left);
-        ast_free(ast->exprBinary.right);
-        break;
     case e_let:
         plist_free(ast->exprLet.params);
         ast_free(ast->exprLet.expr);
