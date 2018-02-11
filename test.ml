@@ -16,6 +16,10 @@ let x = 2 in x * x;;
 (let x = 2 in let y = 3 in x + y) + x;;
 (let x = 2 in let y = 3 in x + y) + x + (let x = 5 in x * x);;
 
+(* tuple definition *)
+let x = (1, 2);;
+let y = (x, x * 2);;
+
 let y = 2 in let z = y in let y = 3 in x + y + z;;
 
 (* if-else *)

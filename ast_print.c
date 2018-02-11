@@ -95,6 +95,10 @@ void ast_print(ast_t *ast) {
         }
         printf(")");
         break;
+    case e_tuple:
+        printf("Tuple");
+        alist_print(ast->exprTuple);
+        break;
     default:
         printf("Unhandled");
         break;

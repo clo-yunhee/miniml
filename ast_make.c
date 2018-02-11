@@ -94,4 +94,10 @@ MAKEAST(if) (ast_t *cond, ast_t *bIf,
     return ast;
 }
 
+MAKEAST(tuple) (astlist_t *exprs) {
+    DECLAST(e_tuple);
+    ast->exprTuple = exprs;
+    return ast;
+}
+
 

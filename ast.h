@@ -2,17 +2,20 @@
 #define _AST_H_
 
 #include <stdbool.h>
+#include <stddef.h>
 
 typedef struct ast ast_t;
 typedef struct astlist astlist_t;
 typedef struct paramlist params_t;
 
 struct astlist {
+    size_t size;
     ast_t *elem;
     struct astlist *next;
 };
 
 struct paramlist {
+    size_t size;
     int name;
     struct paramlist *next;
 };
@@ -23,7 +26,7 @@ struct ast {
         e_string, e_var,
         e_block, e_list,
         e_funcall, e_unary, e_bin,
-        e_let, e_if
+        e_let, e_if, e_tuple
     } type;
     union {
         // e_int
@@ -60,6 +63,8 @@ struct ast {
         struct { ast_t *cond;
                  ast_t *bIf;
                  ast_t *bElse; } exprIf;
+        // e_tuple
+        astlist_t *exprTuple;
     };
 };
 
@@ -104,6 +109,8 @@ MAKEAST(let) (int name, // name == -1  ->  anonymous decl
 
 MAKEAST(if) (ast_t *cond, ast_t *bIf,
                           ast_t *bElse); // bElse != NULL  ->  if-else
+
+MAKEAST(tuple) (astlist_t *elems);
 
 void ast_free(ast_t *ast);
 void ast_print(ast_t *ast);

@@ -11,7 +11,7 @@ typedef enum symbol_standard_type {
 } sym_typestd;
 
 struct symlist {
-    unsigned int size;
+    size_t size;
     symbol_t *elem;
     struct symlist *next;
 };

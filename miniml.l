@@ -60,6 +60,7 @@ identifier          [[:alpha:]][[:alnum:]]*
 ";"                 return TOKEN(SEMI);
 "("                 return TOKEN(LPAREN);
 ")"                 return TOKEN(RPAREN);
+","                 return TOKEN(COMMA);
 "->"                return TOKEN(ARROW);
 
 "+"                 return NTOKEN(PLUS);

@@ -17,7 +17,7 @@ extern astlist_t *prog;
 %token LET IN FUN REC
 %token IF ELSE THEN 
 %token INT FLOAT BOOL STRING NAME
-%token TWOSEMI SEMI LPAREN RPAREN TBEGIN TEND ARROW
+%token TWOSEMI SEMI LPAREN RPAREN TBEGIN TEND ARROW COMMA
 %token PLUS MINUS MUL DIV FPLUS FMINUS FMUL FDIV
 %token EQUAL NOTEQU NOT GT GTE LT LTE
 
@@ -29,6 +29,7 @@ extern astlist_t *prog;
 %nonassoc "simple-if"
 %right ELSE 
 
+%nonassoc COMMA RPAREN
 %left OR
 %left AND
 %left GT GTE LT LTE EQUAL NOTEQU
@@ -59,7 +60,7 @@ extern astlist_t *prog;
 %type <ast> atom funcall_expr arith_expr let_expr fun_expr if_expr
 %type <ast> exp_or exp_and exp_equ exp_rel exp_add exp_mul exp_un
 
-%type <list> atom_list expr_list
+%type <list> atom_list expr_list tuple_list
 %type <let> let_prefix let_binding
 %type <params> parameter_list
 
@@ -107,8 +108,8 @@ funcall_expr:
 arith_expr: exp_or ;
 
 expr_list:
-    %empty                { $$ = NULL; }
-  | expr_list SEMI expr   { $$ = alist_make($3, $1); }
+    expr %prec "below-semi"   { $$ = alist_make($1, NULL); }
+  | expr_list SEMI expr       { $$ = alist_make($3, $1); }
   ;
 
 let_expr:
@@ -128,7 +129,6 @@ if_expr:
   | IF expr THEN expr ELSE expr           { $$ = ast_make_if($2, $4, $6); }
   ;
 
-
 /* atom */
 
 atom:
@@ -140,6 +140,7 @@ atom:
   | LPAREN operator RPAREN    { $$ = ast_make_variable($2); }
   | LPAREN expr RPAREN        { $$ = $2; }
   | LPAREN expr_list RPAREN   { $$ = ast_make_list(alist_rev($2)); }
+  | LPAREN tuple_list RPAREN  { $$ = ast_make_tuple(alist_rev($2)); }
   ;
 
 atom_list:
@@ -147,6 +148,9 @@ atom_list:
   | atom_list atom   { $$ = alist_make($2, $1); }
   ;
 
+tuple_list:
+    expr COMMA expr         { $$ = alist_make($3, alist_make($1, NULL)); }
+  | tuple_list COMMA expr   { $$ = alist_make($3, $1); }
 
 /* lets */
 
