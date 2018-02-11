@@ -23,6 +23,8 @@ VEVAL(let);
 value_t *visit_eval(env_t *env, ast_t *expr) {
    
     switch (expr->type) {
+    case e_unit:
+        return value_make_unit();
     case e_int:
         return value_make_int(expr->exprInteger);
     case e_float:
@@ -62,7 +64,7 @@ VEVAL(list) {
 
     astlist_t *expr = list->exprList;
     while (expr != NULL) {
-        value = visit_eval(env, list);
+        value = visit_eval(env, expr->elem);
         expr = expr->next;
     }
 

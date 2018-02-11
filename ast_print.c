@@ -11,6 +11,9 @@ void ast_print(ast_t *ast) {
     }
 
     switch (ast->type) {
+    case e_unit:
+        printf("Unit");
+        break;
     case e_int:
         printf("Int %d", ast->exprInteger);
         break;

@@ -22,7 +22,7 @@ struct paramlist {
 
 struct ast {
     enum {
-        e_int, e_float, e_bool,
+        e_unit, e_int, e_float, e_bool,
         e_string, e_var,
         e_block, e_list,
         e_funcall,
@@ -83,6 +83,7 @@ void plist_print(params_t *list);
 
 #define MAKEAST(type) ast_t *ast_make_##type 
 
+MAKEAST(unit) (void);
 MAKEAST(integer) (int value);
 MAKEAST(float) (float value);
 MAKEAST(bool) (bool value);

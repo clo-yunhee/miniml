@@ -95,7 +95,7 @@ instruction: expr | global_let ;
 
 expr:
     funcall_expr
-  | TBEGIN expr_list TEND   { $$ = ast_make_list(alist_rev($2)); }
+  /*| TBEGIN expr_list TEND   { $$ = ast_make_list(alist_rev($2)); }*/
   | arith_expr              /* single atom is handled in this rule */
   | let_expr
   | fun_expr
@@ -130,6 +130,7 @@ if_expr:
   | IF expr THEN expr ELSE expr           { $$ = ast_make_if($2, $4, $6); }
   ;
 
+
 /* atom */
 
 atom:
@@ -138,9 +139,12 @@ atom:
   | BOOL                            { $$ = ast_make_bool($1); }
   | STRING                          { $$ = ast_make_string($1); }
   | NAME                            { $$ = ast_make_variable($1); }
+  | LPAREN RPAREN                   { $$ = ast_make_unit(); }
+  | TBEGIN TEND                     { $$ = ast_make_unit(); }
   | LPAREN operator RPAREN          { $$ = ast_make_variable($2); }
   | LPAREN expr RPAREN              { $$ = $2; }
   | LPAREN expr_list RPAREN         { $$ = ast_make_list(alist_rev($2)); }
+  | TBEGIN expr_list TEND           { $$ = ast_make_list(alist_rev($2)); }
   | LPAREN tuple_expr_list RPAREN   { $$ = ast_make_tuple(alist_rev($2)); }
   ;
 
@@ -152,6 +156,7 @@ atom_list:
 tuple_expr_list:
     expr COMMA expr              { $$ = alist_make($3, alist_make($1, NULL)); }
   | tuple_expr_list COMMA expr   { $$ = alist_make($3, $1); }
+
 
 /* lets */
 

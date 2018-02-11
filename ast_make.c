@@ -9,6 +9,11 @@
     ast->type = t;
 
 
+MAKEAST(unit) (void) {
+    DECLAST(e_unit);
+    return ast;
+}
+
 MAKEAST(integer) (int value) {
     DECLAST(e_int);
     ast->exprInteger = value;
