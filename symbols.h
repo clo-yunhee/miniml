@@ -47,6 +47,9 @@ void symbols_setmaxdepth(int max_depth);
 symbol_t *symbols_define(symbol_t *sym); // returns sym or NULL if ambiguous name
 symbol_t *symbols_find(int name); // defines UNDEFINED if not found
 
+void symbols_push();
+void symbols_pop();
+
 bool symbols_search(int name, int depth, symbol_t **symref);
 
 /* symlist */

@@ -15,6 +15,8 @@ static s_entry **table = NULL;
 
 static int cur_depth = 0; // depth 0 is the global scope
 
+void entry_free(s_entry *entry);
+
 
 void symbols_setmaxdepth(int dp) {
     if (table != NULL) {
@@ -50,19 +52,22 @@ void symbols_free() {
         fprintf(stderr, "Symbol table is not initialized\n");
     } else {
         for (int i = 0; i < max_depth; ++i) {
-            s_entry *entry = table[i];
-            s_entry *prev;
-            while (entry != NULL) {
-                sym_free(entry->sym);
-
-                prev = entry;
-                entry = entry->next;
-                free(prev);
-            }
+            entry_free(table[i]);
         }
         free(table);
 
         table = NULL;
+    }
+}
+
+void entry_free(s_entry *entry) {
+    s_entry *prev;
+    while (entry != NULL) {
+        sym_free(entry->sym);
+
+        prev = entry;
+        entry = entry->next;
+        free(prev);
     }
 }
 
@@ -120,3 +125,19 @@ symbol_t *symbols_find(int name) {
     return NULL;
 }
 
+void symbols_push(void) {
+    if (cur_depth == max_depth - 1) {
+        fprintf(stderr, "Maximum depth reached\n");
+        return;
+    }
+    ++cur_depth;
+}
+
+void symbols_pop(void) {
+    if (cur_depth == 0) {
+        fprintf(stderr, "Minimum depth reached\n");
+        return;
+    }
+    entry_free(table[cur_depth]);
+    --cur_depth;
+}
