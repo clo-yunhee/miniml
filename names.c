@@ -36,14 +36,21 @@ static size_t capacity = 16;
 static h_bucket **table = NULL;
 static hfun_t hash = h_djb2; 
 
-static int last_id = 0;
+static int last_id = 1;
+
+
+int name_int;
+int name_float;
+int name_bool;
+int name_string;
+
 
 // does not support resizing
 void names_settablecap(int cap) {
     if (table != NULL) {
-        fprintf(stderr, "Cannot resize name table after use");
+        fprintf(stderr, "Cannot resize name table after use\n");
     } else if (cap < 8) {
-        fprintf(stderr, "Cannot set capacity lower than 8");
+        fprintf(stderr, "Cannot set capacity lower than 8\n");
     } else {
         capacity = cap;
     }
@@ -62,7 +69,7 @@ const char *names_getnm(int id) {
     // but this function is only there for human-readable output
     // we will scan through every the table
 
-    for (int i = 0; i < capacity; i++) {
+    for (int i = 0; i < capacity; ++i) {
         h_bucket *bk = table[i];
         while (bk != NULL) {
             if (bk->value == id) {
@@ -77,18 +84,18 @@ const char *names_getnm(int id) {
 
 void names_init(void) {
     if (table != NULL) {
-        fprintf(stderr, "Name table is already initialized");
+        fprintf(stderr, "Name table is already initialized\n");
     } else {
         table = calloc(capacity, sizeof(h_bucket));
         if (table == NULL) {
-            fprintf(stderr, "Name table was not initialized");
+            fprintf(stderr, "Name table was not initialized\n");
         }
-    }
+    } 
 }
 
 void names_free(void) {
     if (table == NULL) {
-        fprintf(stderr, "Name table is not initialized");
+        fprintf(stderr, "Name table is not initialized\n");
     } else {
         for (int i = 0; i < capacity; ++i) {
             h_bucket *bk = table[i];
