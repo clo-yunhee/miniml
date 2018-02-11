@@ -87,13 +87,13 @@ void plist_partprint(params_t *list) {
 //print
 
 void alist_print(astlist_t *list) {
-    printf("List [");
+    printf("[");
     alist_partprint(list);
     printf("]");
 }
 
 void plist_print(params_t *list) { 
-    printf("Params (");
+    printf("(");
     plist_partprint(list);
     printf(")");
 }

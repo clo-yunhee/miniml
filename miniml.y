@@ -60,9 +60,10 @@ extern astlist_t *prog;
 %type <ast> atom funcall_expr arith_expr let_expr fun_expr if_expr
 %type <ast> exp_or exp_and exp_equ exp_rel exp_add exp_mul exp_un
 
-%type <list> atom_list expr_list tuple_list
+%type <list> atom_list expr_list tuple_expr_list
 %type <let> let_prefix let_binding
-%type <params> parameter_list
+%type <ival> let_pattern
+%type <params> parameter_list tuple_name_list
 
 %type <ival> PLUS MINUS MUL DIV
 %type <ival> FPLUS FMINUS FMUL FDIV
@@ -132,15 +133,15 @@ if_expr:
 /* atom */
 
 atom:
-    INT                       { $$ = ast_make_integer($1); }
-  | FLOAT                     { $$ = ast_make_float($1); }
-  | BOOL                      { $$ = ast_make_bool($1); }
-  | STRING                    { $$ = ast_make_string($1); }
-  | NAME                      { $$ = ast_make_variable($1); }
-  | LPAREN operator RPAREN    { $$ = ast_make_variable($2); }
-  | LPAREN expr RPAREN        { $$ = $2; }
-  | LPAREN expr_list RPAREN   { $$ = ast_make_list(alist_rev($2)); }
-  | LPAREN tuple_list RPAREN  { $$ = ast_make_tuple(alist_rev($2)); }
+    INT                             { $$ = ast_make_integer($1); }
+  | FLOAT                           { $$ = ast_make_float($1); }
+  | BOOL                            { $$ = ast_make_bool($1); }
+  | STRING                          { $$ = ast_make_string($1); }
+  | NAME                            { $$ = ast_make_variable($1); }
+  | LPAREN operator RPAREN          { $$ = ast_make_variable($2); }
+  | LPAREN expr RPAREN              { $$ = $2; }
+  | LPAREN expr_list RPAREN         { $$ = ast_make_list(alist_rev($2)); }
+  | LPAREN tuple_expr_list RPAREN   { $$ = ast_make_tuple(alist_rev($2)); }
   ;
 
 atom_list:
@@ -148,15 +149,15 @@ atom_list:
   | atom_list atom   { $$ = alist_make($2, $1); }
   ;
 
-tuple_list:
-    expr COMMA expr         { $$ = alist_make($3, alist_make($1, NULL)); }
-  | tuple_list COMMA expr   { $$ = alist_make($3, $1); }
+tuple_expr_list:
+    expr COMMA expr              { $$ = alist_make($3, alist_make($1, NULL)); }
+  | tuple_expr_list COMMA expr   { $$ = alist_make($3, $1); }
 
 /* lets */
 
 let_prefix:
-    LET NAME       { $$.name = $2; $$.rec = false; }
-  | LET REC NAME   { $$.name = $3; $$.rec = true; }
+    LET let_pattern       { $$.name = $2; $$.rec = false; }
+  | LET REC let_pattern   { $$.name = $3; $$.rec = true; }
   ;
 
 let_binding:
@@ -164,7 +165,15 @@ let_binding:
   | let_prefix parameter_list EQUAL expr   { $$ = $1; $$.params = plist_rev($2); $$.expr = $4; }
   ;
 
-/* functions */
+let_pattern:
+    NAME                                   { $$ = $1; }
+  | LPAREN operator RPAREN                 { $$ = $2; }
+  | LPAREN tuple_name_list RPAREN          { $$ = $2->name; plist_free($2->next); /* TODO: fix that */ }
+
+tuple_name_list:
+    NAME COMMA NAME              { $$ = plist_make($3, plist_make($1, NULL)); }
+  | tuple_name_list COMMA NAME   { $$ = plist_make($3, $1); }
+
 parameter_list:
     NAME                  { $$ = plist_make($1, NULL); }
   | parameter_list NAME   { $$ = plist_make($2, $1); }

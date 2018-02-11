@@ -32,12 +32,14 @@ void ast_print(ast_t *ast) {
         printf(")");
         break;
     case e_list:
+        printf("List ");
         alist_print(ast->exprList);
         break;
     case e_funcall:
         printf("FunCall (");
         ast_print(ast->exprFunCall.function);
         printf(", ");
+        printf("Params ");
         alist_print(ast->exprFunCall.args);
         printf(")");
         break;
@@ -70,6 +72,7 @@ void ast_print(ast_t *ast) {
             printf("%s, ", names_getnm(ast->exprLet.name));
         }
         if (ast->exprLet.params != NULL) {
+            printf("Params ");
             plist_print(ast->exprLet.params);
             printf(", ");
         }
@@ -96,7 +99,7 @@ void ast_print(ast_t *ast) {
         printf(")");
         break;
     case e_tuple:
-        printf("Tuple");
+        printf("Tuple ");
         alist_print(ast->exprTuple);
         break;
     default:
