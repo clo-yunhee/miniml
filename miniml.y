@@ -50,8 +50,8 @@ extern astlist_t *prog;
     /* parser */
     astlist_t *list;
     ast_t *ast;
-    struct { int name; bool rec; params_t *params; ast_t *expr; } let;
-    params_t *params;
+    struct { namelist_t *names; bool rec; namelist_t *params; ast_t *expr; } let;
+    namelist_t *names;
 }
 
 %type <list> program
@@ -62,8 +62,7 @@ extern astlist_t *prog;
 
 %type <list> atom_list expr_list tuple_expr_list
 %type <let> let_prefix let_binding
-%type <ival> let_pattern
-%type <params> parameter_list tuple_name_list
+%type <names> parameter_list let_pattern tuple_name_list
 
 %type <ival> PLUS MINUS MUL DIV
 %type <ival> FPLUS FMINUS FMUL FDIV
@@ -79,13 +78,13 @@ extern astlist_t *prog;
 
 program:
     program instruction error TWOSEMI   { prog = alist_make($2, prog); }
-  | program error TWOSEMI               {}
-  | error TWOSEMI                       {}
+  | program error TWOSEMI               { }
+  | error TWOSEMI                       { }
 
   | program instruction TWOSEMI   { prog = alist_make($2, prog); }
-  | program TWOSEMI               {}
+  | program TWOSEMI               { }
   | instruction TWOSEMI           { prog = alist_make($1, NULL); }
-  | TWOSEMI                       {}
+  | TWOSEMI                       { }
   ;
 
 instruction: expr | global_let ;
@@ -114,15 +113,15 @@ expr_list:
   ;
 
 let_expr:
-  let_binding IN expr %prec "below-semi"   { $$ = ast_make_let($1.name, $1.rec, $1.params, $1.expr, $3); }
+  let_binding IN expr %prec "below-semi"   { $$ = ast_make_let($1.names, $1.rec, $1.params, $1.expr, $3); }
   ;
 
 global_let:
-  let_binding   { $$ = ast_make_let($1.name, $1.rec, $1.params, $1.expr, NULL); }
+  let_binding   { $$ = ast_make_let($1.names, $1.rec, $1.params, $1.expr, NULL); }
   ;
 
 fun_expr:
-  FUN parameter_list ARROW expr %prec "below-semi"   { $$ = ast_make_let(-1, false, plist_rev($2), $4, NULL); }
+  FUN parameter_list ARROW expr %prec "below-semi"   { $$ = ast_make_let(nmlist_make(UNDEFINED, NULL), false, nmlist_rev($2), $4, NULL); }
   ;
 
 if_expr:
@@ -161,27 +160,27 @@ tuple_expr_list:
 /* lets */
 
 let_prefix:
-    LET let_pattern       { $$.name = $2; $$.rec = false; }
-  | LET REC let_pattern   { $$.name = $3; $$.rec = true; }
+    LET let_pattern       { $$.names = $2; $$.rec = false; }
+  | LET REC let_pattern   { $$.names = $3; $$.rec = true; }
   ;
 
 let_binding:
     let_prefix EQUAL expr                  { $$ = $1; $$.params = NULL; $$.expr = $3; }    
-  | let_prefix parameter_list EQUAL expr   { $$ = $1; $$.params = plist_rev($2); $$.expr = $4; }
+  | let_prefix parameter_list EQUAL expr   { $$ = $1; $$.params = nmlist_rev($2); $$.expr = $4; }
   ;
 
 let_pattern:
-    NAME                                   { $$ = $1; }
-  | LPAREN operator RPAREN                 { $$ = $2; }
-  | LPAREN tuple_name_list RPAREN          { $$ = $2->name; plist_free($2->next); /* TODO: fix that */ }
+    NAME                                   { $$ = nmlist_make($1, NULL); }
+  | LPAREN operator RPAREN                 { $$ = nmlist_make($2, NULL); }
+  | LPAREN tuple_name_list RPAREN          { $$ = $2; }
 
 tuple_name_list:
-    NAME COMMA NAME              { $$ = plist_make($3, plist_make($1, NULL)); }
-  | tuple_name_list COMMA NAME   { $$ = plist_make($3, $1); }
+    NAME COMMA NAME              { $$ = nmlist_make($3, nmlist_make($1, NULL)); }
+  | tuple_name_list COMMA NAME   { $$ = nmlist_make($3, $1); }
 
 parameter_list:
-    NAME                  { $$ = plist_make($1, NULL); }
-  | parameter_list NAME   { $$ = plist_make($2, $1); }
+    NAME                  { $$ = nmlist_make($1, NULL); }
+  | parameter_list NAME   { $$ = nmlist_make($2, $1); }
   ;
 
 

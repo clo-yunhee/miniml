@@ -1,20 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "names.h"
 #include "ast.h"
 #include "values.h"
 #include "natives.h"
 
 NATFUN2(addi, x, y) {
-    return value_make_int(x->valInt + y->valInt);
+    return value_make_int(NO_NAME, x->valInt + y->valInt);
 }
 
 NATFUN2(subi, x, y) {
-    return value_make_int(x->valInt - y->valInt);
+    return value_make_int(NO_NAME, x->valInt - y->valInt);
 }
 
 NATFUN2(muli, x, y) {
-    return value_make_int(x->valInt * y->valInt);
+    return value_make_int(NO_NAME, x->valInt * y->valInt);
 }
 
 NATFUN2(divi, x, y) {
@@ -22,19 +23,19 @@ NATFUN2(divi, x, y) {
         fprintf(stderr, "Division by zero\n");
         return value_make_unit();
     }
-    return value_make_int(x->valInt / y->valInt);
+    return value_make_int(NO_NAME, x->valInt / y->valInt);
 }
 
 NATFUN2(addf, x, y) {
-    return value_make_float(x->valFloat + y->valFloat);
+    return value_make_float(NO_NAME, x->valFloat + y->valFloat);
 }
 
 NATFUN2(subf, x, y) {
-    return value_make_float(x->valFloat - y->valFloat);
+    return value_make_float(NO_NAME, x->valFloat - y->valFloat);
 }
 
 NATFUN2(mulf, x, y) {
-    return value_make_float(x->valFloat * y->valFloat);
+    return value_make_float(NO_NAME, x->valFloat * y->valFloat);
 }
 
 NATFUN2(divf, x, y) {
@@ -42,7 +43,7 @@ NATFUN2(divf, x, y) {
         fprintf(stderr, "Division by zero\n");
         return value_make_unit();
     }
-    return value_make_float(x->valFloat / y->valFloat);
+    return value_make_float(NO_NAME, x->valFloat / y->valFloat);
 }
 
 NATFUN1(print_string, s) {

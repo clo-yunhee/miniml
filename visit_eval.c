@@ -15,8 +15,12 @@ VEVAL(var);
 VEVAL(list);
 VEVAL(funcall);
 VEVAL(let);
+VEVAL(ifelse);
+VEVAL(tuple);
 
 #define VERR(str) do { fprintf(stderr, str "\n"); return value_make_unit(); } while (false)
+#define VERR2(str, ...) do { fprintf(stderr, str "\n", __VA_ARGS__); return value_make_unit(); } while (false)
+
 
 
 // assumes all types are sound already
@@ -26,13 +30,13 @@ value_t *visit_eval(env_t *env, ast_t *expr) {
     case e_unit:
         return value_make_unit();
     case e_int:
-        return value_make_int(expr->exprInteger);
+        return value_make_int(NO_NAME, expr->exprInteger);
     case e_float:
-        return value_make_float(expr->exprFloat);
+        return value_make_float(NO_NAME, expr->exprFloat);
     case e_bool:
-        return value_make_bool(expr->exprBool);
+        return value_make_bool(NO_NAME, expr->exprBool);
     case e_string:
-        return value_make_string(expr->exprString);
+        return value_make_string(NO_NAME, expr->exprString);
     case e_var:
         return eval_var(env, expr);
     case e_block:
@@ -43,6 +47,10 @@ value_t *visit_eval(env_t *env, ast_t *expr) {
         return eval_funcall(env, expr);
     case e_let:
         return eval_let(env, expr);
+    case e_if:
+        return eval_ifelse(env, expr);
+    case e_tuple:
+        return eval_tuple(env, expr);
     default:
         VERR("Not implemented yet");
     }
@@ -52,11 +60,11 @@ value_t *visit_eval(env_t *env, ast_t *expr) {
 
 VEVAL(var) {
     while (env != NULL) {
-        if (env->name == var->exprVariable)
+        if (env->value->name == var->exprVariable)
             return env->value;
         env = env->next;
     }
-    VERR("Undefined name");
+    VERR2("Undefined name %s", names_getnm(var->exprVariable));
 }
 
 VEVAL(list) {
@@ -81,26 +89,25 @@ VEVAL(funcall) {
         break;
     case et_natfun1:
     {
-        value_t *arg = visit_eval(env, args->elem);
-        // there is only one argument
-        if (args->next != NULL) {
-            VERR("Too many arguments");
+        if (args->size > 1) {
+            VERR("Too many arguments"); 
         }
+        
+        value_t *arg = visit_eval(env, args->elem);
         
         return (func->valNatfun1)(arg);
     }
     case et_natfun2:
     {
-        value_t *arg1 = visit_eval(env, args->elem);
-        args = args->next;
-        // there are two arguments
-        if (args == NULL) {
+        if (args->size < 2) {
             VERR("Native functions cannot be curried");
         }
-        value_t *arg2 = visit_eval(env, args->elem);
-        if (args->next != NULL) {
+        if (args->size > 2) {
             VERR("Too many arguments");
         }
+
+        value_t *arg1 = visit_eval(env, args->elem);
+        value_t *arg2 = visit_eval(env, args->next->elem);
 
         return (func->valNatfun2)(arg1, arg2);
     }
@@ -108,26 +115,28 @@ VEVAL(funcall) {
         VERR("Expression is not a function and cannot be applied");
     }
 
-    env_t *callsite = func->valFun.defsite;
-    
-    params_t *params = func->valFun.params;
+    env_t *callsite = func->valFun.defsite;    
+    namelist_t *params = func->valFun.params;
+
+    if (args->size > params->size) {
+        VERR("Too many arguments");
+    }
+
     while (args != NULL && params != NULL) {
         value_t *value = visit_eval(env, args->elem);
+        value->name = params->name;
 
-        callsite = env_make(params->name, value, callsite);
+        callsite = env_make(value, callsite);
         
         args = args->next;
         params = params->next;
     }
 
-    if (args == NULL && params == NULL) { // same number of args and params
+    if (params != NULL) { // partial currying
+        return value_make_fun(NO_NAME, callsite, params, func->valFun.body);
+    } else {
         return visit_eval(callsite, func->valFun.body);
     }
-    if (params != NULL) { // partial currying
-        return value_make_fun(callsite, params, func->valFun.body);
-    }
-    // too many arguments
-    VERR("Too many arguments");
 }
 
 VEVAL(let) {
@@ -138,20 +147,66 @@ VEVAL(let) {
         if (let->exprLet.rec) {
             VERR("Recursive variable bindings aren't supported");
         }
-        
+
         valExpr = visit_eval(env, let->exprLet.expr);
+        valExpr->name = let->exprLet.names->name;
     } else { // it's a function binding
         // a function is never evaluated before it's called
         // only pass the block
         
-        valExpr = value_make_fun(env, let->exprLet.params, let->exprLet.expr);
+        valExpr = value_make_fun(let->exprLet.names->name, env, let->exprLet.params, let->exprLet.expr);
     }
 
     if (let->exprLet.block != NULL) { // it's a let-in
-        env_t *newEnv = env_make(let->exprLet.name, valExpr, env);
+        namelist_t *names = let->exprLet.names;
+        env_t *newEnv = env;
+
+        if (names->next == NULL) { // single name
+            newEnv = env_make(valExpr, newEnv);
+        } else { // tuple binding
+            // expr has to be a tuple as well, with the same length
+            if (valExpr->type != et_tuple) {
+                VERR("Tuple binding must match with a tuple expression");
+            }
+            if (names->size != valExpr->valTuple->size) {
+                VERR("Tuple lengths must match in tuple binding");
+            }
+            
+            vlist_t *elems = valExpr->valTuple;
+            while (names != NULL) {
+                elems->elem->name = names->name;
+                newEnv = env_make(elems->elem, newEnv);
+
+                names = names->next;
+            }
+        }
+        
         return visit_eval(newEnv, let->exprLet.block);
     } else { // it's a global let
+        // then set the value name
         return valExpr;
     }
+}
+
+VEVAL(ifelse) {
+    value_t *cond = visit_eval(env, ifelse->exprIf.cond);
+    
+    if (cond->valBool) {
+        return visit_eval(env, ifelse->exprIf.bIf);
+    } else {
+        return visit_eval(env, ifelse->exprIf.bElse);
+    }
+}
+
+VEVAL(tuple) {
+    vlist_t *elems = NULL;
+    astlist_t *exprs = tuple->exprTuple;
+
+    while (exprs != NULL) {
+        elems = vlist_make(visit_eval(env, exprs->elem), elems);
+        exprs = exprs->next;
+    }
+
+    return value_make_tuple(NO_NAME, vlist_rev(elems));
 }
 

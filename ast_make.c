@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "names.h"
 #include "ast.h"
 
 #define DECLAST(t) \
@@ -73,11 +74,11 @@ MAKEAST(binary) (ast_t *left, int op, ast_t *right) {
     return ast_make_funcall(ast_make_variable(op), alist_make(left, alist_make(right, NULL)));
 }
 
-MAKEAST(let) (int name,
-              bool rec, struct paramlist *params,
+MAKEAST(let) (namelist_t *names,
+              bool rec, namelist_t *params,
               ast_t *expr, ast_t *block) {
     DECLAST(e_let);
-    ast->exprLet.name = name;
+    ast->exprLet.names = names;
     ast->exprLet.rec = rec;
     ast->exprLet.params = params;
     ast->exprLet.expr = expr;

@@ -39,10 +39,11 @@ static hfun_t hash = h_djb2;
 static int last_id = 1;
 
 
-int name_int;
-int name_float;
-int name_bool;
-int name_string;
+int name_addi, name_addf;
+int name_subi, name_subf;
+int name_muli, name_mulf;
+int name_divi, name_divf;
+int name_print_string;
 
 
 // does not support resizing
@@ -89,6 +90,18 @@ void names_init(void) {
         table = calloc(capacity, sizeof(h_bucket));
         if (table == NULL) {
             fprintf(stderr, "Name table was not initialized\n");
+        } else {
+            name_addi = add_name("+");
+            name_subi = add_name("-");
+            name_muli = add_name("*");
+            name_divi = add_name("/");
+            
+            name_addf = add_name("+.");
+            name_subf = add_name("-.");
+            name_mulf = add_name("*.");
+            name_divf = add_name("/.");
+            
+            name_print_string = add_name("print_string");
         }
     } 
 }

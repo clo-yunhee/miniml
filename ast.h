@@ -6,18 +6,11 @@
 
 typedef struct ast ast_t;
 typedef struct astlist astlist_t;
-typedef struct paramlist params_t;
 
 struct astlist {
     size_t size;
     ast_t *elem;
     struct astlist *next;
-};
-
-struct paramlist {
-    size_t size;
-    int name;
-    struct paramlist *next;
 };
 
 struct ast {
@@ -47,9 +40,9 @@ struct ast {
         struct { ast_t *function;
                  astlist_t *args; } exprFunCall;
         // e_let
-        struct { int name;
+        struct { namelist_t *names;
                  bool rec;
-                 params_t *params;
+                 namelist_t *params;
                  ast_t *expr;
                  ast_t *block; } exprLet;
         // e_if
@@ -72,13 +65,6 @@ astlist_t *alist_rev(astlist_t *list);
 void alist_free(astlist_t *list);
 void alist_print(astlist_t *list);
 
-/* paramlist */
-
-params_t *plist_make(int head, params_t *tail);
-params_t *plist_rev(params_t *list);
-void plist_free(params_t *list);
-void plist_print(params_t *list);
-
 /* ast */
 
 #define MAKEAST(type) ast_t *ast_make_##type 
@@ -97,8 +83,8 @@ MAKEAST(funcall) (ast_t *fun, astlist_t *args);
 MAKEAST(unary) (int op, ast_t *right);
 MAKEAST(binary) (ast_t *left, int op, ast_t *right);
 
-MAKEAST(let) (int name, // name == -1  ->  anonymous decl
-              bool rec, params_t *params, // params != NULL  ->  fun decl
+MAKEAST(let) (namelist_t *names, // name == -1  ->  anonymous decl
+              bool rec, namelist_t *params, // params != NULL  ->  fun decl
               ast_t *expr, ast_t *block); // block != NULL  ->  let in
 
 MAKEAST(if) (ast_t *cond, ast_t *bIf,

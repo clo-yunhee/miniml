@@ -14,11 +14,19 @@ enum expr_type {
 
 typedef enum expr_type type_t;
 typedef struct expr_value value_t;
+typedef struct value_list vlist_t;
 
 typedef value_t * (*natfun1_t)(value_t *);
 typedef value_t * (*natfun2_t)(value_t *, value_t *);
 
+struct value_list {
+    size_t size;
+    value_t *elem;
+    struct value_list *next;
+};
+
 struct expr_value {
+    int name;
     type_t type;
     union {
         int valInt;
@@ -28,8 +36,9 @@ struct expr_value {
         natfun1_t valNatfun1;
         natfun2_t valNatfun2;
         struct { env_t *defsite;
-                 params_t *params;
+                 namelist_t *params;
                  ast_t *body; } valFun;
+        vlist_t *valTuple;
     };
 };
 
@@ -37,14 +46,24 @@ struct expr_value {
 #define MAKEVAL(type) value_t *value_make_##type
 
 MAKEVAL(unit) (void);
-MAKEVAL(int) (int value);
-MAKEVAL(float) (float value);
-MAKEVAL(bool) (bool value);
-MAKEVAL(string) (char* value);
-MAKEVAL(natfun1) (natfun1_t fun);
-MAKEVAL(natfun2) (natfun2_t fun);
-MAKEVAL(fun) (env_t *env, params_t *params, ast_t *body);
+MAKEVAL(int) (int name, int value);
+MAKEVAL(float) (int name, float value);
+MAKEVAL(bool) (int name, bool value);
+MAKEVAL(string) (int name, char *value);
+MAKEVAL(natfun1) (int name, natfun1_t fun);
+MAKEVAL(natfun2) (int name, natfun2_t fun);
+MAKEVAL(fun) (int name, env_t *env, namelist_t *params, ast_t *body);
+MAKEVAL(tuple) (int name, vlist_t *elems);
 
+void value_free(value_t *value);
 void value_print(value_t *value);
+void value_ptprint(value_t *value);
+
+/* list */
+
+vlist_t *vlist_make(value_t *head, vlist_t *tail);
+vlist_t *vlist_rev(vlist_t *list);
+void vlist_free(vlist_t *list);
+void vlist_print(vlist_t *list);
 
 #endif // _VALUES_H_

@@ -15,11 +15,11 @@ YACCOPTS = --verbose
 
 
 CFILES := main.c
-CFILES += names.c
+CFILES += name_list.c name_table.c
 CFILES += symbol_make.c symbol_free.c symbol_list.c symbol_table.c
 CFILES += ast_make.c ast_free.c ast_list.c ast_print.c
-CFILES += visit_eval.c value_make.c value_print.c environment.c
-CFILES += natives.c
+CFILES += value_make.c value_free.c value_list.c value_print.c
+CFILES += environment.c natives.c visit_eval.c
 
 OBJFILES := $(subst .c,.o,$(CFILES))
 
@@ -49,9 +49,9 @@ graph:
 	$(YACC) $(YACCOPTS) $(PROG).y --graph
 	dot -Tpng $(PROG).dot -O
 
-.PHONY: test
-test: $(PROG)
-	$(CURDIR)/$(PROG) < test.ml
+# Test
+%.ml: $(PROG)
+	$(CURDIR)/$(PROG) < $@
 
 .PHONY: all
 all: $(PROG)

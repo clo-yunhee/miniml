@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "names.h"
 #include "ast.h"
 
 void ast_free(ast_t *ast) {
@@ -20,7 +21,7 @@ void ast_free(ast_t *ast) {
         alist_free(ast->exprFunCall.args);
         break;
     case e_let:
-        plist_free(ast->exprLet.params);
+        nmlist_free(ast->exprLet.params);
         ast_free(ast->exprLet.expr);
         ast_free(ast->exprLet.block);
         break;

@@ -60,12 +60,13 @@ void ast_print(ast_t *ast) {
             printf("In");
         }
         printf(" (");
-        if (ast->exprLet.name != -1) {
-            printf("%s, ", names_getnm(ast->exprLet.name));
+        if (ast->exprLet.names->name != -1) {
+            nmlist_print(ast->exprLet.names);
+            printf(", ");
         }
         if (ast->exprLet.params != NULL) {
             printf("Params ");
-            plist_print(ast->exprLet.params);
+            nmlist_print(ast->exprLet.params);
             printf(", ");
         }
         ast_print(ast->exprLet.expr);
