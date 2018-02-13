@@ -4,6 +4,7 @@
 #include "names.h"
 #include "environment.h"
 #include "ast.h"
+#include "types.h"
 #include "values.h"
 
 #include "natives.h"
@@ -16,24 +17,24 @@ env_t *env_init(void) {
     // init standard objects
     env_t *env = NULL;
 
-    ADD(name_addi, value_make_natfun2(native_addi));
-    ADD(name_subi, value_make_natfun2(native_subi));
-    ADD(name_muli, value_make_natfun2(native_muli));
-    ADD(name_divi, value_make_natfun2(native_divi));
+    ADD(name_addi, value_make_natfun2(native_addi, type_make_int(), type_make_int(), type_make_int()));
+    ADD(name_subi, value_make_natfun2(native_subi, type_make_int(), type_make_int(), type_make_int()));
+    ADD(name_muli, value_make_natfun2(native_muli, type_make_int(), type_make_int(), type_make_int()));
+    ADD(name_divi, value_make_natfun2(native_divi, type_make_int(), type_make_int(), type_make_int()));
 
-    ADD(name_addf, value_make_natfun2(native_addf)); 
-    ADD(name_subf, value_make_natfun2(native_subf));
-    ADD(name_mulf, value_make_natfun2(native_mulf));
-    ADD(name_divf, value_make_natfun2(native_divf));
+    ADD(name_addf, value_make_natfun2(native_addf, type_make_float(), type_make_float(), type_make_float())); 
+    ADD(name_subf, value_make_natfun2(native_subf, type_make_float(), type_make_float(), type_make_float()));
+    ADD(name_mulf, value_make_natfun2(native_mulf, type_make_float(), type_make_float(), type_make_float()));
+    ADD(name_divf, value_make_natfun2(native_divf, type_make_float(), type_make_float(), type_make_float()));
 
-    ADD(name_compare, value_make_natfun2(native_compare));
-    ADD(name_equal, value_make_natfun2(native_equal));
-    ADD(name_lt, value_make_natfun2(native_lt));
-    ADD(name_lte, value_make_natfun2(native_lte));
-    ADD(name_gt, value_make_natfun2(native_gt));
-    ADD(name_gte, value_make_natfun2(native_gte));
+    ADD(name_compare, value_make_natfun2(native_compare, type_make_poly(0), type_make_poly(0), type_make_bool()));
+    ADD(name_equal, value_make_natfun2(native_equal, type_make_poly(0), type_make_poly(0), type_make_bool()));
+    ADD(name_lt, value_make_natfun2(native_lt, type_make_poly(0), type_make_poly(0), type_make_bool()));
+    ADD(name_lte, value_make_natfun2(native_lte, type_make_poly(0), type_make_poly(0), type_make_bool()));
+    ADD(name_gt, value_make_natfun2(native_gt, type_make_poly(0), type_make_poly(0), type_make_bool()));
+    ADD(name_gte, value_make_natfun2(native_gte, type_make_poly(0), type_make_poly(0), type_make_bool()));
 
-    ADD(name_print_string, value_make_natfun1(native_print_string));
+    ADD(name_print_string, value_make_natfun1(native_print_string, type_make_string(), type_make_unit()));
 
     return env;
 }

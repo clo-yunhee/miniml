@@ -3,30 +3,14 @@
 
 #include <stdbool.h>
 
-typedef struct env env_t;
-
-enum expr_type {
-    et_unit,
-    et_int, et_float, et_bool, et_string,
-    et_natfun1, et_natfun2,
-    et_fun, et_tuple
-};
-
-typedef enum expr_type type_t;
-typedef struct expr_value value_t;
-typedef struct value_list vlist_t;
-
-typedef value_t * (*natfun1_t)(value_t *);
-typedef value_t * (*natfun2_t)(value_t *, value_t *);
-
-struct value_list {
+struct expr_valuelist {
     size_t size;
     value_t *elem;
-    struct value_list *next;
+    struct expr_valuelist *next;
 };
 
 struct expr_value {
-    type_t type;
+    typedata_t *type;
     union {
         int valInt;
         float valFloat;
@@ -49,10 +33,11 @@ MAKEVAL(int) (int value);
 MAKEVAL(float) (float value);
 MAKEVAL(bool) (bool value);
 MAKEVAL(string) (char *value);
-MAKEVAL(natfun1) (natfun1_t fun);
-MAKEVAL(natfun2) (natfun2_t fun);
-MAKEVAL(fun) (env_t *env, namelist_t *params, ast_t *body);
-MAKEVAL(tuple) (vlist_t *elems);
+MAKEVAL(natfun1) (natfun1_t fun, typedata_t *from, typedata_t *to);
+MAKEVAL(natfun2) (natfun2_t fun, typedata_t *from1, typedata_t *from2, typedata_t *to);
+MAKEVAL(fun) (env_t *env, namelist_t *params, ast_t *body,
+                          tdlist_t *args, typedata_t *to);
+MAKEVAL(tuple) (vlist_t *elems, tdlist_t *types);
 
 void value_free(value_t *value);
 void value_print(value_t *value);

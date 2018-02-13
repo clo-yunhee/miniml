@@ -3,6 +3,7 @@
 
 #include "names.h"
 #include "ast.h"
+#include "environment.h"
 #include "values.h"
 
 vlist_t *vlist_make(value_t *head, vlist_t *tail) {
