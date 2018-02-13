@@ -1,66 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "names.h"
-#include "ast.h"
-#include "symbols.h"
-
-#include "values.h"
-#include "environment.h"
-#include "visit.h"
-
-#define VEVAL(type) value_t *eval_##type (env_t *env, ast_t * type , int *nameptr)
-
-VEVAL(var);
-VEVAL(list);
-VEVAL(funcall);
-VEVAL(let);
-VEVAL(ifelse);
-VEVAL(tuple);
-
-#define VERR(str) do { fprintf(stderr, str "\n"); return value_make_unit(); } while (false)
-#define VERR2(str, ...) do { fprintf(stderr, str "\n", __VA_ARGS__); return value_make_unit(); } while (false)
-
-#define setname(val) do { if (nameptr != NULL) *nameptr = val; } while (false)
-
-// assumes all types are sound already
-value_t *visit_eval(env_t *env, ast_t *expr, int *nameptr) {
-   
-    setname(NO_NAME); // default name
-
-    switch (expr->type) {
-    case e_unit:
-        return value_make_unit();
-    case e_int:
-        return value_make_int(expr->exprInteger);
-    case e_float:
-        return value_make_float(expr->exprFloat);
-    case e_bool:
-        return value_make_bool(expr->exprBool);
-    case e_string:
-        return value_make_string(expr->exprString);
-    case e_var:
-        return eval_var(env, expr, nameptr);
-    case e_block:
-        return visit_eval(env, expr->exprBlock, nameptr);
-    case e_list:
-        return eval_list(env, expr, nameptr);
-    case e_funcall:
-        return eval_funcall(env, expr, nameptr);
-    case e_let:
-        return eval_let(env, expr, nameptr);
-    case e_if:
-        return eval_ifelse(env, expr, nameptr);
-    case e_tuple:
-        return eval_tuple(env, expr, nameptr);
-    default:
-        VERR("Evaluation not implemented yet");
-    }
-
-}
+#include "eval.h"
 
 
-VEVAL(var) {
+EVAL(var) {
     while (env != NULL) {
         if (env->name == var->exprVariable)
             return env->value;
@@ -69,7 +10,7 @@ VEVAL(var) {
     VERR2("Undefined name %s", names_getnm(var->exprVariable));
 }
 
-VEVAL(list) {
+EVAL(list) {
     value_t *value;
 
     astlist_t *expr = list->exprList;
@@ -81,7 +22,7 @@ VEVAL(list) {
     return value;
 }
 
-VEVAL(funcall) {
+EVAL(funcall) {
     value_t *func = visit_eval(env, funcall->exprFunCall.function, NULL);
     astlist_t *args = funcall->exprFunCall.args;
 
@@ -140,7 +81,7 @@ VEVAL(funcall) {
     }
 }
 
-VEVAL(let) {
+EVAL(let) {
     namelist_t *names = let->exprLet.names;
 
     value_t *valExpr;
@@ -198,7 +139,7 @@ VEVAL(let) {
     }
 }
 
-VEVAL(ifelse) {
+EVAL(ifelse) {
     value_t *cond = visit_eval(env, ifelse->exprIf.cond, NULL);
     
     if (cond->valBool) {
@@ -208,7 +149,7 @@ VEVAL(ifelse) {
     }
 }
 
-VEVAL(tuple) {
+EVAL(tuple) {
     vlist_t *elems = NULL;
     astlist_t *exprs = tuple->exprTuple;
 
