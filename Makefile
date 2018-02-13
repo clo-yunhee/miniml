@@ -51,7 +51,9 @@ graph:
 	dot -Tpng $(PROG).dot -O
 
 # Test
-%.ml: $(PROG)
+MLFILES = $(wildcard *.ml)
+.PHONY: $(MLFILES)
+$(MLFILES): $(PROG)
 	$(CURDIR)/$(PROG) < $@
 
 .PHONY: all

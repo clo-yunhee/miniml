@@ -19,7 +19,7 @@ let y = 2 in let z = y in let y = 3 in x + y + z;;
 
 (* tuple definition *)
 let x = (1, 2);;
-let y = (x, x * 2);;
+let y = (x, x);;
 (* and with tuple pattern *)
 let (a, b) = x;;
 let (x, y, z) = (x, 1, a * b);;
@@ -29,6 +29,7 @@ let x = 9 in let y = 1 in ( + ) x y;;
 let (+) a b = a - b;;
 
 (* if-else *)
+let a = 12;;
 let a = 5 in if a < 1 then 0 else 3;;
 
 (* basic function declaration *)

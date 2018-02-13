@@ -156,7 +156,16 @@ VEVAL(let) {
         // a function is never evaluated before it's called
         // only pass the block
         
+        // check that there is no invalid reference in the function body
+        
+
         valExpr = value_make_fun(env, let->exprLet.params, let->exprLet.expr);
+
+        // if it's recursive, the function exists from the start of the body
+        if (let->exprLet.rec) {
+            valExpr->valFun.defsite = env_make(
+                names->name, valExpr, valExpr->valFun.defsite);
+        }
     }
 
     if (let->exprLet.block != NULL) { // it's a let-in
