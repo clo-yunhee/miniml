@@ -5,63 +5,63 @@
 #include "values.h"
 
 
-#define DECLVAL(t, n) \
+#define DECLVAL(t) \
     value_t *val = malloc(sizeof(value_t)); \
     if (val == NULL) return NULL; \
-    val->name = n; \
     val->type = t;
 
 MAKEVAL(unit) (void) {
-    DECLVAL(et_unit, NO_NAME);
+    DECLVAL(et_unit);
     return val;
 }
 
-MAKEVAL(int) (int name, int value) {
-    DECLVAL(et_int, name);
+MAKEVAL(int) (int value) {
+    DECLVAL(et_int);
     val->valInt = value;
     return val;
 }
 
-MAKEVAL(float) (int name, float value) {
-    DECLVAL(et_float, name);
+MAKEVAL(float) (float value) {
+    DECLVAL(et_float);
     val->valFloat = value;
     return val;
 }
 
-MAKEVAL(bool) (int name, bool value) {
-    DECLVAL(et_bool, name);
+MAKEVAL(bool) (bool value) {
+    DECLVAL(et_bool);
     val->valBool = value;
     return val;
 }
 
-MAKEVAL(string) (int name, char *value) {
-    DECLVAL(et_string, name);
+MAKEVAL(string) (char *value) {
+    DECLVAL(et_string);
     val->valString = value;
     return val;
 }
 
-MAKEVAL(natfun1) (int name, natfun1_t fun) {
-    DECLVAL(et_natfun1, name);
+MAKEVAL(natfun1) (natfun1_t fun) {
+    DECLVAL(et_natfun1);
     val->valNatfun1 = fun;
     return val;
 }
 
-MAKEVAL(natfun2) (int name, natfun2_t fun) {
-    DECLVAL(et_natfun2, name);
+MAKEVAL(natfun2) (natfun2_t fun) {
+    DECLVAL(et_natfun2);
     val->valNatfun2 = fun;
     return val;
 }
 
-MAKEVAL(fun) (int name, env_t *defsite, namelist_t *params, ast_t *body) {
-    DECLVAL(et_fun, name);
+MAKEVAL(fun) (env_t *defsite, namelist_t *params, ast_t *body) {
+    DECLVAL(et_fun);
     val->valFun.defsite = defsite;
     val->valFun.params = params;
     val->valFun.body = body;
     return val;
 }
 
-MAKEVAL(tuple) (int name, vlist_t *elems) {
-    DECLVAL(et_tuple, name);
+MAKEVAL(tuple) (vlist_t *elems) {
+    DECLVAL(et_tuple);
     val->valTuple = elems;
     return val;
 }
+

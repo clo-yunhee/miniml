@@ -44,7 +44,10 @@ int name_subi, name_subf;
 int name_muli, name_mulf;
 int name_divi, name_divf;
 int name_print_string;
-
+int name_equal;
+int name_lt, name_lte;
+int name_gt, name_gte;
+int name_compare;
 
 // does not support resizing
 void names_settablecap(int cap) {
@@ -102,6 +105,13 @@ void names_init(void) {
             name_divf = add_name("/.");
             
             name_print_string = add_name("print_string");
+
+            name_equal = add_name("=");
+            name_lt = add_name("<");
+            name_lte = add_name("<=");
+            name_gt = add_name(">");
+            name_gte = add_name(">=");
+            name_compare = add_name("compare");
         }
     } 
 }

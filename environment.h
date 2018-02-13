@@ -5,6 +5,7 @@ typedef struct env env_t;
 typedef struct expr_value value_t;
 
 struct env {
+    int name;
     value_t *value;    
 
     struct env *next;
@@ -12,8 +13,8 @@ struct env {
 
 env_t *env_init(void);
 
-env_t *env_make(value_t *value, env_t *tail);
+env_t *env_make(int name, value_t *value, env_t *tail);
 
-env_t *env_addvalue(value_t *value, env_t *tail);
+env_t *env_addvalue(int name, value_t *value, env_t *tail);
 
 #endif // _ENVIRONMENT_H_

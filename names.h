@@ -40,6 +40,9 @@ extern int name_subi, name_subf;
 extern int name_muli, name_mulf;
 extern int name_divi, name_divf;
 extern int name_print_string;
-
+extern int name_equal;
+extern int name_lt, name_lte;
+extern int name_gt, name_gte;
+extern int name_compare;
 
 #endif // _NAMES_H_

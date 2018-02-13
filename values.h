@@ -26,7 +26,6 @@ struct value_list {
 };
 
 struct expr_value {
-    int name;
     type_t type;
     union {
         int valInt;
@@ -46,18 +45,18 @@ struct expr_value {
 #define MAKEVAL(type) value_t *value_make_##type
 
 MAKEVAL(unit) (void);
-MAKEVAL(int) (int name, int value);
-MAKEVAL(float) (int name, float value);
-MAKEVAL(bool) (int name, bool value);
-MAKEVAL(string) (int name, char *value);
-MAKEVAL(natfun1) (int name, natfun1_t fun);
-MAKEVAL(natfun2) (int name, natfun2_t fun);
-MAKEVAL(fun) (int name, env_t *env, namelist_t *params, ast_t *body);
-MAKEVAL(tuple) (int name, vlist_t *elems);
+MAKEVAL(int) (int value);
+MAKEVAL(float) (float value);
+MAKEVAL(bool) (bool value);
+MAKEVAL(string) (char *value);
+MAKEVAL(natfun1) (natfun1_t fun);
+MAKEVAL(natfun2) (natfun2_t fun);
+MAKEVAL(fun) (env_t *env, namelist_t *params, ast_t *body);
+MAKEVAL(tuple) (vlist_t *elems);
 
 void value_free(value_t *value);
 void value_print(value_t *value);
-void value_ptprint(value_t *value);
+void value_ptprint(int name, value_t *value);
 
 /* list */
 

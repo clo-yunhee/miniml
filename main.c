@@ -46,12 +46,13 @@ int main(int argc, char *argv[]) {
     astlist_t *list = prog;
     while (list != NULL) {
         //type_t *type = visit_types(expr);
-        value_t *value = visit_eval(global_env, list->elem);        
+        int name;
+        value_t *value = visit_eval(global_env, list->elem, &name);
+
+        value_ptprint(name, value);
         
-        value_ptprint(value);
-        
-        if (value->name != NO_NAME) {
-            global_env = env_make(value, global_env);
+        if (name != NO_NAME) {
+            global_env = env_make(name, value, global_env);
         }
 
         list = list->next;

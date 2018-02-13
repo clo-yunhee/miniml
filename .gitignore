@@ -1,9 +1,9 @@
 /miniml
-/*.swp
-/*.o
-/*.yy.*
-/*.tab.*
-/*.dot
-/*.dot.png
-/*.output
-/*.out
+*.swp
+*.o
+*.yy.*
+*.tab.*
+*.dot
+*.dot.png
+*.output
+*.out

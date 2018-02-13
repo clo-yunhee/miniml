@@ -19,7 +19,8 @@ CFILES += name_list.c name_table.c
 CFILES += symbol_make.c symbol_free.c symbol_list.c symbol_table.c
 CFILES += ast_make.c ast_free.c ast_list.c ast_print.c
 CFILES += value_make.c value_free.c value_list.c value_print.c
-CFILES += environment.c natives.c visit_eval.c
+CFILES += environment.c visit_eval.c
+CFILES += $(wildcard natives/*.c)
 
 OBJFILES := $(subst .c,.o,$(CFILES))
 
@@ -42,7 +43,7 @@ $(PROG): $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
 	$(YACC) $(YACCOPTS) $< -d
 
 %.o: %.c
-	$(CC) $(CFLAGS) $< -c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 .PHONY: graph
 graph:
@@ -62,7 +63,7 @@ clean-all: clean
 
 .PHONY: clean
 clean:
-	@$(RM) *.o *.yy.* *.tab.* *.err
+	@$(RM) $(OBJFILES) *.yy.* *.tab.* *.err
 
 .PHONY: re
 re: clean-all all

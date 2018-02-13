@@ -41,11 +41,11 @@ void value_print(value_t *value) {
     }
 }
 
-void value_ptprint(value_t *value) {
-    if (value->name == NO_NAME) {
+void value_ptprint(int name, value_t *value) {
+    if (name == NO_NAME) {
         printf("-");
     } else {
-        printf("val %s", names_getnm(value->name));
+        printf("val %s", names_getnm(name));
     }
     printf(" : ");
     
