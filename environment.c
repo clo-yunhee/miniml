@@ -48,7 +48,3 @@ env_t *env_make(int name, value_t *value, env_t *tail) {
 }
 
 
-env_t *env_addvalue(int name, value_t *value, env_t *tail) {
-    return NULL;
-}
-
