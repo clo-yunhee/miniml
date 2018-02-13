@@ -55,7 +55,7 @@ graph:
 MLFILES = $(wildcard *.ml)
 .PHONY: $(MLFILES)
 $(MLFILES): $(PROG)
-	$(CURDIR)/$(PROG) < $@
+	"$(CURDIR)"/$(PROG) < "$@"
 
 .PHONY: all
 all: $(PROG)
