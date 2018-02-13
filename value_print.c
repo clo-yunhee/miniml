@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "names.h"
+#include "symbols.h"
 #include "ast.h"
 #include "values.h"
 
@@ -20,7 +21,7 @@ void value_print(value_t *value) {
         printf("bool = %s", (value->valBool ? "true" : "false"));
         break;
     case et_string:
-        printf("string = \"%s\"", value->valString);
+        printf("string = %s", escape(value->valString));
         break;
     case et_natfun1:
     case et_natfun2:

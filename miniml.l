@@ -15,10 +15,11 @@ void yyerror(const char *s);
 int stoi(const char *str);
 float stof(const char *str);
 
-#define TOKEN(tok)      (yylval.ival = tok)
-#define ITOKEN(tok)     (yylval.ival = stoi(yytext), tok)
-#define FTOKEN(tok)     (yylval.fval = stof(yytext), tok)
-#define NTOKEN(tok)     (yylval.ival = names_getid(yytext), tok)
+#define TOKEN(tok)        (yylval.ival = (tok))
+#define ITOKEN(tok)       (yylval.ival = stoi(yytext), (tok))
+#define FTOKEN(tok)       (yylval.fval = stof(yytext), (tok))
+#define NTOKEN(tok)       (yylval.ival = names_getid(yytext), (tok))
+#define STOKEN(tok, str)  (yylval.sval = (str), (tok))
 
 int comdp = 0;
 %}
@@ -50,10 +51,7 @@ identifier          [[:alpha:]_][[:alnum:]_]*
 {integer}           return ITOKEN(INT);
 {float}             return FTOKEN(FLOAT);
 {boolean}           return ITOKEN(BOOL);
-{string}            {
-                        yylval.sval = strndup(yytext + 1, strlen(yytext) - 2);
-                        return STRING;
-                    }
+{string}            return STOKEN(STRING, strdup(yytext));
 {identifier}        return NTOKEN(NAME);
 
 ";;"                return TOKEN(TWOSEMI);
@@ -124,3 +122,5 @@ float stof(const char *str) {
 
     return v;
 }
+
+

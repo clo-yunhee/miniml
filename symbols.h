@@ -71,4 +71,9 @@ MAKESYM(typefun) (int name, symbol_t *from, symbol_t *to);
 void sym_free(symbol_t *sym);
 void sym_print(symbol_t *sym);
 
+/* string escape/unescape functions */
+
+char *escape(const char *str);
+char *unescape(const char *str);
+
 #endif // _SYMBOLS_H_

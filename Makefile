@@ -16,7 +16,7 @@ YACCOPTS = --verbose
 
 CFILES := main.c
 CFILES += name_list.c name_table.c
-CFILES += symbol_make.c symbol_free.c symbol_list.c symbol_table.c
+CFILES += symbol_make.c symbol_free.c symbol_list.c symbol_table.c symbol_strescape.c
 CFILES += ast_make.c ast_free.c ast_list.c ast_print.c
 CFILES += value_make.c value_free.c value_list.c value_print.c
 CFILES += environment.c
