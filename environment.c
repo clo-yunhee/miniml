@@ -9,43 +9,81 @@
 
 #include "natives.h"
 
+#define P(x) (x)
 
-#define ADD(n, v) env = env_make(n, v, env);
+#define ADD(n, t, v) env = env_make(n, t, v, env);
 
+#define ADDNAT1(fn, tx, ty)        ADD(name_##fn, type_natfun1(tx, ty), value_make_natfun1(native_##fn))
+#define ADDNAT2(fn, tx, ty, tz)    ADD(name_##fn, type_natfun2(tx, ty, tz), value_make_natfun2(native_##fn))
 
 env_t *env_init(void) {
     // init standard objects
     env_t *env = NULL;
 
-    ADD(name_addi, value_make_natfun2(native_addi, type_make_int(), type_make_int(), type_make_int()));
-    ADD(name_subi, value_make_natfun2(native_subi, type_make_int(), type_make_int(), type_make_int()));
-    ADD(name_muli, value_make_natfun2(native_muli, type_make_int(), type_make_int(), type_make_int()));
-    ADD(name_divi, value_make_natfun2(native_divi, type_make_int(), type_make_int(), type_make_int()));
+    /* ( + ) : int -> int -> int */
+    /* ( - ) : int -> int -> int */
+    /* ( * ) : int -> int -> int */ 
+    /* ( / ) : int -> int -> int */    
+    ADDNAT2(addi, tint, tint, tint);
+    ADDNAT2(subi, tint, tint, tint);
+    ADDNAT2(muli, tint, tint, tint);
+    ADDNAT2(divi, tint, tint, tint);
 
-    ADD(name_addf, value_make_natfun2(native_addf, type_make_float(), type_make_float(), type_make_float())); 
-    ADD(name_subf, value_make_natfun2(native_subf, type_make_float(), type_make_float(), type_make_float()));
-    ADD(name_mulf, value_make_natfun2(native_mulf, type_make_float(), type_make_float(), type_make_float()));
-    ADD(name_divf, value_make_natfun2(native_divf, type_make_float(), type_make_float(), type_make_float()));
+    /* ( +. ) : float -> float -> float */
+    /* ( -. ) : float -> float -> float */
+    /* ( *. ) : float -> float -> float */
+    /* ( /. ) : float -> float -> float */
+    ADDNAT2(addf, tfloat, tfloat, tfloat);
+    ADDNAT2(subf, tfloat, tfloat, tfloat);
+    ADDNAT2(mulf, tfloat, tfloat, tfloat);
+    ADDNAT2(divf, tfloat, tfloat, tfloat);
 
-    ADD(name_compare, value_make_natfun2(native_compare, type_make_poly(0), type_make_poly(0), type_make_bool()));
-    ADD(name_equal, value_make_natfun2(native_equal, type_make_poly(0), type_make_poly(0), type_make_bool()));
-    ADD(name_lt, value_make_natfun2(native_lt, type_make_poly(0), type_make_poly(0), type_make_bool()));
-    ADD(name_lte, value_make_natfun2(native_lte, type_make_poly(0), type_make_poly(0), type_make_bool()));
-    ADD(name_gt, value_make_natfun2(native_gt, type_make_poly(0), type_make_poly(0), type_make_bool()));
-    ADD(name_gte, value_make_natfun2(native_gte, type_make_poly(0), type_make_poly(0), type_make_bool()));
+    /* compare : 'a -> 'a -> int */
+    /* ( = ) : 'a -> 'a -> bool  */
+    /* ( < ) : 'a -> 'a -> bool  */
+    /* ( <= ) : 'a -> 'a -> bool */
+    /* ( > ) : 'a -> 'a -> bool  */
+    /* ( >= ) : 'a -> 'a -> bool */
+    ADDNAT2(compare, tpoly1, tpoly1, tint);
+    ADDNAT2(equal, tpoly1, tpoly1, tbool);
+    ADDNAT2(lt, tpoly1, tpoly1, tbool);
+    ADDNAT2(lte, tpoly1, tpoly1, tbool);
+    ADDNAT2(gt, tpoly1, tpoly1, tbool);
+    ADDNAT2(gte, tpoly1, tpoly1, tbool);
 
-    ADD(name_print_string, value_make_natfun1(native_print_string, type_make_string(), type_make_unit()));
+    /* print_string : string -> unit */
+    ADDNAT1(print_string, tstring, tunit);
 
     return env;
 }
 
-env_t *env_make(int name, value_t *value, env_t *tail) {
+env_t *env_make(int name, typedata_t *type, value_t *value, env_t *tail) {
     env_t *env = malloc(sizeof(env_t));
     if (env == NULL) return NULL;
     env->name = name;
+    env->type = type;
     env->value = value;
     env->next = tail;
     return env;
 }
 
 
+void env_print(env_t *env) {
+    if (env->name == NO_NAME) {
+        printf("-");
+    } else {
+        printf("%s", names_getnm(env->name));
+    }
+    printf(" : ");
+    type_print(env->type);
+    printf(" = ");
+    value_print(env->value);
+    printf("\n");
+}
+
+void env_printall(env_t *env) {
+    while (env != NULL) {
+        env_print(env);
+        env = env->next;
+    }
+}

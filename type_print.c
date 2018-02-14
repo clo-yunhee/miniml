@@ -26,10 +26,13 @@ void type_print(typedata_t *type) {
         printf("string");
         break;
     case et_natfun1:
-        type_print(type->typeNatfun1);
-        printf(" -> unit");
+        type_print(type->typeNatfun1.from);
+        printf(" -> ");
+        type_print(type->typeNatfun1.to);
     case et_natfun2:
-        type_print(type->typeNatfun2.from);
+        type_print(type->typeNatfun2.from1);
+        printf(" -> ");
+        type_print(type->typeNatfun2.from2);
         printf(" -> ");
         type_print(type->typeNatfun2.to);
         break;

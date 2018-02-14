@@ -48,3 +48,16 @@ void tdlist_print(tdlist_t *list, const char *delim) {
     tdlist_partprint(list, delim);
     printf(")");
 }
+
+bool tdlist_equ(tdlist_t *first, tdlist_t *second) {
+    if (first->size != second->size) return false;
+    
+    while (first != NULL) {
+        if (!type_equ(first->elem, second->elem))
+            return false;
+        first = first->next;
+        second = second->next;
+    }
+
+    return true;
+}

@@ -7,72 +7,62 @@
 #include "values.h"
 
 
-#define DECLVAL() \
+#define DECLVAL(t) \
     value_t *val = malloc(sizeof(value_t)); \
-    if (val == NULL) return NULL;
+    if (val == NULL) return NULL; \
+    val->type = t;
 
 MAKEVAL(unit) (void) {
-    DECLVAL();
-    val->type = type_make_unit();
+    DECLVAL(et_unit);
     return val;
 }
 
 MAKEVAL(int) (int value) {
-    DECLVAL();
-    val->type = type_make_int();
+    DECLVAL(et_int);
     val->valInt = value;
     return val;
 }
 
 MAKEVAL(float) (float value) {
-    DECLVAL();
-    val->type = type_make_float();
+    DECLVAL(et_float);
     val->valFloat = value;
     return val;
 }
 
 MAKEVAL(bool) (bool value) {
-    DECLVAL();
-    val->type = type_make_bool();
+    DECLVAL(et_bool);
     val->valBool = value;
     return val;
 }
 
 MAKEVAL(string) (char *value) {
-    DECLVAL();
-    val->type = type_make_string();
+    DECLVAL(et_string);
     val->valString = value;
     return val;
 }
 
-MAKEVAL(natfun1) (natfun1_t fun, typedata_t *from, typedata_t *to) {
-    DECLVAL();
-    val->type = type_make_natfun1(from, to);
+MAKEVAL(natfun1) (natfun1_t fun) {
+    DECLVAL(et_natfun1);
     val->valNatfun1 = fun;
     return val;
 }
 
-MAKEVAL(natfun2) (natfun2_t fun, typedata_t *from1, typedata_t *from2, typedata_t *to) {
-    DECLVAL();
-    val->type = type_make_natfun2(from1, from2, to);
+MAKEVAL(natfun2) (natfun2_t fun) {
+    DECLVAL(et_natfun2);
     val->valNatfun2 = fun;
     return val;
 }
 
-MAKEVAL(fun) (env_t *defsite, namelist_t *params, ast_t *body,
-                              tdlist_t *args, typedata_t *to) {
-    DECLVAL();
-    val->type = type_make_fun(args, to);
+MAKEVAL(fun) (env_t *defsite, namelist_t *params, ast_t *body) {
+    DECLVAL(et_fun);
     val->valFun.defsite = defsite;
     val->valFun.params = params;
     val->valFun.body = body;
     return val;
 }
 
-MAKEVAL(tuple) (vlist_t *elems, tdlist_t *types) {
-    DECLVAL();
-    val->type = type_make_tuple(types);
+MAKEVAL(tuple) (vlist_t *elems) {
+    DECLVAL(et_tuple);
     val->valTuple = elems;
     return val;
 }
-

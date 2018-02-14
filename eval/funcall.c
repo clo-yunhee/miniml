@@ -47,7 +47,7 @@ EVAL(funcall) {
     while (args != NULL && params != NULL) {
         value_t *value = visit_eval(env, args->elem, NULL);
 
-        callsite = env_make(params->name, value, callsite);
+        callsite = env_vmake(params->name, value, callsite);
         
         args = args->next;
         params = params->next;

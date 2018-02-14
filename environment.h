@@ -27,6 +27,7 @@ typedef value_t * (*natfun2_t)(value_t *, value_t *);
 
 struct env {
     int name;
+    typedata_t *type;
     value_t *value; 
 
     struct env *next;
@@ -34,7 +35,13 @@ struct env {
 
 env_t *env_init(void);
 
-env_t *env_make(int name, value_t *value, env_t *tail);
-env_t *env_addvalue(int name, value_t *value, env_t *tail);
+env_t *env_make(int name, typedata_t *type, value_t *value, env_t *tail);
+env_t *env_addvalue(int name, typedata_t *type, value_t *value, env_t *tail);
+
+void env_print(env_t *env);
+void env_printall(env_t *env);
+
+#define env_tmake(name, type, tail)   env_make(name, type, NULL, tail)
+#define env_vmake(name, value, tail)  env_make(name, NULL, value, tail)
 
 #endif // _ENVIRONMENT_H_

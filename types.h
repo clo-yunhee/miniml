@@ -22,7 +22,7 @@ struct expr_typedata {
     };
 };
 
-#define MAKETYPE(tname) typedata_t *type_make_##tname
+#define MAKETYPE(tname) typedata_t *type_##tname
 
 MAKETYPE(unit) (void);
 MAKETYPE(int) (void);
@@ -38,11 +38,25 @@ MAKETYPE(poly) (int number);
 void type_free(typedata_t *type);
 void type_print(typedata_t *type);
 
+bool type_equ(typedata_t *first, typedata_t *second);
+
 /* list */
 
 tdlist_t *tdlist_make(typedata_t *head, tdlist_t *tail);
 tdlist_t *tdlist_rev(tdlist_t *list);
 void tdlist_free(tdlist_t *list);
 void tdlist_print(tdlist_t *list, const char *delim);
+
+bool tdlist_equ(tdlist_t *first, tdlist_t *second);
+
+/* shorthands for primitives */
+
+#define tunit       (type_unit())
+#define tint        (type_int())
+#define tfloat      (type_float())
+#define tbool       (type_bool())
+#define tstring     (type_string())
+#define tpoly1      (type_poly(1))
+#define tpoly2      (type_poly(2))
 
 #endif // _TYPES_H_

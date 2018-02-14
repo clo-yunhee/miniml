@@ -9,13 +9,13 @@
 void value_free(value_t *value) {
     if (value == NULL) return;
 
-    switch (value->type->type) {
+    switch (value->type) {
     case et_tuple:
         vlist_free(value->valTuple);
         break;
     default:
         break;
     }
-    type_free(value->type);
+
     free(value);
 }

@@ -47,13 +47,14 @@ int main(int argc, char *argv[]) {
     while (list != NULL) {
         //type_t *type = visit_types(expr);
         int name;
+        typedata_t *type = visit_type(global_env, list->elem, &name);
         value_t *value = visit_eval(global_env, list->elem, &name);
 
-        value_ptprint(name, value);
-        
         if (name != NO_NAME) {
-            global_env = env_make(name, value, global_env);
+            global_env = env_make(name, type, value, global_env);
         }
+
+        env_print(global_env);
 
         list = list->next;
     }
@@ -63,11 +64,9 @@ int main(int argc, char *argv[]) {
 
 void main_init(void) {
     names_init();
-    symbols_init();
 }
 
 void main_free(void) {
     alist_free(prog);
     names_free();
-    symbols_free();
 }

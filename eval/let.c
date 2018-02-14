@@ -21,7 +21,7 @@ EVAL(let) {
 
         // if it's recursive, the function exists from the start of the body
         if (let->exprLet.rec) {
-            valExpr->valFun.defsite = env_make(
+            valExpr->valFun.defsite = env_vmake(
                 names->name, valExpr, valExpr->valFun.defsite);
         }
     }
@@ -30,7 +30,7 @@ EVAL(let) {
         env_t *newEnv = env;
 
         if (names->next == NULL) { // single name
-            newEnv = env_make(names->name, valExpr, newEnv);
+            newEnv = env_vmake(names->name, valExpr, newEnv);
         } else { // tuple binding
             // expr has to be a tuple as well, with the same length
             if (valExpr->type != et_tuple) {
@@ -42,7 +42,7 @@ EVAL(let) {
             
             vlist_t *elems = valExpr->valTuple;
             while (names != NULL) {
-                newEnv = env_make(names->name, elems->elem, newEnv);
+                newEnv = env_vmake(names->name, elems->elem, newEnv);
 
                 names = names->next;
             }

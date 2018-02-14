@@ -9,10 +9,7 @@
 
 
 void value_print(value_t *value) {
-    type_print(value->type);
-    printf(" = ");
-
-    switch (value->type->type) {
+    switch (value->type) {
     case et_unit:
         printf("()");
         break;
@@ -44,15 +41,3 @@ void value_print(value_t *value) {
     }
 }
 
-void value_ptprint(int name, value_t *value) {
-    if (name == NO_NAME) {
-        printf("-");
-    } else {
-        printf("val %s", names_getnm(name));
-    }
-    printf(" : ");
-    
-    value_print(value);
-    
-    printf("\n");
-}

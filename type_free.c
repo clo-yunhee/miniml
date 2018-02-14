@@ -10,10 +10,12 @@ void type_free(typedata_t *type) {
 
     switch (type->type) {
     case et_natfun1:
-        type_free(type->typeNatfun1);
+        type_free(type->typeNatfun1.from);
+        type_free(type->typeNatfun1.to);
         break;
     case et_natfun2:
-        type_free(type->typeNatfun2.from);
+        type_free(type->typeNatfun2.from1);
+        type_free(type->typeNatfun2.from2);
         type_free(type->typeNatfun2.to);
         break;
     case et_fun:

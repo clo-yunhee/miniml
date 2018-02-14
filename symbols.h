@@ -6,9 +6,9 @@
 typedef struct symbol symbol_t;
 typedef struct symlist symlist_t;
 
-typedef enum symbol_standard_type {
-    type_int, type_float, type_bool, type_string
-} sym_typestd;
+typedef enum standard_type {
+    stdtype_int, stdtype_float, stdtype_bool, stdtype_string
+} stdtype_t;
 
 struct symlist {
     size_t size;
@@ -28,7 +28,7 @@ struct symbol {
         struct { void *value;
                  symbol_t *type; } symCstVar;
         // e_typestd
-        sym_typestd symTypeStd;
+        stdtype_t symTypeStd;
         // e_typetup
         struct { symlist_t *types; } symTypeTuple;
         // e_typefun
@@ -64,7 +64,7 @@ void symlist_print(symlist_t *list);
 #define MAKESYM(type) symbol_t *sym_make_##type 
 MAKESYM(undefined) (int name);
 MAKESYM(cstvar) (int name, void *value, symbol_t *type);
-MAKESYM(typestd) (int name, sym_typestd type);
+MAKESYM(typestd) (int name, stdtype_t type);
 MAKESYM(typetup) (int name, symlist_t *types);
 MAKESYM(typefun) (int name, symbol_t *from, symbol_t *to);
 
