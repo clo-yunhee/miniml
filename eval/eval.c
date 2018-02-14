@@ -1,9 +1,7 @@
 #include "eval.h"
 
-value_t *visit_eval(env_t *env, ast_t *expr, int *nameptr) {
+value_t *visit_eval(env_t *env, ast_t *expr) {
    
-    setname(NO_NAME); // default name
-
     switch (expr->type) {
     case e_unit:
         return value_make_unit();
@@ -16,19 +14,19 @@ value_t *visit_eval(env_t *env, ast_t *expr, int *nameptr) {
     case e_string:
         return value_make_string(expr->exprString);
     case e_var:
-        return eval_var(env, expr, nameptr);
+        return eval_var(env, expr);
     case e_block:
-        return visit_eval(env, expr->exprBlock, nameptr);
+        return visit_eval(env, expr->exprBlock);
     case e_list:
-        return eval_list(env, expr, nameptr);
+        return eval_list(env, expr);
     case e_funcall:
-        return eval_funcall(env, expr, nameptr);
+        return eval_funcall(env, expr);
     case e_let:
-        return eval_let(env, expr, nameptr);
+        return eval_let(env, expr);
     case e_if:
-        return eval_ifelse(env, expr, nameptr);
+        return eval_ifelse(env, expr);
     case e_tuple:
-        return eval_tuple(env, expr, nameptr);
+        return eval_tuple(env, expr);
     default:
         VERR("Evaluation not implemented yet");
     }

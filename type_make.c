@@ -69,3 +69,8 @@ MAKETYPE(poly) (int number) {
     type->typePoly = number;
     return type;
 }
+
+MAKETYPE(error) (void) {
+    DECLTYPE(et_error);
+    return type;
+}

@@ -6,6 +6,9 @@ TYPE(tuple) {
     astlist_t *exprs = tuple->exprTuple;
 
     while (exprs != NULL) {
+        typedata_t *type = visit_type(env, exprs->elem, NULL);
+        checkerr(type);
+
         types = tdlist_make(visit_type(env, exprs->elem, NULL), types);
         exprs = exprs->next;
     }

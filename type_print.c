@@ -9,6 +9,7 @@
 
 
 void type_print(typedata_t *type) {
+
     switch (type->type) {
     case et_unit:
         printf("unit");
@@ -29,6 +30,7 @@ void type_print(typedata_t *type) {
         type_print(type->typeNatfun1.from);
         printf(" -> ");
         type_print(type->typeNatfun1.to);
+        break;
     case et_natfun2:
         type_print(type->typeNatfun2.from1);
         printf(" -> ");
@@ -37,12 +39,23 @@ void type_print(typedata_t *type) {
         type_print(type->typeNatfun2.to);
         break;
     case et_fun:
-        tdlist_print(type->typeFun.args, "->");
+        tdlist_print(type->typeFun.args, "", "->", "");
         printf(" -> ");
         type_print(type->typeFun.to);
         break;
     case et_tuple:
-        tdlist_print(type->typeTuple, "*");
+        tdlist_print(type->typeTuple, "(", "*", ")");
+        break;
+    case et_poly:
+        printf("'");
+        if (type->typePoly <= 26) {
+            printf("%c", (char) ('a' + type->typePoly - 1));
+        } else {
+            printf("_%d", type->typePoly);
+        }
+        break;
+    case et_error:
+        printf("<error>");
         break;
     default:
         printf("<unknown>");

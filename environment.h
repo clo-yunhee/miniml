@@ -17,7 +17,7 @@ typedef enum expr_type {
     et_natfun1, et_natfun2,
     et_fun, et_tuple,
 
-    et_poly
+    et_poly, et_error
 } type_t;
 
 typedef value_t * (*natfun1_t)(value_t *);
@@ -36,9 +36,11 @@ struct env {
 env_t *env_init(void);
 
 env_t *env_make(int name, typedata_t *type, value_t *value, env_t *tail);
-env_t *env_addvalue(int name, typedata_t *type, value_t *value, env_t *tail);
+env_t *env_addlist(namelist_t *names, tdlist_t *types, vlist_t *values, env_t *tail);
+
 
 void env_print(env_t *env);
+void env_printrange(env_t *env, env_t *from);
 void env_printall(env_t *env);
 
 #define env_tmake(name, type, tail)   env_make(name, type, NULL, tail)

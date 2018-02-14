@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "names.h"
@@ -8,10 +9,17 @@
 
 bool type_equ(typedata_t *first, typedata_t *second) {
     if (first->type != second->type) {
-        return false;
+        return (first->type == et_poly) || (second->type == et_poly);
     }
 
     switch (first->type) {
+    case et_unit:
+    case et_int:
+    case et_float:
+    case et_bool:
+    case et_string:
+    case et_error:
+        return true;
     case et_natfun1:
         return type_equ(first->typeNatfun1.from, second->typeNatfun1.from)
                 && type_equ(first->typeNatfun1.to, second->typeNatfun1.to);

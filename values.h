@@ -37,6 +37,7 @@ MAKEVAL(natfun1) (natfun1_t fun);
 MAKEVAL(natfun2) (natfun2_t fun);
 MAKEVAL(fun) (env_t *env, namelist_t *params, ast_t *body);
 MAKEVAL(tuple) (vlist_t *elems);
+MAKEVAL(error) (void);
 
 void value_free(value_t *value);
 void value_print(value_t *value);

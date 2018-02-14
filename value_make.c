@@ -66,3 +66,8 @@ MAKEVAL(tuple) (vlist_t *elems) {
     val->valTuple = elems;
     return val;
 }
+
+MAKEVAL(error) (void) {
+    DECLVAL(et_error);
+    return val;
+}

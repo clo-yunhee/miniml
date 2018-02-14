@@ -23,7 +23,7 @@ void value_print(value_t *value) {
         printf("%s", (value->valBool ? "true" : "false"));
         break;
     case et_string:
-        printf("%s", escape(value->valString));
+        printf("%s", value->valString);
         break;
     case et_natfun1:
     case et_natfun2:
@@ -35,6 +35,7 @@ void value_print(value_t *value) {
     case et_tuple:
         vlist_print(value->valTuple);
         break;
+    case et_error:
     default:
         printf("???");
         break;

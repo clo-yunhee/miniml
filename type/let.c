@@ -1,10 +1,10 @@
-#include "eval.h"
+#include "type.h"
 
 
-EVAL(let) {
+TYPE(let) {
     namelist_t *names = let->exprLet.names;
 
-    value_t *valExpr;
+    typedata_t *typeExpr;
 
     if (let->exprLet.params == NULL) { // it's a variable binding
         // don't support recursive variables
@@ -12,47 +12,56 @@ EVAL(let) {
             VERR("Recursive variable bindings aren't supported");
         }
 
-        valExpr = visit_eval(env, let->exprLet.expr, NULL);
+        typeExpr = visit_type(env, let->exprLet.expr, NULL);
     } else { // it's a function binding
-        // a function is never evaluated before it's called
-        // only pass the block
         
-        valExpr = value_make_fun(env, let->exprLet.params, let->exprLet.expr);
+        // TODO: infer arguments types, for now only int
+        
+        env_t *bodyenv = env;
+        tdlist_t *argtypes = NULL;
+        namelist_t *params = let->exprLet.params;
+        while (params != NULL) {
+            argtypes = tdlist_make(tint, argtypes);
 
-        // if it's recursive, the function exists from the start of the body
-        if (let->exprLet.rec) {
-            valExpr->valFun.defsite = env_make(
-                names->name, valExpr, valExpr->valFun.defsite);
+            bodyenv = env_tmake(params->name, argtypes->elem, bodyenv);
+            params = params->next;
         }
+
+        if (let->exprLet.rec) {
+            // TODO: infer when recursive
+            bodyenv = env_tmake(names->name, type_fun(argtypes, tint), bodyenv);
+        }
+
+        typedata_t *bodytype = visit_type(bodyenv, let->exprLet.expr, NULL);
+        checkerr(bodytype);
+
+        typeExpr = type_fun(argtypes, bodytype);
     }
+
+    checkerr(typeExpr);
 
     if (let->exprLet.block != NULL) { // it's a let-in
         env_t *newEnv = env;
 
-        if (names->next == NULL) { // single name
-            newEnv = env_make(names->name, valExpr, newEnv);
+        if (names->next == NULL) {
+            newEnv = env_tmake(names->name, typeExpr, newEnv);
         } else { // tuple binding
             // expr has to be a tuple as well, with the same length
-            if (valExpr->type != et_tuple) {
-                VERR("Tuple binding must match with a tuple expression");
+            if (typeExpr->type != et_tuple) {
+                VERR("Tuple binding type mismatch: expected tuple expression");
             }
-            if (names->size != valExpr->valTuple->size) {
-                VERR("Tuple lengths must match in tuple binding");
+            if (typeExpr->typeTuple->size != names->size) {
+                VERR("Tuple binding type mismatch: expected tuple size");
             }
             
-            vlist_t *elems = valExpr->valTuple;
-            while (names != NULL) {
-                newEnv = env_make(names->name, elems->elem, newEnv);
-
-                names = names->next;
-            }
+            newEnv = env_addlist(names, typeExpr->typeTuple, NULL, newEnv);
         }
         
-        return visit_eval(newEnv, let->exprLet.block, NULL);
+        return visit_type(newEnv, let->exprLet.block, NULL);
     } else { // it's a global let
         // then set the value name
-        setname(names->name);
-        return valExpr;
+        setnames(names);
+        return typeExpr;
     }
 }
 

@@ -89,6 +89,8 @@ identifier          [[:alpha:]_][[:alnum:]_]*
 <comment>[(]            ;
 <comment>\n             ;
 
+.                   return yytext[0];
+
 %%
 
 int stoi(const char *str) {

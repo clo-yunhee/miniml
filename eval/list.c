@@ -6,7 +6,7 @@ EVAL(list) {
 
     astlist_t *expr = list->exprList;
     while (expr != NULL) {
-        value = visit_eval(env, expr->elem, nameptr);
+        value = visit_eval(env, expr->elem);
         expr = expr->next;
     }
 

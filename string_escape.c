@@ -5,8 +5,8 @@
 #include "symbols.h"
 
 
-static char chr_notesc[] = { ' ', '"', '\'', '\n', '\t', '\b', '\r', '\\' };
-static char chr_escape[] = { ' ', '"', '\'',  'n',  't',  'b',  'r', '\\' };
+static char chr_notesc[] = { ' ', '\'', '"', '\n', '\t', '\b', '\r', '\\' };
+static char chr_escape[] = { ' ', '\'', '"',  'n',  't',  'b',  'r', '\\' };
 
 static int nb_esc = sizeof(chr_escape) / sizeof(char);
 
@@ -68,7 +68,7 @@ char *escape(const char *str) {
     while ((c = *str++) != '\0' && k <= len) {
         if (c == '"' && *str == '\0') break; // ignore the trailing quote
         
-        for (e = 0; e < nb_esc; ++e) {
+        for (e = 2; e < nb_esc; ++e) {
             if (c == chr_notesc[e]) {
                 result[k++] = '\\';
                 result[k++] = chr_escape[e];

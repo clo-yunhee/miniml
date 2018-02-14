@@ -43,10 +43,10 @@ void tdlist_partprint(tdlist_t *list, const char *delim) {
     tdlist_partprint(list->next, delim);
 }
 
-void tdlist_print(tdlist_t *list, const char *delim) {
-    printf("(");
+void tdlist_print(tdlist_t *list, const char *pref, const char *delim, const char *suff) {
+    printf("%s", pref);
     tdlist_partprint(list, delim);
-    printf(")");
+    printf("%s", suff);
 }
 
 bool tdlist_equ(tdlist_t *first, tdlist_t *second) {

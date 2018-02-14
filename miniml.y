@@ -172,7 +172,7 @@ let_binding:
 let_pattern:
     NAME                                   { $$ = nmlist_make($1, NULL); }
   | LPAREN operator RPAREN                 { $$ = nmlist_make($2, NULL); }
-  | LPAREN tuple_name_list RPAREN          { $$ = $2; }
+  | LPAREN tuple_name_list RPAREN          { $$ = nmlist_rev($2); }
 
 tuple_name_list:
     NAME COMMA NAME              { $$ = nmlist_make($3, nmlist_make($1, NULL)); }

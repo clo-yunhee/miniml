@@ -11,7 +11,7 @@
 #include "../natives.h"
 #include "../visit.h"
 
-#define TYPE(tn) typedata_t *typing_##tn (env_t *env, ast_t * tn , int *nameptr)
+#define TYPE(tn) typedata_t *typing_##tn (env_t *env, ast_t * tn , namelist_t **nameptr)
 
 TYPE(var);
 TYPE(list);
@@ -21,18 +21,23 @@ TYPE(ifelse);
 TYPE(tuple);
 
 
-#define VERR(str)  do { fprintf(stderr, str "\n"); return tunit; } while (false)
-#define VERR2(str, ...) do { fprintf(stderr, str "\n", __VA_ARGS__); return tunit; } while (false)
+#define VERR(str)  do { fprintf(stderr, str "\n"); return terror; } while (false)
+#define VERR2(str, ...) do { fprintf(stderr, str "\n", __VA_ARGS__); return terror; } while (false)
 
 #define checktypes(tx, ty, str) do { \
-    fprintf(stderr, str ": was ");   \
-    type_print(tx);                  \
-    fprintf(stderr, " expected ");   \
-    type_print(ty);                  \
-    fprintf(stderr, "\n");           \
-    return tunit;                    \
+    if (!type_equ(tx, ty)) {     \
+        printf(str ": was ");    \
+        type_print(tx);          \
+        printf(", expected ");   \
+        type_print(ty);          \
+        printf("\n");            \
+        return terror;           \
+    }                            \
 } while (false)
 
-#define setname(val) do { if (nameptr != NULL) *nameptr = val; } while (false)
+#define checkerr(t) do { if (type_equ(t, terror)) return terror; } while (false) 
+
+#define setnames(lst) do { if (nameptr != NULL) *nameptr = lst; } while (false)
+#define setname(val)  setnames(nmlist_make(val, NULL))
 
 #endif // _EVAL_H_

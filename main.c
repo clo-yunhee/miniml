@@ -5,6 +5,7 @@
 #include "ast.h"
 #include "symbols.h"
 #include "environment.h"
+#include "types.h"
 #include "values.h"
 #include "visit.h"
 
@@ -40,25 +41,37 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    env_t *global_env = env_init();    
+    /*
+    alist_print(prog);
+    printf("\n\n");
+    */
+
+    env_t *global_env = env_init(); 
 
     // usage example for visitor functions
     astlist_t *list = prog;
     while (list != NULL) {
-        //type_t *type = visit_types(expr);
-        int name;
-        typedata_t *type = visit_type(global_env, list->elem, &name);
-        value_t *value = visit_eval(global_env, list->elem, &name);
+        namelist_t *names = NULL;
 
-        if (name != NO_NAME) {
-            global_env = env_make(name, type, value, global_env);
+        typedata_t *type = visit_type(global_env, list->elem, &names);
+
+        if (!type_equ(type, terror)) { // if no error, evaluate
+            value_t *value = visit_eval(global_env, list->elem);
+
+            if (names->next == NULL) {
+                global_env = env_make(names->name, type, value, global_env);
+                env_print(global_env);
+            } else {
+                env_t *start = global_env;
+                global_env = env_addlist(names, type->typeTuple, value->valTuple, global_env);
+
+                env_printrange(global_env, start);
+            }
         }
-
-        env_print(global_env);
 
         list = list->next;
     }
-    
+
     return EXIT_SUCCESS;
 }
 

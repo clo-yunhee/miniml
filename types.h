@@ -34,6 +34,7 @@ MAKETYPE(natfun2) (typedata_t *from1, typedata_t *from2, typedata_t *to);
 MAKETYPE(fun) (tdlist_t *args, typedata_t *to);
 MAKETYPE(tuple) (tdlist_t *elems);
 MAKETYPE(poly) (int number);
+MAKETYPE(error) (void);
 
 void type_free(typedata_t *type);
 void type_print(typedata_t *type);
@@ -45,12 +46,14 @@ bool type_equ(typedata_t *first, typedata_t *second);
 tdlist_t *tdlist_make(typedata_t *head, tdlist_t *tail);
 tdlist_t *tdlist_rev(tdlist_t *list);
 void tdlist_free(tdlist_t *list);
-void tdlist_print(tdlist_t *list, const char *delim);
+void tdlist_print(tdlist_t *list,
+        const char *pref, const char *delim, const char *suff);
 
 bool tdlist_equ(tdlist_t *first, tdlist_t *second);
 
 /* shorthands for primitives */
 
+#define terror      (type_error())
 #define tunit       (type_unit())
 #define tint        (type_int())
 #define tfloat      (type_float())

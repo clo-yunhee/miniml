@@ -67,12 +67,33 @@ env_t *env_make(int name, typedata_t *type, value_t *value, env_t *tail) {
     return env;
 }
 
+env_t *env_addlist(namelist_t *names, tdlist_t *types, vlist_t *values, env_t *tail) {
+    env_t *env = tail;
+
+    int name;
+    typedata_t *type;
+    value_t *value;
+
+    while (names != NULL) {
+        name = names->name;
+        type = (types != NULL ? types->elem : NULL);
+        value = (values != NULL ? values->elem : NULL);
+
+        env = env_make(name, type, value, env);
+    
+        if (types != NULL) types = types->next;
+        if (values != NULL) values = values->next;
+        names = names->next;
+    }
+
+    return env;
+}
 
 void env_print(env_t *env) {
     if (env->name == NO_NAME) {
         printf("-");
     } else {
-        printf("%s", names_getnm(env->name));
+        printf("val %s", names_getnm(env->name));
     }
     printf(" : ");
     type_print(env->type);
@@ -81,9 +102,13 @@ void env_print(env_t *env) {
     printf("\n");
 }
 
+void env_printrange(env_t *env, env_t *from) {
+    if (env == NULL || env == from) return;
+    env_printrange(env->next, from);
+    env_print(env);
+}
+
+// print in postfix order, as the head is the last element added
 void env_printall(env_t *env) {
-    while (env != NULL) {
-        env_print(env);
-        env = env->next;
-    }
+    env_printrange(env, NULL);
 }

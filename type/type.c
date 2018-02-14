@@ -1,6 +1,6 @@
 #include "type.h"
 
-typedata_t *visit_type(env_t *env, ast_t *expr, int *nameptr) {
+typedata_t *visit_type(env_t *env, ast_t *expr, namelist_t **nameptr) {
    
     setname(NO_NAME); // default name
 

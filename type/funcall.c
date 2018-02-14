@@ -16,7 +16,7 @@ TYPE(funcall) {
         }
         
         typedata_t *arg = visit_type(env, args->elem, NULL);
-
+        checkerr(arg);
         checktypes(func->typeNatfun1.from, arg, "Argument type mismatch");
 
         return func->typeNatfun1.to;
@@ -31,9 +31,11 @@ TYPE(funcall) {
         }
 
         typedata_t *arg1 = visit_type(env, args->elem, NULL);
-        typedata_t *arg2 = visit_type(env, args->next->elem, NULL);
-
+        checkerr(arg1);
         checktypes(func->typeNatfun2.from1, arg1, "Argument type mismatch");
+
+        typedata_t *arg2 = visit_type(env, args->next->elem, NULL);
+        checkerr(arg2);
         checktypes(func->typeNatfun2.from2, arg2, "Argument type mismatch");
 
         return func->typeNatfun2.to;
@@ -54,7 +56,7 @@ TYPE(funcall) {
         typedata_t *type = visit_type(env, args->elem, NULL);
 
         argtypes = tdlist_make(type, argtypes);
-
+        checkerr(argtypes->elem);
         checktypes(argtypes->elem, params->elem, "Argument type mismatch");
         
         args = args->next;

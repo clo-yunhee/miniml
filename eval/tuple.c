@@ -6,7 +6,7 @@ EVAL(tuple) {
     astlist_t *exprs = tuple->exprTuple;
 
     while (exprs != NULL) {
-        elems = vlist_make(visit_eval(env, exprs->elem, NULL), elems);
+        elems = vlist_make(visit_eval(env, exprs->elem), elems);
         exprs = exprs->next;
     }
 

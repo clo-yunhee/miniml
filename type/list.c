@@ -7,6 +7,8 @@ TYPE(list) {
     astlist_t *expr = list->exprList;
     while (expr != NULL) {
         type = visit_type(env, expr->elem, nameptr);
+        checkerr(type);
+
         expr = expr->next;
     }
 
