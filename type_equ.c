@@ -8,6 +8,7 @@
 
 
 bool type_equ(typedata_t *first, typedata_t *second) {
+    if (first == NULL || second == NULL) return false;
     if (first->type != second->type) {
         return (first->type == et_poly) || (second->type == et_poly);
     }

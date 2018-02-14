@@ -9,6 +9,10 @@
 
 
 void type_print(typedata_t *type) {
+    if (type == NULL) {
+        printf("<null>");
+        return;
+    }
 
     switch (type->type) {
     case et_unit:

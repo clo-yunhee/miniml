@@ -39,7 +39,7 @@ MAKETYPE(string) (void) {
 MAKETYPE(natfun1) (typedata_t *from, typedata_t *to) {
     DECLTYPE(et_natfun1);
     type->typeNatfun1.from = from;
-    type->typeNatfun2.to = to;
+    type->typeNatfun1.to = to;
     return type;
 }
 

@@ -9,7 +9,7 @@ TYPE(tuple) {
         typedata_t *type = visit_type(env, exprs->elem, NULL);
         checkerr(type);
 
-        types = tdlist_make(visit_type(env, exprs->elem, NULL), types);
+        types = tdlist_make(type, types);
         exprs = exprs->next;
     }
 
