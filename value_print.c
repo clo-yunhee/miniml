@@ -1,5 +1,8 @@
 #include "common.h"
 
+void vlist_print(ValueList *list) {
+    list_print(list, (ListPrintFunc) value_print, "(", ", ", ")");
+}
 
 void value_print(value_t *value) {
     switch (value->type) {

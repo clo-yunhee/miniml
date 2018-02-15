@@ -13,15 +13,15 @@ LDFLAGS := -lfl -lcalg
 LEXOPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
 YACCOPTS = --verbose
 
-CALGDIR := /usr/local/
+CALGDIR := /usr/local
 CFLAGS  += -I$(CALGDIR)/include/libcalg-1.0
 LDFLAGS += -L$(CALGDIR)/lib
 
 CFILES := main.c list.c
-CFILES += name_list.c name_table.c string_escape.c
-CFILES += ast_make.c ast_free.c ast_list.c ast_print.c
-CFILES += value_make.c value_free.c value_list.c value_print.c
-CFILES += type_make.c type_free.c type_list.c type_print.c type_equ.c
+CFILES += name_table.c name_list.c string_escape.c
+CFILES += ast_make.c ast_free.c ast_print.c
+CFILES += value_make.c value_free.c value_print.c
+CFILES += type_make.c type_free.c type_print.c type_equ.c
 CFILES += environment.c
 CFILES += $(wildcard natives/*.c)
 CFILES += $(wildcard type/*.c)

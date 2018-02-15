@@ -1,5 +1,10 @@
 #include "common.h"
 
+void tdlist_free(TypeList *list) {
+    list_foreach(list, (ListConsumer) type_free);
+    list_free(list);
+}
+
 void type_free(typedata_t *type) {
     if (type == NULL) return;
 

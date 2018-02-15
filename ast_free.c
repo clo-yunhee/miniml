@@ -1,5 +1,10 @@
 #include "common.h"
 
+void alist_free(AstList *list) {
+    list_foreach(list, (ListConsumer) ast_free);
+    list_free(list);
+}
+
 void ast_free(ast_t *ast) {
     if (ast == NULL) return;
 

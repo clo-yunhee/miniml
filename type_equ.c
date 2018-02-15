@@ -1,5 +1,21 @@
 #include "common.h"
 
+bool tdlist_equ(TypeList *first, TypeList *second) {
+    ListIterator it1, it2;
+    list_iterate(&first, &it1);
+    list_iterate(&second, &it2);
+    
+    while (list_iter_has_more(&it1) && list_iter_has_more(&it2)) {
+        typedata_t *type1 = list_iter_next(&it1);
+        typedata_t *type2 = list_iter_next(&it2);
+        
+        if (!type_equ(type1, type2))
+            return false;
+    }
+
+    // if the lists don't have the same size then they can't be equal
+    return list_iter_has_more(&it1) || list_iter_has_more(&it2);
+}
 
 bool type_equ(typedata_t *first, typedata_t *second) {
     if (first == NULL || second == NULL) return false;
@@ -34,3 +50,4 @@ bool type_equ(typedata_t *first, typedata_t *second) {
         return false;
     }
 }
+

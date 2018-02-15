@@ -6,7 +6,6 @@ void nmlist_free(NameList *list) {
     list_free(list); 
 }
 
-
 static void print_nameptr(int *ptr) {
     printf("%s", names_getnm(*ptr));
 }

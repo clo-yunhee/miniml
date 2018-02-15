@@ -1,5 +1,8 @@
 #include "common.h"
 
+void tdlist_print(TypeList *list, const char *pref, const char *delim, const char *suff) {
+    list_print(list, (ListPrintFunc) type_print, pref, delim, suff);
+}
 
 void type_print(typedata_t *type) {
     if (type == NULL) {
