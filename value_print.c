@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "list.h"
 #include "names.h"
 #include "symbols.h"
 #include "ast.h"

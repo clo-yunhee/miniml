@@ -3,7 +3,7 @@
 
 EVAL(funcall) {
     value_t *func = visit_eval(env, funcall->exprFunCall.function);
-    astlist_t *args = funcall->exprFunCall.args;
+    AstList *args = funcall->exprFunCall.args;
 
     switch (func->type) {
     case et_fun:
@@ -11,14 +11,14 @@ EVAL(funcall) {
         break;
     case et_natfun1:
     {
-        value_t *arg = visit_eval(env, args->elem);
+        value_t *arg = visit_eval(env, list_data(args));
         
         return (func->valNatfun1)(arg);
     }
     case et_natfun2:
     {
-        value_t *arg1 = visit_eval(env, args->elem);
-        value_t *arg2 = visit_eval(env, args->next->elem);
+        value_t *arg1 = visit_eval(env, list_nth_data(args, 0));
+        value_t *arg2 = visit_eval(env, list_nth_data(args, 1));
 
         return (func->valNatfun2)(arg1, arg2);
     }
@@ -27,18 +27,21 @@ EVAL(funcall) {
     }
 
     env_t *callsite = func->valFun.defsite;    
-    namelist_t *params = func->valFun.params;
+    NameList *params = func->valFun.params;
 
-    while (args != NULL && params != NULL) {
-        value_t *value = visit_eval(env, args->elem);
+    ListIterator argIt, paramIt;
+    list_iterate(&args, &argIt);
+    list_iterate(&params, &paramIt);
+    while (list_iter_has_more(&argIt)) {
+        ast_t *arg = list_iter_next(&argIt);
+        int param_name = *(int*) list_iter_next(&paramIt);
 
-        callsite = env_vmake(params->name, value, callsite);
-        
-        args = args->next;
-        params = params->next;
+        value_t *value = visit_eval(env, arg);
+
+        callsite = env_vmake(param_name, value, callsite); 
     }
 
-    if (params != NULL) { // partial currying
+    if (list_iter_has_more(&paramIt)) { // partial currying
         return value_make_fun(callsite, params, func->valFun.body);
     } else {
         return visit_eval(callsite, func->valFun.body);

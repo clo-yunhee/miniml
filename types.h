@@ -1,12 +1,6 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
-struct expr_typedata_list {
-    size_t size;
-    typedata_t *elem;
-    struct expr_typedata_list *next;
-};
-
 struct expr_typedata {
     type_t type;
     union {
@@ -15,9 +9,9 @@ struct expr_typedata {
         struct { typedata_t *from1;
                  typedata_t *from2;
                  typedata_t *to; } typeNatfun2;
-        struct { tdlist_t *args;
+        struct { TypeList *args;
                  typedata_t *to; } typeFun;
-        tdlist_t *typeTuple;
+        TypeList *typeTuple;
         int typePoly;
     };
 };
@@ -31,8 +25,8 @@ MAKETYPE(bool) (void);
 MAKETYPE(string) (void);
 MAKETYPE(natfun1) (typedata_t *from, typedata_t *to);
 MAKETYPE(natfun2) (typedata_t *from1, typedata_t *from2, typedata_t *to);
-MAKETYPE(fun) (tdlist_t *args, typedata_t *to);
-MAKETYPE(tuple) (tdlist_t *elems);
+MAKETYPE(fun) (TypeList *args, typedata_t *to);
+MAKETYPE(tuple) (TypeList *elems);
 MAKETYPE(poly) (int number);
 MAKETYPE(error) (void);
 
@@ -43,13 +37,11 @@ bool type_equ(typedata_t *first, typedata_t *second);
 
 /* list */
 
-tdlist_t *tdlist_make(typedata_t *head, tdlist_t *tail);
-tdlist_t *tdlist_rev(tdlist_t *list);
-void tdlist_free(tdlist_t *list);
-void tdlist_print(tdlist_t *list,
+void tdlist_free(TypeList *list);
+void tdlist_print(TypeList *list,
         const char *pref, const char *delim, const char *suff);
 
-bool tdlist_equ(tdlist_t *first, tdlist_t *second);
+bool tdlist_equ(TypeList *first, TypeList *second);
 
 /* shorthands for primitives */
 

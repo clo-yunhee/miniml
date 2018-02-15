@@ -78,13 +78,13 @@ extern AstList *prog;
 %%
 
 program:
-    program instruction error TWOSEMI   { prog = list_append(&prog, $2); }
+    program instruction error TWOSEMI   { list_append(&prog, $2); }
   | program error TWOSEMI               { }
   | error TWOSEMI                       { }
 
-  | program instruction TWOSEMI   { prog = list_append(&prog, $2); }
+  | program instruction TWOSEMI   { list_append(&prog, $2); }
   | program TWOSEMI               { }
-  | instruction TWOSEMI           { prog = list_new($1); }
+  | instruction TWOSEMI           { list_append(&prog, $1); }
   | TWOSEMI                       { }
   ;
 
@@ -109,7 +109,7 @@ arith_expr: exp_or ;
 
 expr_list:
     expr %prec "below-semi"   { $$ = list_new($1); }
-  | expr_list SEMI expr       { $$ = list_append(&$1, $3); }
+  | expr_list SEMI expr       { $$ = $1; list_append(&$1, $3); }
   ;
 
 let_expr:
@@ -121,7 +121,7 @@ global_let:
   ;
 
 fun_expr:
-  FUN parameter_list ARROW expr %prec "below-semi"   { $$ = ast_make_let(list_new(nmalloc(UNDEFINED)), false, $2, $4, NULL); }
+  FUN parameter_list ARROW expr %prec "below-semi"   { $$ = ast_make_let(NULL, false, $2, $4, NULL); }
   ;
 
 if_expr:
@@ -149,12 +149,12 @@ atom:
 
 atom_list:
     atom             { $$ = list_new($1); }
-  | atom_list atom   { $$ = list_append(&$1, $2); }
+  | atom_list atom   { $$ = $1; list_append(&$1, $2); }
   ;
 
 tuple_expr_list:
     expr COMMA expr              { $$ = list_new($1); list_append(&$$, $3); }
-  | tuple_expr_list COMMA expr   { $$ = list_append(&$1, $3); }
+  | tuple_expr_list COMMA expr   { $$ = $1; list_append(&$1, $3); }
 
 
 /* lets */
@@ -176,11 +176,11 @@ let_pattern:
 
 tuple_name_list:
     NAME COMMA NAME              { $$ = list_new(nmalloc($1)); list_append(&$$, nmalloc($3)); }
-  | tuple_name_list COMMA NAME   { $$ = list_append(&$1, nmalloc($3)); }
+  | tuple_name_list COMMA NAME   { $$ = $1; list_append(&$1, nmalloc($3)); }
 
 parameter_list:
     NAME                  { $$ = list_new(nmalloc($1)); }
-  | parameter_list NAME   { $$ = list_append(&$1, nmalloc($2)); }
+  | parameter_list NAME   { $$ = $1; list_append(&$1, nmalloc($2)); }
   ;
 
 

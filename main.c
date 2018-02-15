@@ -41,16 +41,16 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    /*
+    
     alist_print(prog);
     printf("\n\n");
-    */
+    
 
-    /*env_t *global_env = env_init(); 
+    env_t *global_env = env_init(); 
 
     // usage example for visitor functions
     ListIterator progIter;
-    list_iterator(&&prog, &progIter);
+    list_iterate(&prog, &progIter);
     while (list_iter_has_more(&progIter)) {
         ast_t *expr = list_iter_next(&progIter);
 
@@ -60,8 +60,9 @@ int main(int argc, char *argv[]) {
         if (!type_equ(type, terror)) { // if no error, evaluate
             value_t *value = visit_eval(global_env, expr);
 
-            if (names->next == NULL) {
-                global_env = env_make(names->name, type, value, global_env);
+            if (list_length(names) == 1) {
+                int name = *(int*) list_data(names);
+                global_env = env_make(name, type, value, global_env);
                 env_print(global_env);
             } else {
                 env_t *start = global_env;
@@ -70,7 +71,7 @@ int main(int argc, char *argv[]) {
                 env_printrange(global_env, start);
             }
         }
-    }*/
+    }
 
     return EXIT_SUCCESS;
 }

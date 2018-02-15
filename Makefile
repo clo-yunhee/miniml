@@ -13,8 +13,9 @@ LDFLAGS := -lfl -lcalg
 LEXOPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
 YACCOPTS = --verbose
 
-CFLAGS  += -I$(HOME)/include/libcalg-1.0
-LDFLAGS += -L$(HOME)/lib
+CALGDIR := /usr/local/
+CFLAGS  += -I$(CALGDIR)/include/libcalg-1.0
+LDFLAGS += -L$(CALGDIR)/lib
 
 CFILES := main.c list.c
 CFILES += name_list.c name_table.c string_escape.c

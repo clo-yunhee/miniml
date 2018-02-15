@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "list.h"
 #include "names.h"
 #include "ast.h"
 
@@ -60,7 +61,7 @@ void ast_print(ast_t *ast) {
             printf("In");
         }
         printf(" (");
-        if (ast->exprLet.names->name != -1) {
+        if (ast->exprLet.names != NULL) {
             nmlist_print(ast->exprLet.names);
             printf(", ");
         }

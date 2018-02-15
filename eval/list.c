@@ -4,10 +4,14 @@
 EVAL(list) {
     value_t *value;
 
-    astlist_t *expr = list->exprList;
-    while (expr != NULL) {
-        value = visit_eval(env, expr->elem);
-        expr = expr->next;
+    AstList *expr = list->exprList;
+
+    ListIterator it;
+    list_iterate(&expr, &it);    
+    while (list_iter_has_more(&it)) {
+        ast_t *expr = list_iter_next(&it);
+
+        value = visit_eval(env, expr);
     }
 
     return value;

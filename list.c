@@ -9,6 +9,15 @@ ListEntry *list_new(ListValue value) {
     return list_append(&list, value);
 }
 
+void list_foreach(ListEntry *list, ListConsumer func) {
+    ListIterator it;
+    list_iterate(&list, &it);
+    
+    while (list_iter_has_more(&it)) {
+        func(list_iter_next(&it));
+    }
+}
+
 void list_print(ListEntry *list, ListPrintFunc func, const char *pref, const char *delim, const char *suff) {
     ListIterator it;
     list_iterate(&list, &it);

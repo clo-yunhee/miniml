@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../list.h"
 #include "../names.h"
 #include "../ast.h"
 #include "../environment.h"
@@ -11,7 +12,7 @@
 #include "../natives.h"
 #include "../visit.h"
 
-#define TYPE(tn) typedata_t *typing_##tn (env_t *env, ast_t * tn , namelist_t **nameptr)
+#define TYPE(tn) typedata_t *typing_##tn (env_t *env, ast_t * tn , NameList **nameptr)
 
 TYPE(var);
 TYPE(list);
@@ -38,6 +39,6 @@ TYPE(tuple);
 #define checkerr(t) do { if (type_equ(t, terror)) return terror; } while (false) 
 
 #define setnames(lst) do { if (nameptr != NULL) *nameptr = lst; } while (false)
-#define setname(val)  setnames(nmlist_make(val, NULL))
+#define setname(val)  setnames(list_new(nmalloc(val)))
 
 #endif // _EVAL_H_

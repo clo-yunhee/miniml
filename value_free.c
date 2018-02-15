@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "list.h"
 #include "names.h"
 #include "ast.h"
 #include "environment.h"

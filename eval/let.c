@@ -2,7 +2,7 @@
 
 
 EVAL(let) {
-    namelist_t *names = let->exprLet.names;
+    NameList *names = let->exprLet.names;
 
     value_t *valExpr;
 
@@ -16,16 +16,17 @@ EVAL(let) {
 
         // if it's recursive, the function exists from the start of the body
         if (let->exprLet.rec) {
-            valExpr->valFun.defsite = env_vmake(
-                names->name, valExpr, valExpr->valFun.defsite);
+            int name = *(int*) list_data(names);
+            valExpr->valFun.defsite = env_vmake(name, valExpr, valExpr->valFun.defsite);
         }
     }
 
     if (let->exprLet.block != NULL) { // it's a let-in
         env_t *newEnv = env;
 
-        if (names->next == NULL) { // single name
-            newEnv = env_vmake(names->name, valExpr, newEnv);
+        if (list_length(names) == 1) { // single name
+            int name = *(int*) list_data(names);
+            newEnv = env_vmake(name, valExpr, newEnv);
         } else { // tuple binding
             newEnv = env_addlist(names, NULL, valExpr->valTuple, newEnv);
         }

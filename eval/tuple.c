@@ -2,14 +2,19 @@
 
 
 EVAL(tuple) {
-    vlist_t *elems = NULL;
-    astlist_t *exprs = tuple->exprTuple;
+    ValueList *elems = NULL;
+    AstList *exprs = tuple->exprTuple;
 
-    while (exprs != NULL) {
-        elems = vlist_make(visit_eval(env, exprs->elem), elems);
-        exprs = exprs->next;
+    ListIterator it;
+    list_iterate(&exprs, &it);
+    while (list_iter_has_more(&it)) {
+        ast_t *expr = list_iter_next(&it);
+
+        value_t *value = visit_eval(env, expr);
+
+        list_append(&elems, value);
     }
 
-    return value_make_tuple(vlist_rev(elems));
+    return value_make_tuple(elems);
 }
 

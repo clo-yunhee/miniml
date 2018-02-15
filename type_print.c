@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "list.h"
 #include "names.h"
 #include "symbols.h"
 #include "ast.h"
@@ -43,12 +44,12 @@ void type_print(typedata_t *type) {
         type_print(type->typeNatfun2.to);
         break;
     case et_fun:
-        tdlist_print(type->typeFun.args, "", "->", "");
+        tdlist_print(type->typeFun.args, "", " -> ", "");
         printf(" -> ");
         type_print(type->typeFun.to);
         break;
     case et_tuple:
-        tdlist_print(type->typeTuple, "(", "*", ")");
+        tdlist_print(type->typeTuple, "(", " * ", ")");
         break;
     case et_poly:
         printf("'");

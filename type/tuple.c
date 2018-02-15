@@ -2,17 +2,21 @@
 
 
 TYPE(tuple) {
-    tdlist_t *types = NULL;
-    astlist_t *exprs = tuple->exprTuple;
+    TypeList *types = NULL;
+    AstList *exprs = tuple->exprTuple;
+    
+    ListIterator it;
+    list_iterate(&exprs, &it);
 
-    while (exprs != NULL) {
-        typedata_t *type = visit_type(env, exprs->elem, NULL);
+    while (list_iter_has_more(&it)) {
+        ast_t *expr = list_iter_next(&it);
+
+        typedata_t *type = visit_type(env, expr, NULL);
         checkerr(type);
-
-        types = tdlist_make(type, types);
-        exprs = exprs->next;
+    
+        list_append(&types, type);
     }
 
-    return type_tuple(tdlist_rev(types));
+    return type_tuple(types);
 }
 

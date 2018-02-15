@@ -3,7 +3,9 @@
 
 TYPE(funcall) {
     typedata_t *func = visit_type(env, funcall->exprFunCall.function, NULL);
-    astlist_t *args = funcall->exprFunCall.args;
+    AstList *args = funcall->exprFunCall.args;
+
+    unsigned int argcount = list_length(args);
 
     switch (func->type) {
     case et_fun:
@@ -11,11 +13,11 @@ TYPE(funcall) {
         break;
     case et_natfun1:
     {
-        if (args->size > 1) {
+        if (argcount > 1) {
             VERR("Too many arguments"); 
         }
         
-        typedata_t *arg = visit_type(env, args->elem, NULL);
+        typedata_t *arg = visit_type(env, list_data(args), NULL);
         checkerr(arg);
         checktypes(func->typeNatfun1.from, arg, "Argument type mismatch");
 
@@ -23,18 +25,18 @@ TYPE(funcall) {
     }
     case et_natfun2:
     {
-        if (args->size < 2) {
+        if (argcount < 2) {
             VERR("Native functions cannot be curried");
         }
-        if (args->size > 2) {
+        if (argcount > 2) {
             VERR("Too many arguments");
         }
 
-        typedata_t *arg1 = visit_type(env, args->elem, NULL);
+        typedata_t *arg1 = visit_type(env, list_nth_data(args, 0), NULL);
         checkerr(arg1);
         checktypes(func->typeNatfun2.from1, arg1, "Argument type mismatch");
 
-        typedata_t *arg2 = visit_type(env, args->next->elem, NULL);
+        typedata_t *arg2 = visit_type(env, list_nth_data(args, 1), NULL);
         checkerr(arg2);
         checktypes(func->typeNatfun2.from2, arg2, "Argument type mismatch");
 
@@ -44,27 +46,38 @@ TYPE(funcall) {
         VERR("Expression is not a function and cannot be applied");
     }
 
-    tdlist_t *params = func->typeFun.args;
+    TypeList *params = func->typeFun.args;
 
-    if (args->size > params->size) {
+    unsigned int paramcount = list_length(params);
+
+    if (argcount > paramcount) {
         VERR("Too many arguments");
     }
 
-    tdlist_t *argtypes = NULL;
+    TypeList *argtypes = NULL;
 
-    while (args != NULL) {
-        typedata_t *type = visit_type(env, args->elem, NULL);
+    int lastIndex = 0;
 
-        argtypes = tdlist_make(type, argtypes);
-        checkerr(argtypes->elem);
-        checktypes(argtypes->elem, params->elem, "Argument type mismatch");
+    ListIterator argIt, paramIt;
+    list_iterate(&args, &argIt);
+    list_iterate(&params, &paramIt);
+    while (list_iter_has_more(&argIt) && list_iter_has_more(&paramIt)) {
+        ast_t *arg = list_iter_next(&argIt);
+        typedata_t *param = list_iter_next(&paramIt);
         
-        args = args->next;
-        params = params->next;
+        typedata_t *type = visit_type(env, arg, NULL);
+
+        list_prepend(&argtypes, type);
+        checkerr(type);
+        checktypes(type, param, "Argument type mismatch");
+
+        lastIndex++;
     }
 
-    if (params != NULL) { // partial currying
-        return type_fun(params, func->typeFun.to);
+    if (list_iter_has_more(&paramIt)) { // partial currying
+        // get last params
+        TypeList *curried_params = list_nth_entry(params, lastIndex);
+        return type_fun(curried_params, func->typeFun.to);
     } else {
         // get type of function body
         return func->typeFun.to;

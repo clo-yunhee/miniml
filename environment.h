@@ -4,10 +4,7 @@
 typedef struct env env_t;
 
 typedef struct expr_value value_t;
-typedef struct expr_valuelist vlist_t;
-
 typedef struct expr_typedata typedata_t;
-typedef struct expr_typedata_list tdlist_t;
 
 /* expr */
 
@@ -36,7 +33,7 @@ struct env {
 env_t *env_init(void);
 
 env_t *env_make(int name, typedata_t *type, value_t *value, env_t *tail);
-env_t *env_addlist(NameList *names, tdlist_t *types, vlist_t *values, env_t *tail);
+env_t *env_addlist(NameList *names, TypeList *types, ValueList *values, env_t *tail);
 
 
 void env_print(env_t *env);

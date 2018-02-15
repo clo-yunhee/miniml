@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "list.h"
 #include "names.h"
 #include "environment.h"
 #include "ast.h"
@@ -67,23 +68,26 @@ env_t *env_make(int name, typedata_t *type, value_t *value, env_t *tail) {
     return env;
 }
 
-env_t *env_addlist(namelist_t *names, tdlist_t *types, vlist_t *values, env_t *tail) {
+env_t *env_addlist(NameList *names, TypeList *types, ValueList *values, env_t *tail) {
     env_t *env = tail;
+
+    ListIterator nameIt, typeIt, valueIt;
+    list_iterate(&names, &nameIt);
+    list_iterate(&types, &typeIt);
+    list_iterate(&values, &valueIt);
 
     int name;
     typedata_t *type;
     value_t *value;
 
-    while (names != NULL) {
-        name = names->name;
-        type = (types != NULL ? types->elem : NULL);
-        value = (values != NULL ? values->elem : NULL);
+    while (list_iter_has_more(&nameIt)
+                && list_iter_has_more(&typeIt)
+                && list_iter_has_more(&valueIt)) {
+        name = *(int*) list_iter_next(&nameIt);
+        type = list_iter_next(&typeIt);
+        value = list_iter_next(&valueIt);
 
         env = env_make(name, type, value, env);
-    
-        if (types != NULL) types = types->next;
-        if (values != NULL) values = values->next;
-        names = names->next;
     }
 
     return env;

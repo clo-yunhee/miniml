@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "list.h"
 #include "names.h"
 #include "ast.h"
 #include "environment.h"
@@ -53,7 +54,7 @@ MAKEVAL(natfun2) (natfun2_t fun) {
     return val;
 }
 
-MAKEVAL(fun) (env_t *defsite, namelist_t *params, ast_t *body) {
+MAKEVAL(fun) (env_t *defsite, NameList *params, ast_t *body) {
     DECLVAL(et_fun);
     val->valFun.defsite = defsite;
     val->valFun.params = params;
@@ -61,7 +62,7 @@ MAKEVAL(fun) (env_t *defsite, namelist_t *params, ast_t *body) {
     return val;
 }
 
-MAKEVAL(tuple) (vlist_t *elems) {
+MAKEVAL(tuple) (ValueList *elems) {
     DECLVAL(et_tuple);
     val->valTuple = elems;
     return val;

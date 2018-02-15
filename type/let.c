@@ -2,9 +2,10 @@
 
 
 TYPE(let) {
-    namelist_t *names = let->exprLet.names;
-
+    NameList *names = let->exprLet.names;
     typedata_t *typeExpr;
+
+    unsigned int namecount = list_length(names);
 
     if (let->exprLet.params == NULL) { // it's a variable binding
         // don't support recursive variables
@@ -18,18 +19,23 @@ TYPE(let) {
         // TODO: infer arguments types, for now only int
         
         env_t *bodyenv = env;
-        tdlist_t *argtypes = NULL;
-        namelist_t *params = let->exprLet.params;
-        while (params != NULL) {
-            argtypes = tdlist_make(tint, argtypes);
+        TypeList *argtypes = NULL;
+        NameList *params = let->exprLet.params;
 
-            bodyenv = env_tmake(params->name, argtypes->elem, bodyenv);
-            params = params->next;
+        ListIterator paramIt;
+        list_iterate(&params, &paramIt);
+        while (list_iter_has_more(&paramIt)) {
+            int param_name = *(int*) list_iter_next(&paramIt);
+
+            typedata_t *type = tint;
+            list_prepend(&argtypes, type);
+
+            bodyenv = env_tmake(param_name, type, bodyenv);
         }
 
         if (let->exprLet.rec) {
-            // TODO: infer when recursive
-            bodyenv = env_tmake(names->name, type_fun(argtypes, tint), bodyenv);
+            int name = *(int*) list_data(names);
+            bodyenv = env_tmake(name, type_fun(argtypes, tint), bodyenv);
         }
 
         typedata_t *bodytype = visit_type(bodyenv, let->exprLet.expr, NULL);
@@ -43,18 +49,21 @@ TYPE(let) {
     if (let->exprLet.block != NULL) { // it's a let-in
         env_t *newEnv = env;
 
-        if (names->next == NULL) {
-            newEnv = env_tmake(names->name, typeExpr, newEnv);
+        if (namecount == 1) {
+            int name = *(int*) list_data(names);
+            newEnv = env_tmake(name, typeExpr, newEnv);
         } else { // tuple binding
             // expr has to be a tuple as well, with the same length
             if (typeExpr->type != et_tuple) {
                 VERR("Tuple binding type mismatch: expected tuple expression");
             }
-            if (typeExpr->typeTuple->size != names->size) {
+
+            TypeList *tuple = typeExpr->typeTuple;
+            if (list_length(tuple) != namecount) {
                 VERR("Tuple binding type mismatch: expected tuple size");
             }
             
-            newEnv = env_addlist(names, typeExpr->typeTuple, NULL, newEnv);
+            newEnv = env_addlist(names, tuple, NULL, newEnv);
         }
         
         return visit_type(newEnv, let->exprLet.block, NULL);

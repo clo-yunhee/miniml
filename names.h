@@ -17,6 +17,11 @@ const char *names_getnm(int id);
 
 int operator_id(int t);
 
+/* list */
+
+void nmlist_free(NameList *list);
+void nmlist_print(NameList *list);
+
 /* standard name */
 
 extern int name_addi, name_addf;

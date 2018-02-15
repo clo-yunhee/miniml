@@ -1,63 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "list.h"
 #include "names.h"
 #include "ast.h"
 #include "environment.h"
 #include "types.h"
 
-tdlist_t *tdlist_make(typedata_t *head, tdlist_t *tail) {
-    tdlist_t *lst = malloc(sizeof(tdlist_t));
-    if (lst == NULL) return NULL;
-    lst->size = (tail != NULL ? 1 + tail->size : 1);
-    lst->elem = head;
-    lst->next = tail;
-    return lst;
+void tdlist_free(TypeList *list) {
+    list_foreach(list, (ListConsumer) type_free);
+    list_free(list);
 }
 
-tdlist_t *tdlist_revRec(tdlist_t *list, tdlist_t *acc) {
-    if (list == NULL) return acc;
-    tdlist_t *revlst = tdlist_revRec(list->next, tdlist_make(list->elem, acc));
-    free(list);
-    return revlst;
+void tdlist_print(TypeList *list, const char *pref, const char *delim, const char *suff) {
+    list_print(list, (ListPrintFunc) type_print, pref, delim, suff);
 }
 
-tdlist_t *tdlist_rev(tdlist_t *list) {
-    return tdlist_revRec(list, NULL);
-}
-
-void tdlist_free(tdlist_t *list) {
-    if (list == NULL) return;
-    type_free(list->elem);
-    tdlist_free(list->next);
-    free(list);
-}
-
-void tdlist_partprint(tdlist_t *list, const char *delim) {
-    if (list == NULL) return;
-
-    type_print(list->elem);
-    if (list->next != NULL)
-        printf(" %s ", delim);
-
-    tdlist_partprint(list->next, delim);
-}
-
-void tdlist_print(tdlist_t *list, const char *pref, const char *delim, const char *suff) {
-    printf("%s", pref);
-    tdlist_partprint(list, delim);
-    printf("%s", suff);
-}
-
-bool tdlist_equ(tdlist_t *first, tdlist_t *second) {
-    if (first->size != second->size) return false;
+bool tdlist_equ(TypeList *first, TypeList *second) {
+    ListIterator it1, it2;
+    list_iterate(&first, &it1);
+    list_iterate(&second, &it2);
     
-    while (first != NULL) {
-        if (!type_equ(first->elem, second->elem))
+    while (list_iter_has_more(&it1) && list_iter_has_more(&it2)) {
+        typedata_t *type1 = list_iter_next(&it1);
+        typedata_t *type2 = list_iter_next(&it2);
+        
+        if (!type_equ(type1, type2))
             return false;
-        first = first->next;
-        second = second->next;
     }
 
-    return true;
+    // if not the same size, then false
+    
+    return list_iter_has_more(&it1) || list_iter_has_more(&it2);
 }

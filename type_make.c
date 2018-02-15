@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "list.h"
 #include "names.h"
 #include "ast.h"
 #include "environment.h"
@@ -51,14 +52,14 @@ MAKETYPE(natfun2) (typedata_t *from1, typedata_t *from2, typedata_t *to) {
     return type;
 }
 
-MAKETYPE(fun) (tdlist_t *args, typedata_t *to) {
+MAKETYPE(fun) (TypeList *args, typedata_t *to) {
     DECLTYPE(et_fun);
     type->typeFun.args = args;
     type->typeFun.to = to;
     return type;
 }
 
-MAKETYPE(tuple) (tdlist_t *elems) {
+MAKETYPE(tuple) (TypeList *elems) {
     DECLTYPE(et_tuple);
     type->typeTuple = elems;
     return type;

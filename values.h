@@ -3,12 +3,6 @@
 
 #include <stdbool.h>
 
-struct expr_valuelist {
-    size_t size;
-    value_t *elem;
-    struct expr_valuelist *next;
-};
-
 struct expr_value {
     type_t type;
     union {
@@ -21,7 +15,7 @@ struct expr_value {
         struct { env_t *defsite;
                  NameList *params;
                  ast_t *body; } valFun;
-        vlist_t *valTuple;
+        ValueList *valTuple;
     };
 };
 
@@ -36,7 +30,7 @@ MAKEVAL(string) (char *value);
 MAKEVAL(natfun1) (natfun1_t fun);
 MAKEVAL(natfun2) (natfun2_t fun);
 MAKEVAL(fun) (env_t *env, NameList *params, ast_t *body);
-MAKEVAL(tuple) (vlist_t *elems);
+MAKEVAL(tuple) (ValueList *elems);
 MAKEVAL(error) (void);
 
 void value_free(value_t *value);
@@ -44,9 +38,10 @@ void value_print(value_t *value);
 
 /* list */
 
-vlist_t *vlist_make(value_t *head, vlist_t *tail);
-vlist_t *vlist_rev(vlist_t *list);
-void vlist_free(vlist_t *list);
-void vlist_print(vlist_t *list);
+ValueList *vlist_make(value_t *head, ValueList *tail);
+ValueList *vlist_rev(ValueList *list);
+
+void vlist_free(ValueList *list);
+void vlist_print(ValueList *list);
 
 #endif // _VALUES_H_

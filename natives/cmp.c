@@ -56,22 +56,27 @@ NATFUN2(compare, x, y) {
 
 
 int cmp_tuple(value_t *x, value_t *y) {
-    vlist_t *elx = x->valTuple;
-    vlist_t *ely = y->valTuple;
+    ValueList *elx = x->valTuple;
+    ValueList *ely = y->valTuple;
 
-    if (elx->size != ely->size) {
+    if (list_length(elx) != list_length(ely)) {
         fprintf(stderr, "Can't compare different tuple types");
         return -1;
     }
 
+    ListIterator itx, ity;
+    list_iterate(&elx, &itx);
+    list_iterate(&ely, &ity);
+
     int c = 0;
-    while (elx != NULL) {
-        c = native_compare(elx->elem, ely->elem)->valInt;
-        if (c != 0) // if not equal, return now
-            return c;
-        elx = elx->next;
-        ely = ely->next;
+
+    while (c == 0 && list_iter_has_more(&itx) && list_iter_has_more(&ity)) {
+        value_t *vx = list_iter_next(&itx);
+        value_t *vy = list_iter_next(&ity);
+        
+        c = native_compare(vx, vy)->valInt;
     }
+    
     return c;
 }
 
