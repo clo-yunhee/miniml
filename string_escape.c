@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "symbols.h"
+#include "common.h"
 
 
 static char chr_notesc[] = { ' ', '\'', '"', '\n', '\t', '\b', '\r', '\\' };

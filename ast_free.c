@@ -1,8 +1,4 @@
-#include <stdlib.h>
-
-#include "list.h"
-#include "names.h"
-#include "ast.h"
+#include "common.h"
 
 void ast_free(ast_t *ast) {
     if (ast == NULL) return;

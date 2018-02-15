@@ -1,11 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "list.h"
-#include "names.h"
-#include "ast.h"
-#include "environment.h"
-#include "values.h"
+#include "common.h"
 
 void vlist_free(ValueList *list) {
     ListIterator it;

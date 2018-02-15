@@ -1,14 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "list.h"
-#include "names.h"
-#include "environment.h"
-#include "ast.h"
-#include "types.h"
-#include "values.h"
-
-#include "natives.h"
+#include "common.h"
 
 #define P(x) (x)
 

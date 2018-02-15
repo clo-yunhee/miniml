@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "list.h"
-#include "names.h"
+#include "common.h"
 
 
 void nmlist_free(NameList *list) {

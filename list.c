@@ -1,8 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-
-#include <libcalg/list.h>
-#include "list.h"
+#include "common.h"
 
 ListEntry *list_new(ListValue value) {
     ListEntry *list = NULL;

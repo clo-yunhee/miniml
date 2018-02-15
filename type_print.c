@@ -1,12 +1,4 @@
-#include <stdio.h>
-
-#include "list.h"
-#include "names.h"
-#include "symbols.h"
-#include "ast.h"
-#include "environment.h"
-#include "types.h"
-
+#include "common.h"
 
 
 void type_print(typedata_t *type) {

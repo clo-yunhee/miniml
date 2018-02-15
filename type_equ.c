@@ -1,11 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "list.h"
-#include "names.h"
-#include "ast.h"
-#include "environment.h"
-#include "types.h"
+#include "common.h"
 
 
 bool type_equ(typedata_t *first, typedata_t *second) {

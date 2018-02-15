@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "list.h"
-#include "names.h"
-#include "ast.h"
+#include "common.h"
 
 #define DECLAST(t) \
     ast_t *ast = malloc(sizeof(ast_t)); \

@@ -1,10 +1,4 @@
-#include <stdlib.h>
-
-#include "list.h"
-#include "names.h"
-#include "ast.h"
-#include "environment.h"
-#include "types.h"
+#include "common.h"
 
 
 #define DECLTYPE(t) \

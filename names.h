@@ -2,7 +2,6 @@
 #define _NAMES_H_
 
 #include <stddef.h>
-#include <libcalg/list.h>
 
 #define UNDEFINED (-1)
 #define NO_NAME 0

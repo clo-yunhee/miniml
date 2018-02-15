@@ -54,8 +54,12 @@ struct ast {
 };
 
 /* token */
+
 const char *token_name(int t);
 void token_print(int t);
+
+char *escape(const char *str);
+char *unescape(const char *str);
 
 /* list */
 

@@ -1,11 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "list.h"
-#include "names.h"
-#include "ast.h"
-#include "environment.h"
-#include "types.h"
+#include "common.h"
 
 void tdlist_free(TypeList *list) {
     list_foreach(list, (ListConsumer) type_free);

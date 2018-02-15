@@ -6,7 +6,6 @@
 
 #include "../list.h"
 #include "../names.h"
-#include "../symbols.h"
 #include "../ast.h"
 #include "../environment.h"
 #include "../values.h"

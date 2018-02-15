@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "list.h"
-#include "names.h"
+#include "common.h"
 
 /*
  * in real life programs there can be many distinct names,
@@ -14,28 +9,10 @@
  * an existing one.
  */
 
-typedef char * hkey_t;
-typedef int hvalue_t;
+static int add_name(char *name);
 
-typedef unsigned int (*hfun_t)(hkey_t);
-
-typedef struct bucket h_bucket; 
-struct bucket {
-    hkey_t key;
-    hvalue_t value;
-    
-    struct bucket *next;
-};
-
-static h_bucket *find_bucket(const char *name);
-static int find_name(const char *name);
-static int add_name(const char *name);
-
-static unsigned int h_djb2(char *str);
-
-static size_t capacity = 16;
-static h_bucket **table = NULL;
-static hfun_t hash = h_djb2; 
+static HashTable *name_table = NULL; // name -> id
+static HashTable *id_table = NULL; // id -> name
 
 static int last_id = 1;
 
@@ -50,51 +27,37 @@ int name_lt, name_lte;
 int name_gt, name_gte;
 int name_compare;
 
-// does not support resizing
-void names_settablecap(int cap) {
-    if (table != NULL) {
-        fprintf(stderr, "Cannot resize name table after use\n");
-    } else if (cap < 8) {
-        fprintf(stderr, "Cannot set capacity lower than 8\n");
-    } else {
-        capacity = cap;
-    }
-}
 
 int names_getid(const char *name) {
-    int id = find_name(name);
-    if (id == -1) {
-        id = add_name(name);
-    }
-    return id;
+    char *namedup = strdup(name);
+    int *id = hash_table_lookup(name_table, namedup);
+    return id != NULL ? *id : add_name(namedup);
 }
 
 const char *names_getnm(int id) {
-    // TODO: might want to implement a reverse table
-    // but this function is only there for human-readable output
-    // we will scan through every the table
-
-    for (int i = 0; i < capacity; ++i) {
-        h_bucket *bk = table[i];
-        while (bk != NULL) {
-            if (bk->value == id) {
-                return bk->key;
-            }
-            bk = bk->next;
-        }
-    }
-
-    return "<undefined>";
+    const char *name = hash_table_lookup(id_table, &id); 
+    return name != NULL ? name : "<undefined>";
 }
 
 void names_init(void) {
-    if (table != NULL) {
+    if (name_table != NULL) {
         fprintf(stderr, "Name table is already initialized\n");
     } else {
-        table = calloc(capacity, sizeof(h_bucket));
-        if (table == NULL) {
+        name_table = hash_table_new(string_hash, string_equal);
+        id_table = hash_table_new(int_hash, int_equal);
+        if (name_table == NULL || id_table == NULL) {
             fprintf(stderr, "Name table was not initialized\n");
+            if (name_table != NULL) {
+                hash_table_free(name_table);
+                name_table = NULL;
+            }
+            if (id_table != NULL) {
+                hash_table_free(id_table);
+                id_table = NULL;
+            }
         } else {
+            hash_table_register_free_functions(name_table, NULL, NULL); // unregister for first table
+            
             name_addi = add_name("+");
             name_subi = add_name("-");
             name_muli = add_name("*");
@@ -118,65 +81,26 @@ void names_init(void) {
 }
 
 void names_free(void) {
-    if (table == NULL) {
+    if (name_table == NULL) {
         fprintf(stderr, "Name table is not initialized\n");
     } else {
-        for (int i = 0; i < capacity; ++i) {
-            h_bucket *bk = table[i];
-            h_bucket *prev;
-            while (bk != NULL) {
-                free(bk->key); // because we dup the keys
+        hash_table_free(name_table);
+        hash_table_free(id_table);
 
-                prev = bk;
-                bk = bk->next;
-                free(prev);
-            }
-        }
-        free(table);
-
-        table = NULL;
+        name_table = NULL;
+        id_table = NULL;
     }
 }
 
 /* private */
 
-static h_bucket *find_bucket(const char *name) {
-    return table[hash((char *) name) % capacity];
-}
-
-static int find_name(const char *name) {
-    h_bucket *bk = find_bucket(name);
-    while (bk != NULL) {
-        if (strcmp(bk->key, name) == 0) { // if equal
-            return bk->value;
-        }
-        bk = bk->next;
-    }
-    return -1;
-}
-
-static int add_name(const char *name) {
-    // assume that the name is not already in the table
-    h_bucket *entry = malloc(sizeof(h_bucket));
-    entry->key = strdup(name);
-    entry->value = ++last_id;
+static int add_name(char *name) {
+    int *id = malloc(sizeof(int));
+    *id = ++last_id;
     
-    unsigned int k = hash((char *) name) % capacity;
-    entry->next = table[k];
-    table[k] = entry;
-    
+    hash_table_insert(name_table, name, id);
+    hash_table_insert(id_table, id, name);
+
     return last_id;
 }
 
-/* hashes */
-
-static unsigned int h_djb2(char *str) {
-    unsigned int hash = 5381;
-    char c;
-
-    while ((c = *str++))
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-
-
-    return hash;
-}

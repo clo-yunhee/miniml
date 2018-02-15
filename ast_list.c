@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "list.h"
-#include "names.h"
-#include "ast.h"
+#include "common.h"
 
 void alist_free(AstList *list) {
     list_foreach(list, (ListConsumer) ast_free);
