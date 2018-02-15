@@ -5,7 +5,6 @@
 #include <stddef.h>
 
 typedef struct ast ast_t;
-typedef struct astlist astlist_t;
 
 struct astlist {
     size_t size;
@@ -35,14 +34,14 @@ struct ast {
         // e_block
         ast_t *exprBlock;
         // e_list
-        astlist_t *exprList;
+        AstList *exprList;
         // e_funcall
         struct { ast_t *function;
-                 astlist_t *args; } exprFunCall;
+                 AstList *args; } exprFunCall;
         // e_let
-        struct { namelist_t *names;
+        struct { NameList *names;
                  bool rec;
-                 namelist_t *params;
+                 NameList *params;
                  ast_t *expr;
                  ast_t *block; } exprLet;
         // e_if
@@ -50,7 +49,7 @@ struct ast {
                  ast_t *bIf;
                  ast_t *bElse; } exprIf;
         // e_tuple
-        astlist_t *exprTuple;
+        AstList *exprTuple;
     };
 };
 
@@ -58,12 +57,10 @@ struct ast {
 const char *token_name(int t);
 void token_print(int t);
 
-/* astlist */
+/* list */
 
-astlist_t *alist_make(ast_t *head, astlist_t *tail);
-astlist_t *alist_rev(astlist_t *list);
-void alist_free(astlist_t *list);
-void alist_print(astlist_t *list);
+void alist_free(AstList *list);
+void alist_print(AstList *list);
 
 /* ast */
 
@@ -77,20 +74,20 @@ MAKEAST(string) (char *value);
 MAKEAST(variable) (int name);
 
 MAKEAST(block) (ast_t *ast);
-MAKEAST(list) (astlist_t *list);
+MAKEAST(list) (AstList *list);
 
-MAKEAST(funcall) (ast_t *fun, astlist_t *args);
+MAKEAST(funcall) (ast_t *fun, AstList *args);
 MAKEAST(unary) (int op, ast_t *right);
 MAKEAST(binary) (ast_t *left, int op, ast_t *right);
 
-MAKEAST(let) (namelist_t *names, // name == -1  ->  anonymous decl
-              bool rec, namelist_t *params, // params != NULL  ->  fun decl
+MAKEAST(let) (NameList *names, // name == -1  ->  anonymous decl
+              bool rec, NameList *params, // params != NULL  ->  fun decl
               ast_t *expr, ast_t *block); // block != NULL  ->  let in
 
 MAKEAST(if) (ast_t *cond, ast_t *bIf,
                           ast_t *bElse); // bElse != NULL  ->  if-else
 
-MAKEAST(tuple) (astlist_t *elems);
+MAKEAST(tuple) (AstList *elems);
 
 void ast_free(ast_t *ast);
 void ast_print(ast_t *ast);

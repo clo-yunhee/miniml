@@ -1,4 +1,5 @@
 %{
+#include "list.h"
 #include "names.h"
 #include "ast.h"
 
@@ -7,7 +8,7 @@ extern int yylineno;
 
 void yyerror(const char *);
 
-extern astlist_t *prog;
+extern AstList *prog;
 %}
 
 %error-verbose
@@ -48,10 +49,10 @@ extern astlist_t *prog;
     float fval;
     char *sval;
     /* parser */
-    astlist_t *list;
+    AstList *list;
     ast_t *ast;
-    struct { namelist_t *names; bool rec; namelist_t *params; ast_t *expr; } let;
-    namelist_t *names;
+    struct { NameList *names; bool rec; NameList *params; ast_t *expr; } let;
+    NameList *names;
 }
 
 %type <list> program
@@ -77,13 +78,13 @@ extern astlist_t *prog;
 %%
 
 program:
-    program instruction error TWOSEMI   { prog = alist_make($2, prog); }
+    program instruction error TWOSEMI   { prog = list_append(&prog, $2); }
   | program error TWOSEMI               { }
   | error TWOSEMI                       { }
 
-  | program instruction TWOSEMI   { prog = alist_make($2, prog); }
+  | program instruction TWOSEMI   { prog = list_append(&prog, $2); }
   | program TWOSEMI               { }
-  | instruction TWOSEMI           { prog = alist_make($1, NULL); }
+  | instruction TWOSEMI           { prog = list_new($1); }
   | TWOSEMI                       { }
   ;
 
@@ -94,7 +95,6 @@ instruction: expr | global_let ;
 
 expr:
     funcall_expr
-  /*| TBEGIN expr_list TEND   { $$ = ast_make_list(alist_rev($2)); }*/
   | arith_expr              /* single atom is handled in this rule */
   | let_expr
   | fun_expr
@@ -102,14 +102,14 @@ expr:
   ;
 
 funcall_expr:
-  atom atom_list %prec "funcall"  { $$ = ast_make_funcall($1, alist_rev($2)); }
+  atom atom_list %prec "funcall"  { $$ = ast_make_funcall($1, $2); }
   ;
 
 arith_expr: exp_or ;
 
 expr_list:
-    expr %prec "below-semi"   { $$ = alist_make($1, NULL); }
-  | expr_list SEMI expr       { $$ = alist_make($3, $1); }
+    expr %prec "below-semi"   { $$ = list_new($1); }
+  | expr_list SEMI expr       { $$ = list_append(&$1, $3); }
   ;
 
 let_expr:
@@ -121,7 +121,7 @@ global_let:
   ;
 
 fun_expr:
-  FUN parameter_list ARROW expr %prec "below-semi"   { $$ = ast_make_let(nmlist_make(UNDEFINED, NULL), false, nmlist_rev($2), $4, NULL); }
+  FUN parameter_list ARROW expr %prec "below-semi"   { $$ = ast_make_let(list_new(nmalloc(UNDEFINED)), false, $2, $4, NULL); }
   ;
 
 if_expr:
@@ -142,19 +142,19 @@ atom:
   | TBEGIN TEND                     { $$ = ast_make_unit(); }
   | LPAREN operator RPAREN          { $$ = ast_make_variable($2); }
   | LPAREN expr RPAREN              { $$ = $2; }
-  | LPAREN expr_list RPAREN         { $$ = ast_make_list(alist_rev($2)); }
-  | TBEGIN expr_list TEND           { $$ = ast_make_list(alist_rev($2)); }
-  | LPAREN tuple_expr_list RPAREN   { $$ = ast_make_tuple(alist_rev($2)); }
+  | LPAREN expr_list RPAREN         { $$ = ast_make_list($2); }
+  | TBEGIN expr_list TEND           { $$ = ast_make_list($2); }
+  | LPAREN tuple_expr_list RPAREN   { $$ = ast_make_tuple($2); }
   ;
 
 atom_list:
-    atom             { $$ = alist_make($1, NULL); }
-  | atom_list atom   { $$ = alist_make($2, $1); }
+    atom             { $$ = list_new($1); }
+  | atom_list atom   { $$ = list_append(&$1, $2); }
   ;
 
 tuple_expr_list:
-    expr COMMA expr              { $$ = alist_make($3, alist_make($1, NULL)); }
-  | tuple_expr_list COMMA expr   { $$ = alist_make($3, $1); }
+    expr COMMA expr              { $$ = list_new($1); list_append(&$$, $3); }
+  | tuple_expr_list COMMA expr   { $$ = list_append(&$1, $3); }
 
 
 /* lets */
@@ -166,21 +166,21 @@ let_prefix:
 
 let_binding:
     let_prefix EQUAL expr                  { $$ = $1; $$.params = NULL; $$.expr = $3; }    
-  | let_prefix parameter_list EQUAL expr   { $$ = $1; $$.params = nmlist_rev($2); $$.expr = $4; }
+  | let_prefix parameter_list EQUAL expr   { $$ = $1; $$.params = $2; $$.expr = $4; }
   ;
 
 let_pattern:
-    NAME                                   { $$ = nmlist_make($1, NULL); }
-  | LPAREN operator RPAREN                 { $$ = nmlist_make($2, NULL); }
-  | LPAREN tuple_name_list RPAREN          { $$ = nmlist_rev($2); }
+    NAME                                   { $$ = list_new(nmalloc($1)); }
+  | LPAREN operator RPAREN                 { $$ = list_new(nmalloc($2)); }
+  | LPAREN tuple_name_list RPAREN          { $$ = $2; }
 
 tuple_name_list:
-    NAME COMMA NAME              { $$ = nmlist_make($3, nmlist_make($1, NULL)); }
-  | tuple_name_list COMMA NAME   { $$ = nmlist_make($3, $1); }
+    NAME COMMA NAME              { $$ = list_new(nmalloc($1)); list_append(&$$, nmalloc($3)); }
+  | tuple_name_list COMMA NAME   { $$ = list_append(&$1, nmalloc($3)); }
 
 parameter_list:
-    NAME                  { $$ = nmlist_make($1, NULL); }
-  | parameter_list NAME   { $$ = nmlist_make($2, $1); }
+    NAME                  { $$ = list_new(nmalloc($1)); }
+  | parameter_list NAME   { $$ = list_append(&$1, nmalloc($2)); }
   ;
 
 

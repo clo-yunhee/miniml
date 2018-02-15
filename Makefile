@@ -6,15 +6,17 @@ RM    = rm -f
 MKDIR = mkdir -p
 CFLAGS := -g -std=c11 -pedantic -Wall -Werror
 CFLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG 
-LDFLAGS = -lfl
+LDFLAGS := -lfl -lcalg
 # --nounput: ne génère pas la fonction yyunput() inutile
 # --DYY_NO_INPUT: ne prend pas en compte la fonction input() inutile
 # -D_POSIX_SOURCE: déclare la fonction fileno()
 LEXOPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
 YACCOPTS = --verbose
 
+CFLAGS  += -I$(HOME)/include/libcalg-1.0
+LDFLAGS += -L$(HOME)/lib
 
-CFILES := main.c
+CFILES := main.c list.c
 CFILES += name_list.c name_table.c string_escape.c
 #CFILES += symbol_make.c symbol_free.c symbol_list.c symbol_table.c
 CFILES += ast_make.c ast_free.c ast_list.c ast_print.c

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "list.h"
 #include "names.h"
 #include "ast.h"
 #include "symbols.h"
@@ -16,7 +17,7 @@ extern int yyparse(void);
 void main_init(void);
 void main_free(void);
 
-astlist_t *prog = NULL;
+AstList *prog = NULL;
 
 
 int main(int argc, char *argv[]) {
@@ -28,7 +29,6 @@ int main(int argc, char *argv[]) {
     switch (yyparse()) {
     case 0:
         // successful
-        prog = alist_rev(prog);
         break;
     case 1:
         fprintf(stderr, "Invalid input\n");
@@ -46,17 +46,19 @@ int main(int argc, char *argv[]) {
     printf("\n\n");
     */
 
-    env_t *global_env = env_init(); 
+    /*env_t *global_env = env_init(); 
 
     // usage example for visitor functions
-    astlist_t *list = prog;
-    while (list != NULL) {
-        namelist_t *names = NULL;
+    ListIterator progIter;
+    list_iterator(&&prog, &progIter);
+    while (list_iter_has_more(&progIter)) {
+        ast_t *expr = list_iter_next(&progIter);
 
-        typedata_t *type = visit_type(global_env, list->elem, &names);
+        NameList *names;
+        typedata_t *type = visit_type(global_env, expr, &names);
 
         if (!type_equ(type, terror)) { // if no error, evaluate
-            value_t *value = visit_eval(global_env, list->elem);
+            value_t *value = visit_eval(global_env, expr);
 
             if (names->next == NULL) {
                 global_env = env_make(names->name, type, value, global_env);
@@ -68,9 +70,7 @@ int main(int argc, char *argv[]) {
                 env_printrange(global_env, start);
             }
         }
-
-        list = list->next;
-    }
+    }*/
 
     return EXIT_SUCCESS;
 }

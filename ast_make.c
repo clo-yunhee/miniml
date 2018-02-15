@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "list.h"
 #include "names.h"
 #include "ast.h"
 
@@ -51,13 +52,13 @@ MAKEAST(block) (ast_t *block) {
     return ast;
 }
 
-MAKEAST(list) (astlist_t *list) {
+MAKEAST(list) (AstList *list) {
     DECLAST(e_list);
     ast->exprList = list;
     return ast;
 }
 
-MAKEAST(funcall) (ast_t *fun, astlist_t *args) {
+MAKEAST(funcall) (ast_t *fun, AstList *args) {
     DECLAST(e_funcall);
     ast->exprFunCall.function = fun;
     ast->exprFunCall.args = args;
@@ -66,16 +67,18 @@ MAKEAST(funcall) (ast_t *fun, astlist_t *args) {
 
 MAKEAST(unary) (int op, ast_t *right) {
     // an unary operator is an infix function with one parameter
-    return ast_make_funcall(ast_make_variable(op), alist_make(right, NULL));
+    return ast_make_funcall(ast_make_variable(op), list_new(right));
 }
 
 MAKEAST(binary) (ast_t *left, int op, ast_t *right) {
     // a binary operator is an infix function with two parameters
-    return ast_make_funcall(ast_make_variable(op), alist_make(left, alist_make(right, NULL)));
+    AstList *args = list_new(left);
+    list_append(&args, right);
+    return ast_make_funcall(ast_make_variable(op), args);
 }
 
-MAKEAST(let) (namelist_t *names,
-              bool rec, namelist_t *params,
+MAKEAST(let) (NameList *names,
+              bool rec, NameList *params,
               ast_t *expr, ast_t *block) {
     DECLAST(e_let);
     ast->exprLet.names = names;
@@ -95,7 +98,7 @@ MAKEAST(if) (ast_t *cond, ast_t *bIf,
     return ast;
 }
 
-MAKEAST(tuple) (astlist_t *exprs) {
+MAKEAST(tuple) (AstList *exprs) {
     DECLAST(e_tuple);
     ast->exprTuple = exprs;
     return ast;

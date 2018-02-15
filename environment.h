@@ -36,7 +36,7 @@ struct env {
 env_t *env_init(void);
 
 env_t *env_make(int name, typedata_t *type, value_t *value, env_t *tail);
-env_t *env_addlist(namelist_t *names, tdlist_t *types, vlist_t *values, env_t *tail);
+env_t *env_addlist(NameList *names, tdlist_t *types, vlist_t *values, env_t *tail);
 
 
 void env_print(env_t *env);

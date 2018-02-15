@@ -19,7 +19,7 @@ struct expr_value {
         natfun1_t valNatfun1;
         natfun2_t valNatfun2;
         struct { env_t *defsite;
-                 namelist_t *params;
+                 NameList *params;
                  ast_t *body; } valFun;
         vlist_t *valTuple;
     };
@@ -35,7 +35,7 @@ MAKEVAL(bool) (bool value);
 MAKEVAL(string) (char *value);
 MAKEVAL(natfun1) (natfun1_t fun);
 MAKEVAL(natfun2) (natfun2_t fun);
-MAKEVAL(fun) (env_t *env, namelist_t *params, ast_t *body);
+MAKEVAL(fun) (env_t *env, NameList *params, ast_t *body);
 MAKEVAL(tuple) (vlist_t *elems);
 MAKEVAL(error) (void);
 

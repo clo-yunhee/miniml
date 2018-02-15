@@ -2,19 +2,10 @@
 #define _NAMES_H_
 
 #include <stddef.h>
-
-
+#include <libcalg/list.h>
 
 #define UNDEFINED (-1)
 #define NO_NAME 0
-
-typedef struct namelist namelist_t;
-
-struct namelist {
-    size_t size;
-    int name;
-    struct namelist *next;
-};
 
 void names_init(void);
 void names_free(void);
@@ -25,13 +16,6 @@ int names_getid(const char *name);
 const char *names_getnm(int id);
 
 int operator_id(int t);
-
-/* list */
-
-namelist_t *nmlist_make(int head, namelist_t *tail);
-namelist_t *nmlist_rev(namelist_t *list);
-void nmlist_free(namelist_t *list);
-void nmlist_print(namelist_t *list);
 
 /* standard name */
 

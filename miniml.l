@@ -5,6 +5,7 @@
 #include <limits.h>
 #include <math.h>
 
+#include "list.h"
 #include "names.h"
 #include "ast.h"
 
