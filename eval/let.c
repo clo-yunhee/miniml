@@ -4,7 +4,7 @@
 EVAL(let) {
     NameList *names = let->exprLet.names;
 
-    value_t *valExpr;
+    Value *valExpr;
 
     if (let->exprLet.params == NULL) { // it's a variable binding
         valExpr = visit_eval(env, let->exprLet.expr);
@@ -22,7 +22,7 @@ EVAL(let) {
     }
 
     if (let->exprLet.block != NULL) { // it's a let-in
-        env_t *newEnv = env;
+        Environment *newEnv = env;
 
         if (list_length(names) == 1) { // single name
             int name = *(int*) list_data(names);

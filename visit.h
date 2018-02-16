@@ -1,7 +1,7 @@
 #ifndef _VISIT_H_
 #define _VISIT_H_
 
-typedata_t *visit_type(env_t *env, ast_t *expr, NameList **nameptr);
-value_t *visit_eval(env_t *env, ast_t *expr);
+Type *visit_type(Environment *env, Ast *expr, NameList **nameptr);
+Value *visit_eval(Environment *env, Ast *expr);
 
 #endif // _VISIT_H_

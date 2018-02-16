@@ -1,10 +1,10 @@
 #ifndef _ENVIRONMENT_H_
 #define _ENVIRONMENT_H_
 
-typedef struct env env_t;
+typedef struct env Environment;
 
-typedef struct expr_value value_t;
-typedef struct expr_typedata typedata_t;
+typedef struct expr_value Value;
+typedef struct expr_typedata Type;
 
 /* expr */
 
@@ -15,32 +15,32 @@ typedef enum expr_type {
     et_fun, et_tuple,
 
     et_poly, et_error
-} type_t;
+} TypeEnum;
 
-typedef value_t * (*natfun1_t)(value_t *);
-typedef value_t * (*natfun2_t)(value_t *, value_t *);
+typedef Value * (*NativeFunc1)(Value *);
+typedef Value * (*NativeFunc2)(Value *, Value *);
 
 /* env */
 
 struct env {
     int name;
-    typedata_t *type;
-    value_t *value; 
+    Type *type;
+    Value *value; 
 
-    struct env *next;
+    Environment *next;
 };
 
-env_t *env_init(void);
+Environment *env_init(void);
 
-env_t *env_make(int name, typedata_t *type, value_t *value, env_t *tail);
-env_t *env_addlist(NameList *names, TypeList *types, ValueList *values, env_t *tail);
+Environment *env_make(int name, Type *type, Value *value, Environment *tail);
+Environment *env_addlist(NameList *names, TypeList *types, ValueList *values, Environment *tail);
 
 
-void env_print(env_t *env);
-void env_printrange(env_t *env, env_t *from);
-void env_printall(env_t *env);
+void env_print(Environment *env);
+void env_printrange(Environment *env, Environment *from);
+void env_printall(Environment *env);
 
-#define env_tmake(name, type, tail)   env_make(name, type, NULL, tail)
+#define Environmentmake(name, type, tail)   env_make(name, type, NULL, tail)
 #define env_vmake(name, value, tail)  env_make(name, NULL, value, tail)
 
 #endif // _ENVIRONMENT_H_

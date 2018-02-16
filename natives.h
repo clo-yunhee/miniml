@@ -2,8 +2,8 @@
 #define _NATIVES_H_
 
 
-#define NATFUN1(name, arg) value_t * native_##name (value_t * arg )
-#define NATFUN2(name, arg1, arg2) value_t * native_##name (value_t * arg1 , value_t * arg2 )
+#define NATFUN1(name, arg) Value * native_##name (Value * arg )
+#define NATFUN2(name, arg1, arg2) Value * native_##name (Value * arg1 , Value * arg2 )
 
 NATFUN2(addi, x, y);
 NATFUN2(subi, x, y);

@@ -2,7 +2,7 @@
 
 
 #define DECLVAL(t) \
-    value_t *val = malloc(sizeof(value_t)); \
+    Value *val = malloc(sizeof(Value)); \
     if (val == NULL) return NULL; \
     val->type = t;
 
@@ -35,19 +35,19 @@ MAKEVAL(string) (char *value) {
     return val;
 }
 
-MAKEVAL(natfun1) (natfun1_t fun) {
+MAKEVAL(natfun1) (NativeFunc1 fun) {
     DECLVAL(et_natfun1);
     val->valNatfun1 = fun;
     return val;
 }
 
-MAKEVAL(natfun2) (natfun2_t fun) {
+MAKEVAL(natfun2) (NativeFunc2 fun) {
     DECLVAL(et_natfun2);
     val->valNatfun2 = fun;
     return val;
 }
 
-MAKEVAL(fun) (env_t *defsite, NameList *params, ast_t *body) {
+MAKEVAL(fun) (Environment *defsite, NameList *params, Ast *body) {
     DECLVAL(et_fun);
     val->valFun.defsite = defsite;
     val->valFun.params = params;

@@ -4,7 +4,7 @@ void vlist_print(ValueList *list) {
     list_print(list, (ListPrintFunc) value_print, "(", ", ", ")");
 }
 
-void value_print(value_t *value) {
+void value_print(Value *value) {
     switch (value->type) {
     case et_unit:
         printf("()");

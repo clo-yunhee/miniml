@@ -9,9 +9,9 @@ TYPE(tuple) {
     list_iterate(&exprs, &it);
 
     while (list_iter_has_more(&it)) {
-        ast_t *expr = list_iter_next(&it);
+        Ast *expr = list_iter_next(&it);
 
-        typedata_t *type = visit_type(env, expr, NULL);
+        Type *type = visit_type(env, expr, NULL);
         checkerr(type);
     
         list_append(&types, type);

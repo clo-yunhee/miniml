@@ -8,9 +8,9 @@ EVAL(tuple) {
     ListIterator it;
     list_iterate(&exprs, &it);
     while (list_iter_has_more(&it)) {
-        ast_t *expr = list_iter_next(&it);
+        Ast *expr = list_iter_next(&it);
 
-        value_t *value = visit_eval(env, expr);
+        Value *value = visit_eval(env, expr);
 
         list_append(&elems, value);
     }

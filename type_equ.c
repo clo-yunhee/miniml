@@ -6,8 +6,8 @@ bool tdlist_equ(TypeList *first, TypeList *second) {
     list_iterate(&second, &it2);
     
     while (list_iter_has_more(&it1) && list_iter_has_more(&it2)) {
-        typedata_t *type1 = list_iter_next(&it1);
-        typedata_t *type2 = list_iter_next(&it2);
+        Type *type1 = list_iter_next(&it1);
+        Type *type2 = list_iter_next(&it2);
         
         if (!type_equ(type1, type2))
             return false;
@@ -17,7 +17,7 @@ bool tdlist_equ(TypeList *first, TypeList *second) {
     return list_iter_has_more(&it1) || list_iter_has_more(&it2);
 }
 
-bool type_equ(typedata_t *first, typedata_t *second) {
+bool type_equ(Type *first, Type *second) {
     if (first == NULL || second == NULL) return false;
     if (first->type != second->type) {
         return (first->type == et_poly) || (second->type == et_poly);

@@ -1,6 +1,6 @@
 #include "eval.h"
 
-value_t *visit_eval(env_t *env, ast_t *expr) {
+Value *visit_eval(Environment *env, Ast *expr) {
    
     switch (expr->type) {
     case e_unit:

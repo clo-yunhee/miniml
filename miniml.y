@@ -50,8 +50,8 @@ extern AstList *prog;
     char *sval;
     /* parser */
     AstList *list;
-    ast_t *ast;
-    struct { NameList *names; bool rec; NameList *params; ast_t *expr; } let;
+    Ast *ast;
+    struct { NameList *names; bool rec; NameList *params; Ast *expr; } let;
     NameList *names;
 }
 

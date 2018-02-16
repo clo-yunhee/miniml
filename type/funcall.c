@@ -2,7 +2,7 @@
 
 
 TYPE(funcall) {
-    typedata_t *func = visit_type(env, funcall->exprFunCall.function, NULL);
+    Type *func = visit_type(env, funcall->exprFunCall.function, NULL);
     AstList *args = funcall->exprFunCall.args;
 
     unsigned int argcount = list_length(args);
@@ -17,7 +17,7 @@ TYPE(funcall) {
             VERR("Too many arguments"); 
         }
         
-        typedata_t *arg = visit_type(env, list_data(args), NULL);
+        Type *arg = visit_type(env, list_data(args), NULL);
         checkerr(arg);
         checktypes(func->typeNatfun1.from, arg, "Argument type mismatch");
 
@@ -32,11 +32,11 @@ TYPE(funcall) {
             VERR("Too many arguments");
         }
 
-        typedata_t *arg1 = visit_type(env, list_nth_data(args, 0), NULL);
+        Type *arg1 = visit_type(env, list_nth_data(args, 0), NULL);
         checkerr(arg1);
         checktypes(func->typeNatfun2.from1, arg1, "Argument type mismatch");
 
-        typedata_t *arg2 = visit_type(env, list_nth_data(args, 1), NULL);
+        Type *arg2 = visit_type(env, list_nth_data(args, 1), NULL);
         checkerr(arg2);
         checktypes(func->typeNatfun2.from2, arg2, "Argument type mismatch");
 
@@ -62,10 +62,10 @@ TYPE(funcall) {
     list_iterate(&args, &argIt);
     list_iterate(&params, &paramIt);
     while (list_iter_has_more(&argIt) && list_iter_has_more(&paramIt)) {
-        ast_t *arg = list_iter_next(&argIt);
-        typedata_t *param = list_iter_next(&paramIt);
+        Ast *arg = list_iter_next(&argIt);
+        Type *param = list_iter_next(&paramIt);
         
-        typedata_t *type = visit_type(env, arg, NULL);
+        Type *type = visit_type(env, arg, NULL);
 
         list_prepend(&argtypes, type);
         checkerr(type);

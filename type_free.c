@@ -5,7 +5,7 @@ void tdlist_free(TypeList *list) {
     list_free(list);
 }
 
-void type_free(typedata_t *type) {
+void type_free(Type *type) {
     if (type == NULL) return;
 
     switch (type->type) {

@@ -5,7 +5,7 @@
 #define CHKTYPES do { if (x->type != y->type) { fprintf(stderr, "Can't compare different types"); return value_make_bool(false); } } while (false)
 
 
-int cmp_tuple(value_t *x, value_t *y);
+int cmp_tuple(Value *x, Value *y);
 int cmpi(int x, int y);
 int cmpf(float x, float y);
 
@@ -55,7 +55,7 @@ NATFUN2(compare, x, y) {
 }
 
 
-int cmp_tuple(value_t *x, value_t *y) {
+int cmp_tuple(Value *x, Value *y) {
     ValueList *elx = x->valTuple;
     ValueList *ely = y->valTuple;
 
@@ -71,8 +71,8 @@ int cmp_tuple(value_t *x, value_t *y) {
     int c = 0;
 
     while (c == 0 && list_iter_has_more(&itx) && list_iter_has_more(&ity)) {
-        value_t *vx = list_iter_next(&itx);
-        value_t *vy = list_iter_next(&ity);
+        Value *vx = list_iter_next(&itx);
+        Value *vy = list_iter_next(&ity);
         
         c = native_compare(vx, vy)->valInt;
     }

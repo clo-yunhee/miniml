@@ -1,7 +1,7 @@
 #include "common.h"
 
 #define DECLAST(t) \
-    ast_t *ast = malloc(sizeof(ast_t)); \
+    Ast *ast = malloc(sizeof(Ast)); \
     if (ast == NULL) return NULL; \
     ast->type = t;
 
@@ -41,7 +41,7 @@ MAKEAST(variable) (int name) {
     return ast;
 }
 
-MAKEAST(block) (ast_t *block) {
+MAKEAST(block) (Ast *block) {
     DECLAST(e_block);
     ast->exprBlock = block;
     return ast;
@@ -53,19 +53,19 @@ MAKEAST(list) (AstList *list) {
     return ast;
 }
 
-MAKEAST(funcall) (ast_t *fun, AstList *args) {
+MAKEAST(funcall) (Ast *fun, AstList *args) {
     DECLAST(e_funcall);
     ast->exprFunCall.function = fun;
     ast->exprFunCall.args = args;
     return ast;
 }
 
-MAKEAST(unary) (int op, ast_t *right) {
+MAKEAST(unary) (int op, Ast *right) {
     // an unary operator is an infix function with one parameter
     return ast_make_funcall(ast_make_variable(op), list_new(right));
 }
 
-MAKEAST(binary) (ast_t *left, int op, ast_t *right) {
+MAKEAST(binary) (Ast *left, int op, Ast *right) {
     // a binary operator is an infix function with two parameters
     AstList *args = list_new(left);
     list_append(&args, right);
@@ -74,7 +74,7 @@ MAKEAST(binary) (ast_t *left, int op, ast_t *right) {
 
 MAKEAST(let) (NameList *names,
               bool rec, NameList *params,
-              ast_t *expr, ast_t *block) {
+              Ast *expr, Ast *block) {
     DECLAST(e_let);
     ast->exprLet.names = names;
     ast->exprLet.rec = rec;
@@ -84,8 +84,8 @@ MAKEAST(let) (NameList *names,
     return ast;
 }
 
-MAKEAST(if) (ast_t *cond, ast_t *bIf,
-                          ast_t *bElse) {
+MAKEAST(if) (Ast *cond, Ast *bIf,
+                          Ast *bElse) {
     DECLAST(e_if);
     ast->exprIf.cond = cond;
     ast->exprIf.bIf = bIf;

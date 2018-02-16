@@ -12,7 +12,7 @@
 #include "../natives.h"
 #include "../visit.h"
 
-#define TYPE(tn) typedata_t *typing_##tn (env_t *env, ast_t * tn , NameList **nameptr)
+#define TYPE(tn) Type *typing_##tn (Environment *env, Ast * tn , NameList **nameptr)
 
 TYPE(var);
 TYPE(list);

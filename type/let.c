@@ -3,7 +3,7 @@
 
 TYPE(let) {
     NameList *names = let->exprLet.names;
-    typedata_t *typeExpr;
+    Type *typeExpr;
 
     unsigned int namecount = list_length(names);
 
@@ -18,7 +18,7 @@ TYPE(let) {
         
         // TODO: infer arguments types, for now only int
         
-        env_t *bodyenv = env;
+        Environment *bodyenv = env;
         TypeList *argtypes = NULL;
         NameList *params = let->exprLet.params;
 
@@ -27,18 +27,18 @@ TYPE(let) {
         while (list_iter_has_more(&paramIt)) {
             int param_name = *(int*) list_iter_next(&paramIt);
 
-            typedata_t *type = tint;
+            Type *type = tint;
             list_prepend(&argtypes, type);
 
-            bodyenv = env_tmake(param_name, type, bodyenv);
+            bodyenv = Environmentmake(param_name, type, bodyenv);
         }
 
         if (let->exprLet.rec) {
             int name = *(int*) list_data(names);
-            bodyenv = env_tmake(name, type_fun(argtypes, tint), bodyenv);
+            bodyenv = Environmentmake(name, type_fun(argtypes, tint), bodyenv);
         }
 
-        typedata_t *bodytype = visit_type(bodyenv, let->exprLet.expr, NULL);
+        Type *bodytype = visit_type(bodyenv, let->exprLet.expr, NULL);
         checkerr(bodytype);
 
         typeExpr = type_fun(argtypes, bodytype);
@@ -47,11 +47,11 @@ TYPE(let) {
     checkerr(typeExpr);
 
     if (let->exprLet.block != NULL) { // it's a let-in
-        env_t *newEnv = env;
+        Environment *newEnv = env;
 
         if (namecount == 1) {
             int name = *(int*) list_data(names);
-            newEnv = env_tmake(name, typeExpr, newEnv);
+            newEnv = Environmentmake(name, typeExpr, newEnv);
         } else { // tuple binding
             // expr has to be a tuple as well, with the same length
             if (typeExpr->type != et_tuple) {

@@ -5,7 +5,7 @@ void alist_free(AstList *list) {
     list_free(list);
 }
 
-void ast_free(ast_t *ast) {
+void ast_free(Ast *ast) {
     if (ast == NULL) return;
 
     switch (ast->type) {

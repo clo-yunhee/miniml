@@ -2,38 +2,38 @@
 #define _TYPES_H_
 
 struct expr_typedata {
-    type_t type;
+    TypeEnum type;
     union {
-        struct { typedata_t *from;
-                 typedata_t *to; } typeNatfun1;
-        struct { typedata_t *from1;
-                 typedata_t *from2;
-                 typedata_t *to; } typeNatfun2;
+        struct { Type *from;
+                 Type *to; } typeNatfun1;
+        struct { Type *from1;
+                 Type *from2;
+                 Type *to; } typeNatfun2;
         struct { TypeList *args;
-                 typedata_t *to; } typeFun;
+                 Type *to; } typeFun;
         TypeList *typeTuple;
         int typePoly;
     };
 };
 
-#define MAKETYPE(tname) typedata_t *type_##tname
+#define MAKETYPE(tname) Type *type_##tname
 
 MAKETYPE(unit) (void);
 MAKETYPE(int) (void);
 MAKETYPE(float) (void);
 MAKETYPE(bool) (void);
 MAKETYPE(string) (void);
-MAKETYPE(natfun1) (typedata_t *from, typedata_t *to);
-MAKETYPE(natfun2) (typedata_t *from1, typedata_t *from2, typedata_t *to);
-MAKETYPE(fun) (TypeList *args, typedata_t *to);
+MAKETYPE(natfun1) (Type *from, Type *to);
+MAKETYPE(natfun2) (Type *from1, Type *from2, Type *to);
+MAKETYPE(fun) (TypeList *args, Type *to);
 MAKETYPE(tuple) (TypeList *elems);
 MAKETYPE(poly) (int number);
 MAKETYPE(error) (void);
 
-void type_free(typedata_t *type);
-void type_print(typedata_t *type);
+void type_free(Type *type);
+void type_print(Type *type);
 
-bool type_equ(typedata_t *first, typedata_t *second);
+bool type_equ(Type *first, Type *second);
 
 /* list */
 

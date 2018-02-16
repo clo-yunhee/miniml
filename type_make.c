@@ -2,7 +2,7 @@
 
 
 #define DECLTYPE(t) \
-    typedata_t *type = malloc(sizeof(typedata_t)); \
+    Type *type = malloc(sizeof(Type)); \
     if (type == NULL) return NULL; \
     type->type = t;
 
@@ -31,14 +31,14 @@ MAKETYPE(string) (void) {
     return type;
 }
 
-MAKETYPE(natfun1) (typedata_t *from, typedata_t *to) {
+MAKETYPE(natfun1) (Type *from, Type *to) {
     DECLTYPE(et_natfun1);
     type->typeNatfun1.from = from;
     type->typeNatfun1.to = to;
     return type;
 }
 
-MAKETYPE(natfun2) (typedata_t *from1, typedata_t *from2, typedata_t *to) {
+MAKETYPE(natfun2) (Type *from1, Type *from2, Type *to) {
     DECLTYPE(et_natfun2);
     type->typeNatfun2.from1 = from1;
     type->typeNatfun2.from2 = from2;
@@ -46,7 +46,7 @@ MAKETYPE(natfun2) (typedata_t *from1, typedata_t *from2, typedata_t *to) {
     return type;
 }
 
-MAKETYPE(fun) (TypeList *args, typedata_t *to) {
+MAKETYPE(fun) (TypeList *args, Type *to) {
     DECLTYPE(et_fun);
     type->typeFun.args = args;
     type->typeFun.to = to;

@@ -4,41 +4,41 @@
 #include <stdbool.h>
 
 struct expr_value {
-    type_t type;
+    TypeEnum type;
     union {
         int valInt;
         float valFloat;
         bool valBool;
         char *valString;
-        natfun1_t valNatfun1;
-        natfun2_t valNatfun2;
-        struct { env_t *defsite;
+        NativeFunc1 valNatfun1;
+        NativeFunc2 valNatfun2;
+        struct { Environment *defsite;
                  NameList *params;
-                 ast_t *body; } valFun;
+                 Ast *body; } valFun;
         ValueList *valTuple;
     };
 };
 
 
-#define MAKEVAL(type) value_t *value_make_##type
+#define MAKEVAL(type) Value *value_make_##type
 
 MAKEVAL(unit) (void);
 MAKEVAL(int) (int value);
 MAKEVAL(float) (float value);
 MAKEVAL(bool) (bool value);
 MAKEVAL(string) (char *value);
-MAKEVAL(natfun1) (natfun1_t fun);
-MAKEVAL(natfun2) (natfun2_t fun);
-MAKEVAL(fun) (env_t *env, NameList *params, ast_t *body);
+MAKEVAL(natfun1) (NativeFunc1 fun);
+MAKEVAL(natfun2) (NativeFunc2 fun);
+MAKEVAL(fun) (Environment *env, NameList *params, Ast *body);
 MAKEVAL(tuple) (ValueList *elems);
 MAKEVAL(error) (void);
 
-void value_free(value_t *value);
-void value_print(value_t *value);
+void value_free(Value *value);
+void value_print(Value *value);
 
 /* list */
 
-ValueList *vlist_make(value_t *head, ValueList *tail);
+ValueList *vlist_make(Value *head, ValueList *tail);
 ValueList *vlist_rev(ValueList *list);
 
 void vlist_free(ValueList *list);

@@ -7,9 +7,9 @@
 #define ADDNAT1(fn, tx, ty)        ADD(name_##fn, type_natfun1(tx, ty), value_make_natfun1(native_##fn))
 #define ADDNAT2(fn, tx, ty, tz)    ADD(name_##fn, type_natfun2(tx, ty, tz), value_make_natfun2(native_##fn))
 
-env_t *env_init(void) {
+Environment *env_init(void) {
     // init standard objects
-    env_t *env = NULL;
+    Environment *env = NULL;
 
     /* ( + ) : int -> int -> int */
     /* ( - ) : int -> int -> int */
@@ -48,8 +48,8 @@ env_t *env_init(void) {
     return env;
 }
 
-env_t *env_make(int name, typedata_t *type, value_t *value, env_t *tail) {
-    env_t *env = malloc(sizeof(env_t));
+Environment *env_make(int name, Type *type, Value *value, Environment *tail) {
+    Environment *env = malloc(sizeof(Environment));
     if (env == NULL) return NULL;
     env->name = name;
     env->type = type;
@@ -58,8 +58,8 @@ env_t *env_make(int name, typedata_t *type, value_t *value, env_t *tail) {
     return env;
 }
 
-env_t *env_addlist(NameList *names, TypeList *types, ValueList *values, env_t *tail) {
-    env_t *env = tail;
+Environment *env_addlist(NameList *names, TypeList *types, ValueList *values, Environment *tail) {
+    Environment *env = tail;
 
     ListIterator nameIt, typeIt, valueIt;
     list_iterate(&names, &nameIt);
@@ -67,8 +67,8 @@ env_t *env_addlist(NameList *names, TypeList *types, ValueList *values, env_t *t
     list_iterate(&values, &valueIt);
 
     int name;
-    typedata_t *type;
-    value_t *value;
+    Type *type;
+    Value *value;
 
     while (list_iter_has_more(&nameIt)
                 && list_iter_has_more(&typeIt)
@@ -83,7 +83,7 @@ env_t *env_addlist(NameList *names, TypeList *types, ValueList *values, env_t *t
     return env;
 }
 
-void env_print(env_t *env) {
+void env_print(Environment *env) {
     if (env->name == NO_NAME) {
         printf("-");
     } else {
@@ -96,13 +96,13 @@ void env_print(env_t *env) {
     printf("\n");
 }
 
-void env_printrange(env_t *env, env_t *from) {
+void env_printrange(Environment *env, Environment *from) {
     if (env == NULL || env == from) return;
     env_printrange(env->next, from);
     env_print(env);
 }
 
 // print in postfix order, as the head is the last element added
-void env_printall(env_t *env) {
+void env_printall(Environment *env) {
     env_printrange(env, NULL);
 }

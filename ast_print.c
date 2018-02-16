@@ -4,7 +4,7 @@ void alist_print(AstList *list) {
     list_print(list, (ListPrintFunc) ast_print, "[", ", ", "]");
 }
 
-void ast_print(ast_t *ast) {
+void ast_print(Ast *ast) {
     if (ast == NULL) {
         printf("<NULL>");
         return;

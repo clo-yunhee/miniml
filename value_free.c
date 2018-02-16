@@ -5,7 +5,7 @@ void vlist_free(ValueList *list) {
     list_free(list);
 }
 
-void value_free(value_t *value) {
+void value_free(Value *value) {
     if (value == NULL) return;
 
     switch (value->type) {

@@ -36,26 +36,26 @@ int main(int argc, char *argv[]) {
     printf("\n\n");
     
 
-    env_t *global_env = env_init(); 
+    Environment *global_env = env_init(); 
 
     // usage example for visitor functions
     ListIterator progIter;
     list_iterate(&prog, &progIter);
     while (list_iter_has_more(&progIter)) {
-        ast_t *expr = list_iter_next(&progIter);
+        Ast *expr = list_iter_next(&progIter);
 
         NameList *names;
-        typedata_t *type = visit_type(global_env, expr, &names);
+        Type *type = visit_type(global_env, expr, &names);
 
         if (!type_equ(type, terror)) { // if no error, evaluate
-            value_t *value = visit_eval(global_env, expr);
+            Value *value = visit_eval(global_env, expr);
 
             if (list_length(names) == 1) {
                 int name = *(int*) list_data(names);
                 global_env = env_make(name, type, value, global_env);
                 env_print(global_env);
             } else {
-                env_t *start = global_env;
+                Environment *start = global_env;
                 global_env = env_addlist(names, type->typeTuple, value->valTuple, global_env);
 
                 env_printrange(global_env, start);

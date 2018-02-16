@@ -4,7 +4,7 @@ void tdlist_print(TypeList *list, const char *pref, const char *delim, const cha
     list_print(list, (ListPrintFunc) type_print, pref, delim, suff);
 }
 
-void type_print(typedata_t *type) {
+void type_print(Type *type) {
     if (type == NULL) {
         printf("<null>");
         return;
