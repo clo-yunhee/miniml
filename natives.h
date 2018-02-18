@@ -21,6 +21,8 @@ NATFUN2(lt, x, y);
 NATFUN2(gt, x, y);
 NATFUN2(lte, x, y);
 NATFUN2(gte, x, y);
+NATFUN2(and, x, y);
+NATFUN2(or, x, y);
 
 NATFUN1(print_string, str);
 

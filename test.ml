@@ -17,6 +17,10 @@ let x = 2 in x * x;;
 (let x = 2 in let y = 3 in x + y) + x + (let x = 5 in x * x);;
 let y = 2 in let z = y in let y = 3 in x + y + z;;
 
+(* boolean expressions *)
+let a = (x = y);;
+let b = a && (x < y);;
+
 (* tuple definition *)
 let x = (1, 2);;
 let y = (x, x);;
@@ -26,7 +30,7 @@ let (x, y, z) = (x, 1, a * b);;
 
 (* using operator as a name *)
 let x = 9 in let y = 1 in ( + ) x y;;
-let (+) a b = a - b;;
+let ( + ) a b = a - b;;
 
 (* if-else *)
 let a = 12;;

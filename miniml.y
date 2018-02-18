@@ -20,7 +20,7 @@ extern AstList *prog;
 %token INT FLOAT BOOL STRING NAME
 %token TWOSEMI SEMI LPAREN RPAREN TBEGIN TEND ARROW COMMA
 %token PLUS MINUS MUL DIV FPLUS FMINUS FMUL FDIV
-%token EQUAL NOTEQU NOT GT GTE LT LTE
+%token EQUAL NOTEQU NOT GT GTE LT LTE AND OR
 
 /* precedence rules */
 
@@ -31,14 +31,6 @@ extern AstList *prog;
 %right ELSE 
 
 %nonassoc COMMA RPAREN
-%left OR
-%left AND
-%left GT GTE LT LTE EQUAL NOTEQU
-%right NOT
-
-%left PLUS MINUS FPLUS FMINUS
-%left MUL DIV FMUL FDIV
-%right "prefix"
 %left "funcall"
 
 /* data holder */

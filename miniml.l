@@ -79,6 +79,8 @@ identifier          [[:alpha:]_][[:alnum:]_]*
 ">="                return NTOKEN(GTE);
 "<"                 return NTOKEN(LT);
 "<="                return NTOKEN(LTE);
+"&&"                return NTOKEN(AND);
+"||"                return NTOKEN(OR);
 
 {whitespace}        ;
 

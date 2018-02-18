@@ -26,6 +26,13 @@ NATFUN2(gte, x, y) {
     RBOOL(native_compare(x, y)->valInt >= 0);
 }
 
+NATFUN2(and, x, y) {
+    RBOOL(x->valBool && y->valBool);
+}
+NATFUN2(or, x, y) {
+    RBOOL(y->valBool || y->valBool);
+}
+
 //structural comparison
 NATFUN2(compare, x, y) {
     CHKTYPES;
