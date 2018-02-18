@@ -12,7 +12,7 @@
 #include "../natives.h"
 #include "../visit.h"
 
-#define EVAL(type) Value *eval_##type (Environment *env, Ast * type) 
+#define EVAL(type) Value *eval_##type (Env *env, Ast * type) 
 
 EVAL(var);
 EVAL(list);

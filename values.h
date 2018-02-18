@@ -12,7 +12,7 @@ struct expr_value {
         char *valString;
         NativeFunc1 valNatfun1;
         NativeFunc2 valNatfun2;
-        struct { Environment *defsite;
+        struct { Env *defsite;
                  NameList *params;
                  Ast *body; } valFun;
         ValueList *valTuple;
@@ -29,7 +29,7 @@ MAKEVAL(bool) (bool value);
 MAKEVAL(string) (char *value);
 MAKEVAL(natfun1) (NativeFunc1 fun);
 MAKEVAL(natfun2) (NativeFunc2 fun);
-MAKEVAL(fun) (Environment *env, NameList *params, Ast *body);
+MAKEVAL(fun) (Env *env, NameList *params, Ast *body);
 MAKEVAL(tuple) (ValueList *elems);
 MAKEVAL(error) (void);
 

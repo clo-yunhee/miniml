@@ -47,7 +47,7 @@ MAKEVAL(natfun2) (NativeFunc2 fun) {
     return val;
 }
 
-MAKEVAL(fun) (Environment *defsite, NameList *params, Ast *body) {
+MAKEVAL(fun) (Env *defsite, NameList *params, Ast *body) {
     DECLVAL(et_fun);
     val->valFun.defsite = defsite;
     val->valFun.params = params;

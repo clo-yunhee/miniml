@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     printf("\n\n");
     
 
-    Environment *global_env = env_init(); 
+    Env *global_env = env_init(); 
 
     // usage example for visitor functions
     ListIterator progIter;
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
                 global_env = env_make(name, type, value, global_env);
                 env_print(global_env);
             } else {
-                Environment *start = global_env;
+                Env *start = global_env;
                 global_env = env_addlist(names, type->typeTuple, value->valTuple, global_env);
 
                 env_printrange(global_env, start);

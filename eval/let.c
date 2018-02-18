@@ -22,7 +22,7 @@ EVAL(let) {
     }
 
     if (let->exprLet.block != NULL) { // it's a let-in
-        Environment *newEnv = env;
+        Env *newEnv = env;
 
         if (list_length(names) == 1) { // single name
             int name = *(int*) list_data(names);

@@ -1,7 +1,7 @@
 #ifndef _ENVIRONMENT_H_
 #define _ENVIRONMENT_H_
 
-typedef struct env Environment;
+typedef struct env Env;
 
 typedef struct expr_value Value;
 typedef struct expr_typedata Type;
@@ -27,20 +27,20 @@ struct env {
     Type *type;
     Value *value; 
 
-    Environment *next;
+    Env *next;
 };
 
-Environment *env_init(void);
+Env *env_init(void);
 
-Environment *env_make(int name, Type *type, Value *value, Environment *tail);
-Environment *env_addlist(NameList *names, TypeList *types, ValueList *values, Environment *tail);
+Env *env_make(int name, Type *type, Value *value, Env *tail);
+Env *env_addlist(NameList *names, TypeList *types, ValueList *values, Env *tail);
 
 
-void env_print(Environment *env);
-void env_printrange(Environment *env, Environment *from);
-void env_printall(Environment *env);
+void env_print(Env *env);
+void env_printrange(Env *env, Env *from);
+void env_printall(Env *env);
 
-#define Environmentmake(name, type, tail)   env_make(name, type, NULL, tail)
+#define env_tmake(name, type, tail)   env_make(name, type, NULL, tail)
 #define env_vmake(name, value, tail)  env_make(name, NULL, value, tail)
 
 #endif // _ENVIRONMENT_H_

@@ -7,9 +7,9 @@
 #define ADDNAT1(fn, tx, ty)        ADD(name_##fn, type_natfun1(tx, ty), value_make_natfun1(native_##fn))
 #define ADDNAT2(fn, tx, ty, tz)    ADD(name_##fn, type_natfun2(tx, ty, tz), value_make_natfun2(native_##fn))
 
-Environment *env_init(void) {
+Env *env_init(void) {
     // init standard objects
-    Environment *env = NULL;
+    Env *env = NULL;
 
     /* ( + ) : int -> int -> int */
     /* ( - ) : int -> int -> int */
@@ -48,8 +48,8 @@ Environment *env_init(void) {
     return env;
 }
 
-Environment *env_make(int name, Type *type, Value *value, Environment *tail) {
-    Environment *env = malloc(sizeof(Environment));
+Env *env_make(int name, Type *type, Value *value, Env *tail) {
+    Env *env = malloc(sizeof(Env));
     if (env == NULL) return NULL;
     env->name = name;
     env->type = type;
@@ -58,8 +58,8 @@ Environment *env_make(int name, Type *type, Value *value, Environment *tail) {
     return env;
 }
 
-Environment *env_addlist(NameList *names, TypeList *types, ValueList *values, Environment *tail) {
-    Environment *env = tail;
+Env *env_addlist(NameList *names, TypeList *types, ValueList *values, Env *tail) {
+    Env *env = tail;
 
     ListIterator nameIt, typeIt, valueIt;
     list_iterate(&names, &nameIt);
@@ -83,7 +83,7 @@ Environment *env_addlist(NameList *names, TypeList *types, ValueList *values, En
     return env;
 }
 
-void env_print(Environment *env) {
+void env_print(Env *env) {
     if (env->name == NO_NAME) {
         printf("-");
     } else {
@@ -96,13 +96,13 @@ void env_print(Environment *env) {
     printf("\n");
 }
 
-void env_printrange(Environment *env, Environment *from) {
+void env_printrange(Env *env, Env *from) {
     if (env == NULL || env == from) return;
     env_printrange(env->next, from);
     env_print(env);
 }
 
 // print in postfix order, as the head is the last element added
-void env_printall(Environment *env) {
+void env_printall(Env *env) {
     env_printrange(env, NULL);
 }

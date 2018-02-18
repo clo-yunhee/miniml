@@ -26,7 +26,7 @@ EVAL(funcall) {
         VERR("Expression is not a function and cannot be applied");
     }
 
-    Environment *callsite = func->valFun.defsite;    
+    Env *callsite = func->valFun.defsite;    
     NameList *params = func->valFun.params;
 
     ListIterator argIt, paramIt;
