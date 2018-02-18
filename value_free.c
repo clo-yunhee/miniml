@@ -9,6 +9,10 @@ void value_free(Value *value) {
     if (value == NULL) return;
 
     switch (value->type) {
+    case et_fun:
+        nmlist_free(value->valFun.params);
+        ast_free(value->valFun.body);
+        break;
     case et_tuple:
         vlist_free(value->valTuple);
         break;

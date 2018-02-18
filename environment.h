@@ -35,7 +35,6 @@ Env *env_init(void);
 Env *env_make(int name, Type *type, Value *value, Env *tail);
 Env *env_addlist(NameList *names, TypeList *types, ValueList *values, Env *tail);
 
-
 void env_print(Env *env);
 void env_printrange(Env *env, Env *from);
 void env_printall(Env *env);

@@ -16,16 +16,24 @@ void ast_free(Ast *ast) {
         ast_free(ast->exprBlock);
         break;
     case e_list:
-        list_free(ast->exprList);
+        alist_free(ast->exprList);
         break;
     case e_funcall:
         ast_free(ast->exprFunCall.function);
-        list_free(ast->exprFunCall.args);
+        alist_free(ast->exprFunCall.args);
         break;
     case e_let:
-        list_free(ast->exprLet.params);
+        nmlist_free(ast->exprLet.params);
         ast_free(ast->exprLet.expr);
         ast_free(ast->exprLet.block);
+        break;
+    case e_if:
+        ast_free(ast->exprIf.cond);
+        ast_free(ast->exprIf.bIf);
+        ast_free(ast->exprIf.bElse);
+        break;
+    case e_tuple:
+        alist_free(ast->exprTuple);
         break;
     default:
         break;
