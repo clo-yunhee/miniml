@@ -1,0 +1,236 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% LaTeX Example: Project Report
+%
+% Source: http://www.howtotex.com
+%
+% Feel free to distribute this example, but please keep the referral
+% to howtotex.com
+% Date: March 2011 
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% How to use writeLaTeX: 
+%
+% You edit the source code here on the left, and the preview on the
+% right shows you the result within a few seconds.
+%
+% Bookmark this page and share the URL with your co-authors. They can
+% edit at the same time!
+%
+% You can upload figures, bibliographies, custom classes and
+% styles using the files menu.
+%
+% If you're new to LaTeX, the wikibook is a great place to start:
+% http://en.wikibooks.org/wiki/LaTeX
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Edit the title below to update the display in My Documents
+%\title{Project Report}
+%
+%%% Preamble
+\documentclass[paper=a4, fontsize=11pt]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fourier}
+
+\usepackage[french]{babel}															% French language/hyphenation
+\usepackage[protrusion=true,expansion=true]{microtype}	
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage[pdftex]{graphicx}	
+\usepackage{url}
+
+
+%%% Custom sectioning
+\usepackage{sectsty}
+\allsectionsfont{\centering \normalfont\scshape}
+
+
+%%% Custom headers/footers (fancyhdr package)
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}											% No page header
+\fancyfoot[L]{}											% Empty 
+\fancyfoot[C]{}											% Empty
+\fancyfoot[R]{\thepage}									% Pagenumbering
+\renewcommand{\headrulewidth}{0pt}			% Remove header underlines
+\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
+\setlength{\headheight}{13.6pt}
+
+
+%%% Equation and float numbering
+\numberwithin{equation}{section}		% Equationnumbering: section.eq#
+\numberwithin{figure}{section}			% Figurenumbering: section.fig#
+\numberwithin{table}{section}				% Tablenumbering: section.tab#
+
+
+%%% BNF grammar block
+\usepackage{syntax}
+\renewcommand{\grammarlabel}[2]{\synt{#1}\hfill#2}
+\setlength{\grammarparsep}{14pt plus 1pt minus 1pt}   % increase separation between rules
+\setlength{\grammarindent}{5cm}
+
+%%% Table
+\usepackage{arydshln}
+
+
+%%% Maketitle metadata
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} 	% Horizontal rule
+
+\title{
+		\vspace{-1in} 	
+		\usefont{OT1}{bch}{b}{n}
+		%\normalfont \normalsize \textsc{Université de Rouen} \\ [25pt]
+		\horrule{0.5pt} \\[0.4cm]
+		\huge Rapport sur le transpilateur MiniML vers C \\
+		\horrule{2pt} \\[0.5cm]
+}
+\author{
+		\normalfont 								\normalsize
+        Name \\[-3pt]		\normalsize
+        \today
+}
+\date{}
+
+
+%%% Begin document
+\begin{document}
+\maketitle
+
+\section{Grammaire MiniML et Bison}
+
+La grammaire employée pour ce langage est décrite en annexe grâce au méta-langage BNF.
+Certaines adaptations ont été effectuées afin de rendre la grammaire compatible avec Bison.
+
+La récupération sur erreur s'effectue par instruction, c'est-à-dire qu'une instruction est ignorée si une erreur d'analyse survient, ainsi que les symboles restants jusqu'à une nouvelle instruction.
+
+La grammaire en annexe contient des conflits décalage/réduction.
+Ces conflits ont été résolus en appliquant des règles de priorité.
+La priorité des opérateurs est définie explicitement, en imbriquant des règles intermédiaires pour former $simple-expr$.
+La priorité des non-opérateurs est définie dans le fichier source Bison, grâce aux instructions de priorité/associativé.
+
+Le tableau de priorité/associativité est le suivant, par ordre de priorité de la plus élevée à la plus faible:
+
+\begin{center}
+\begin{tabular}{ | c | c | }
+\hline
+Production ou symbole & Associativité \\ \hline
+$!$ 							& droite \\ 
+application						& gauche \\ 
+$+$ $-$ $+.$ $-.$ (préfixe)		& droite \\ 
+$*$ $/$ $*.$ $/.$ 				& gauche \\ 
+$+$ $-$ $+.$ $-.$				& gauche \\ 
+$=$ $<>$ $<$ $<=$ $>$ $>=$		& gauche \\ 
+$\&\&$							& droite \\ 
+$||$							& droite \\ 
+$,$								& - \\ 
+$else$							& droite \\ 
+$if$							& - \\ 
+$;$								& droite \\ 
+$let$ $function$				& - \\
+\hline
+\end{tabular}
+\end{center}
+
+
+\newpage
+\section{Annexe 1 : Grammaire}
+
+\subsection{BNF}
+\begin{grammar}
+
+<program> ::= <program> ~ <instruction> ~ `;;'
+\alt <program> ~ `;;'
+\alt <instruction> ~ `;;'
+\alt `;;'
+
+<instruction> ::= <expr> ~ | ~ <let-binding>
+
+<expr> ::= <simple-expr>
+\alt <atom> ~ <atom-list>
+\alt <let-binding> ~ `in' ~ <expr>
+\alt `function' ~ <parameter-list> ~ `->' ~ <expr>
+\alt <if-expr>
+
+<simple-expr> ::= <simple-expr> ~ `||' ~ <simple-expr>
+\alt <simple-expr> ~ `&&' ~ <simple-expr>
+\alt <simple-expr> ~ <equ-op> ~ <simple-expr>
+\alt <simple-expr> ~ <rel-op> ~ <simple-expr>
+\alt <simple-expr> ~ <add-op> ~ <simple-expr>
+\alt <simple-expr> ~ <mul-op> ~ <simple-expr>
+\alt <unary-op> ~ <simple-expr>
+\alt <simple-expr>
+
+<if-expr> ::= `if' ~ <expr> ~ `then' ~ <expr>
+\alt `if' ~ <expr> ~ `then' ~ <expr> ~ `else' ~ <expr>
+
+<let-binding> ::= `let' ~ <let-pattern> ~ `=' ~ <expr>
+\alt `let' ~ `rec' ~ <let-pattern> ~ `=' ~ <expr>
+
+<let-pattern> ::= <name>
+\alt `(' ~ <operator> ~ `)'
+\alt `(' ~ <tuple-name-list> ~ `)'
+
+<atom> ::= <integer> ~ | ~ <float>
+\alt <boolean> ~ | ~ <string>
+\alt <name>
+\alt `(' ~ `)'
+\alt `(' ~ <operator> ~ `)'
+\alt `(' ~ <expr-list> ~ `)'
+\alt `begin' ~ `end'
+\alt `begin' ~ <expr-list> ~ `end'
+\alt `(' ~ <tuple-expr-list> ~ `)'
+
+<atom-list> ::= <atom>
+\alt <atom-list> ~ <atom>
+
+<expr-list> ::= <expr>
+\alt <expr-list> ~ <expr>
+
+<parameter-list> ::= <name>
+\alt <parameter-list> ~ <name>
+
+<tuple-name-list> ::= <name>
+\alt <tuple-name-list> ~ `,' ~ <name>
+
+<tuple-expr-list> ::= <expr>
+\alt <tuple-expr-list> ~ `,' ~ <expr>
+
+<equ-op> ::= `=' ~ | ~ `<>'
+
+<rel-op> ::= `>' ~ | ~ `>=' ~ | ~ `<' ~ | ~ `<='
+
+<add-op> ::= `+' ~ | ~ `-' ~ | ~ `+.' ~ | ~ `-.'
+
+<mul-op> ::= `*' ~ | ~ `/' ~ | ~ `*.' ~ | ~ `/.' 
+
+<unary-op> := `!' ~ | ~ `+' ~ | ~ `-' ~ | ~ `+.' ~ | ~ `-.'
+
+\end{grammar}
+
+\subsection{Terminaux}
+
+\paragraph{integer:} les nombres entiers.
+
+\paragraph{float:} les nombres flottants, avec décimales et/ou exposant.
+\begin{small}
+(ex: $5.$, $3.1415$, $9e+5$ ou $1.2e-67$)
+\end{small}
+
+\paragraph{boolean:} les valeurs de vérité $true$ et $false$.
+
+\paragraph{string:} les chaînes litérales, avec les échappements suivants: \\
+\begin{small}
+	le guillemet ($\backslash "$),
+	l'apostrophe ($\backslash \textsf{'}$),
+	le retour à la ligne ($\backslash n$),
+	le retour arrière ($\backslash b$),
+	la tabulation ($\backslash t$),
+	le retour chariot ($\backslash r$),
+	l'espace ($\backslash ~~$).
+\end{small}
+
+\paragraph{name:} les identifiants, commencent par une lettre et constitués de lettres, chiffres et/ou tiret du bas.
+
+\paragraph{operator:} les terminaux des opérateurs, $\&\&$, $||$ et les autres terminaux qui apparaissent dans les productions $-op$.
+
+
+\end{document}
