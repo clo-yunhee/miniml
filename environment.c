@@ -42,6 +42,11 @@ Env *env_init(void) {
     ADDNAT2(gt, tpoly1, tpoly1, tbool);
     ADDNAT2(gte, tpoly1, tpoly1, tbool);
 
+    /* ( && ) : bool -> bool -> bool */
+    /* ( || ) : bool -> bool -> bool */
+    ADDNAT2(and, tbool, tbool, tbool);
+    ADDNAT2(or, tbool, tbool, tbool);
+
     /* print_string : string -> unit */
     ADDNAT1(print_string, tstring, tunit);
 

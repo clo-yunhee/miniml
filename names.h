@@ -32,5 +32,6 @@ extern int name_equal;
 extern int name_lt, name_lte;
 extern int name_gt, name_gte;
 extern int name_compare;
+extern int name_and, name_or;
 
 #endif // _NAMES_H_

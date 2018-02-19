@@ -18,8 +18,8 @@ let x = 2 in x * x;;
 let y = 2 in let z = y in let y = 3 in x + y + z;;
 
 (* boolean expressions *)
-let a = (x = y);;
-let b = a && (x < y);;
+let a = (x = 1);;
+let b = a && (3. < y);;
 
 (* tuple definition *)
 let x = (1, 2);;

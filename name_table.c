@@ -26,6 +26,7 @@ int name_equal;
 int name_lt, name_lte;
 int name_gt, name_gte;
 int name_compare;
+int name_and, name_or;
 
 
 int names_getid(const char *name) {
@@ -76,6 +77,9 @@ void names_init(void) {
             name_gt = add_name(">");
             name_gte = add_name(">=");
             name_compare = add_name("compare");
+
+            name_and = add_name("&&");
+            name_or = add_name("||");
         }
     } 
 }
