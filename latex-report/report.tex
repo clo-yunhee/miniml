@@ -163,19 +163,19 @@ Il s'agit d'une bibliothèque de structures de données, utilisée dans le but d
 L'implémentation présente permet 6 types de tokens différents (association d'un lexème avec une valeur éventuelle).
 
 \paragraph{Les litéraux:}
-Les nombres entiers, les nombres flottants et les chaînes de charactères ont leur propre catégorie.
+Les nombres entiers, les nombres flottants et les chaînes de caractères ont leur propre catégorie.
 Les lexèmes $true$ et $false$ sont associés dans une même catégorie aux valeurs $1$ et $0$ respectivement.
 
 \paragraph{Les identifiants:}
-Les identifiants et les opérateurs appartiennent à la même catégorie, celle des noms.
-En effet, par la nature fonctionnelle des langages ML, les opérateurs sont considérés comme des fonctions infixes, et donc ne sont que des identifiants spéciaux.
+Les identifiants et les opérateurs appartiennent à la même catégorie des noms.
+En effet, par la nature fonctionnelle des langages ML, les opérateurs sont considérés comme des fonctions infixes, et donc des identifiants spéciaux.
 
-Une table de noms est mise en place pour associer chaque identifiant à un entier unique afin de simplifier la comparaison d'identifiants. Cette table est implémentée par une table d'association bijective.
+Une table des noms est mise en place pour associer chaque identifiant à un entier unique afin de simplifier la comparaison d'identifiants. Cette table est implémentée par une table d'association bijective.
 
 Chaque nouveau nom est associé à un entier unique strictement supérieur à $0$. L'entier $0$ est utilisé lorsqu'un identifiant ne peut pas exister (p.ex. une fonction anonyme).
 
 \paragraph{Les autres:}
-Les autres mots-clés et lexèmes ne portant pas de valeur particulière, ils forment la dernière catégorie de tokens.
+Les autres mots-clés et lexèmes restants ne portant pas de valeur particulière, ils forment la dernière catégorie de tokens.
 Les caractères blancs sont ignorés par l'analyseur, et les caractères invalides sont passés à l'analyseur syntaxique tels quels, où ils provoqueront une erreur de syntaxe.
 
 \subsection{Commentaires}
