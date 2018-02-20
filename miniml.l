@@ -16,7 +16,7 @@ void yyerror(const char *s);
 int stoi(const char *str);
 float stof(const char *str);
 
-#define TOKEN(tok)        (yylval.ival = (tok))
+#define TOKEN(tok)        (tok)
 #define ITOKEN(tok)       (yylval.ival = stoi(yytext), (tok))
 #define FTOKEN(tok)       (yylval.fval = stof(yytext), (tok))
 #define NTOKEN(tok)       (yylval.ival = names_getid(yytext), (tok))
@@ -51,7 +51,7 @@ identifier          [[:alpha:]][[:alnum:]_]*
 
 {integer}           return ITOKEN(INT);
 {float}             return FTOKEN(FLOAT);
-{boolean}           return ITOKEN(BOOL);
+{boolean}           return (yylval.ival = (strcmp("true", yytext) == 0), TOKEN(BOOL));
 {string}            return STOKEN(STRING, strdup(yytext));
 {identifier}        return NTOKEN(NAME);
 
