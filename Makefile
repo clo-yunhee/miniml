@@ -13,7 +13,8 @@ LDFLAGS := -lfl -lcalg
 LEXOPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
 YACCOPTS = --verbose
 
-CALGDIR := /usr/local
+CALGDIR := $(HOME)
+#CALGDIR := /usr/local/
 CFLAGS  += -I$(CALGDIR)/include/libcalg-1.0
 LDFLAGS += -L$(CALGDIR)/lib
 
@@ -54,6 +55,10 @@ $(PROG): $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
 graph:
 	$(YACC) $(YACCOPTS) $(PROG).y --graph
 	dot -Tpng $(PROG).dot -O
+
+.PHONY: report
+report:
+	$(MAKE) -C latex-report/
 
 # Test
 MLFILES = $(wildcard *.ml)
