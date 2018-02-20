@@ -62,14 +62,18 @@
 \numberwithin{table}{section}				% Tablenumbering: section.tab#
 
 
-%%% BNF grammar block
+%%% Custom settings
+
 \usepackage{syntax}
 \renewcommand{\grammarlabel}[2]{\synt{#1}\hfill#2}
 \setlength{\grammarparsep}{14pt plus 1pt minus 1pt}   % increase separation between rules
 \setlength{\grammarindent}{5cm}
 
-%%% Table
-\usepackage{arydshln}
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue
+]{hyperref}
 
 
 %%% Maketitle metadata
@@ -94,6 +98,9 @@
 %%% Begin document
 \begin{document}
 \maketitle
+
+\tableofcontents
+\newpage
 
 \section{Grammaire MiniML et Bison}
 
@@ -144,16 +151,52 @@ La compilation est divisée en quatre étapes:
 
 Chaque section traitera un type d'analyse.
 
+\paragraph{NB:}
+Le programme final doit être compilé et lié avec libcalg (\href{https://github.com/fragglet/c-algorithms}{à compiler à partir des sources}).
+Il s'agit d'une bibliothèque de structures de données, utilisée dans le but de simplifier les implémentations, i.e. le code relatif aux structures des données de base est abstrait par libcalg.
+
+\newpage
 \section{Analyse lexicale}
 
-L'implémentation de l'analyse lexicale utilise 5 types différents de lexèmes.
+\subsection{Tokens et lexèmes}
 
+L'implémentation présente permet 6 types de tokens différents (association d'un lexème avec une valeur éventuelle).
 
+\paragraph{Les litéraux:}
+Les nombres entiers, les nombres flottants et les chaînes de charactères ont leur propre catégorie.
+Les lexèmes $true$ et $false$ sont associés dans une même catégorie aux valeurs $1$ et $0$ respectivement.
+
+\paragraph{Les identifiants:}
+Les identifiants et les opérateurs appartiennent à la même catégorie, celle des noms.
+En effet, par la nature fonctionnelle des langages ML, les opérateurs sont considérés comme des fonctions infixes, et donc ne sont que des identifiants spéciaux.
+
+Une table de noms est mise en place pour associer chaque identifiant à un entier unique afin de simplifier la comparaison d'identifiants. Cette table est implémentée par une table d'association bijective.
+
+Chaque nouveau nom est associé à un entier unique strictement supérieur à $0$. L'entier $0$ est utilisé lorsqu'un identifiant ne peut pas exister (p.ex. une fonction anonyme).
+
+\paragraph{Les autres:}
+Les autres mots-clés et lexèmes ne portant pas de valeur particulière, ils forment la dernière catégorie de tokens.
+Les caractères blancs sont ignorés par l'analyseur, et les caractères invalides sont passés à l'analyseur syntaxique tels quels, où ils provoqueront une erreur de syntaxe.
+
+\subsection{Commentaires}
+L'analyseur lexical ignore les commentaires, lesquels peuvent être imbriqués.
+
+Le contexte devient $comment$ en lisant un commentaire.
+Un compteur est incrémenté et décrementé en cas d'ouverture et de fermeture de commentaire respectivement.
+Quand le compteur est nul, le contexte redevient le contexte initial.
+
+Les spécificités dans l'implémentation de cette règle permettent d'optimiser la lecture quand les caractères des balises de commentaire apparaissent dans son contenu.
+
+\begin{small}
+\paragraph{Remarque:}
+Il peut être plus efficace de créer une fonction C pour analyser les commentaires.
+En effet, en pratique, le tampon de lecture de Flex a une capacité limitée, et si la longueur du commentaire dépasse cette capacité, le comportement du programme peut être indéterminé.
+\end{small}
 
 \newpage
 \section{Annexe 1 : Grammaire}
 
-\subsection{BNF}
+\subsection{Grammaire BNF}
 \begin{grammar}
 
 <program> ::= <program> ~ <instruction> ~ `;;'
