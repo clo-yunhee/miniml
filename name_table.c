@@ -36,6 +36,7 @@ int names_getid(const char *name) {
 }
 
 const char *names_getnm(int id) {
+    if (id == NO_NAME) return "<no-name>";
     const char *name = hash_table_lookup(id_table, &id); 
     return name != NULL ? name : "<undefined>";
 }

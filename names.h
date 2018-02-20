@@ -3,7 +3,6 @@
 
 #include <stddef.h>
 
-#define UNDEFINED (-1)
 #define NO_NAME 0
 
 void names_init(void);
