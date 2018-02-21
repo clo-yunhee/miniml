@@ -71,11 +71,12 @@ all: $(PROG)
 
 .PHONY: clean-all
 clean-all: clean
-	@$(RM) $(PROG) *.dot *.dot.png *.output *.out
+	$(RM) $(PROG) *.dot *.dot.png *.output *.out
 
 .PHONY: clean
 clean:
-	@$(RM) $(OBJFILES) *.yy.* *.tab.* *.err
+	$(RM) $(OBJFILES) *.yy.* *.tab.* *.err
+	$(MAKE) -C latex-report/ clean
 
 .PHONY: re
 re: clean-all all
