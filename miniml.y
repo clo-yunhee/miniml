@@ -61,6 +61,7 @@ extern AstList *prog;
 %type <ival> FPLUS FMINUS FMUL FDIV
 %type <ival> EQUAL NOTEQU NOT OR AND
 %type <ival> GT GTE LT LTE
+%type <ival> equ_op rel_op add_op mul_op un_op
 %type <ival> operator
 
 %type <ival> INT BOOL NAME
@@ -188,43 +189,34 @@ exp_and:
   | exp_and AND exp_equ   { $$ = ast_make_binary($1, $2, $3); }
   ;
 
+equ_op: EQUAL | NOTEQU
 exp_equ:
     exp_rel
-  | exp_equ EQUAL exp_rel    { $$ = ast_make_binary($1, $2, $3); }
-  | exp_equ NOTEQU exp_rel   { $$ = ast_make_binary($1, $2, $3); }
+  | exp_equ equ_op exp_rel    { $$ = ast_make_binary($1, $2, $3); }
   ;
 
+rel_op: GT | GTE | LT | LTE
 exp_rel:
     exp_add
-  | exp_rel GT exp_add    { $$ = ast_make_binary($1, $2, $3); }
-  | exp_rel GTE exp_add   { $$ = ast_make_binary($1, $2, $3); }
-  | exp_rel LT exp_add    { $$ = ast_make_binary($1, $2, $3); }
-  | exp_rel LTE exp_add   { $$ = ast_make_binary($1, $2, $3); }
+  | exp_rel rel_op exp_add    { $$ = ast_make_binary($1, $2, $3); }
   ;
 
+add_op: PLUS | MINUS | FPLUS | FMINUS
 exp_add:
     exp_mul
-  | exp_add PLUS exp_mul     { $$ = ast_make_binary($1, $2, $3); }
-  | exp_add MINUS exp_mul    { $$ = ast_make_binary($1, $2, $3); }
-  | exp_add FPLUS exp_mul    { $$ = ast_make_binary($1, $2, $3); }
-  | exp_add FMINUS exp_mul   { $$ = ast_make_binary($1, $2, $3); }
+  | exp_add add_op exp_mul     { $$ = ast_make_binary($1, $2, $3); }
   ;
 
+mul_op: MUL | DIV | FMUL | FDIV
 exp_mul:
     exp_un
-  | exp_mul MUL exp_un    { $$ = ast_make_binary($1, $2, $3); }
-  | exp_mul DIV exp_un    { $$ = ast_make_binary($1, $2, $3); }
-  | exp_mul FMUL exp_un   { $$ = ast_make_binary($1, $2, $3); }
-  | exp_mul FDIV exp_un   { $$ = ast_make_binary($1, $2, $3); }
+  | exp_mul mul_op exp_un    { $$ = ast_make_binary($1, $2, $3); }
   ;
 
+un_op: NOT | PLUS | MINUS | FPLUS | FMINUS
 exp_un:
     atom
-  | NOT atom      { $$ = ast_make_unary($1, $2); }
-  | PLUS atom     { $$ = ast_make_unary($1, $2); }
-  | MINUS atom    { $$ = ast_make_unary($1, $2); }
-  | FPLUS atom    { $$ = ast_make_unary($1, $2); }
-  | FMINUS atom   { $$ = ast_make_unary($1, $2); }
+  | un_op atom      { $$ = ast_make_unary($1, $2); }
   ;
 
 
