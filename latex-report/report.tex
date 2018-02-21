@@ -84,7 +84,9 @@
     urlcolor=blue
 ]{hyperref}
 
-\usepackage{qtree}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{tikz-qtree}
 
 
 %%% Maketitle metadata
@@ -136,16 +138,16 @@ Le tableau de priorité/associativité est le suivant, par ordre de priorité de
     \texttt{+ - +. -.} (préfixe)	& droite \\ 
     \texttt{* / *. /.} 				& gauche \\ 
     \texttt{+ - +. -.}				& gauche \\ 
-    \texttt{= <> < <= > >=}		& gauche \\ 
-    \texttt{\&\&}							& droite \\ 
-    \texttt{||}							& droite \\ 
-    \texttt{,}								& - \\ 
-    \texttt{else}							& droite \\ 
-    \texttt{if}							& - \\ 
-    \texttt{;}								& droite \\ 
-    \texttt{let} \texttt{function}				& - \\
+    \texttt{= <> < <= > >=}		    & gauche \\ 
+    \texttt{\&\&}					& droite \\ 
+    \texttt{||}						& droite \\ 
+    \texttt{,}						& - \\ 
+    \texttt{else}					& droite \\ 
+    \texttt{if}						& - \\ 
+    \texttt{;}						& droite \\ 
+    \texttt{let function}			& - \\
 \hline
-\end{tabular}
+\end{tabular}}
 \end{center}
 
 \newpage
@@ -248,6 +250,57 @@ Le champ \texttt{expr} est l'expression du corps de la déclaration.
 
 Le champ \texttt{block} est l'expression suivant cette définition. Il correspond au bloc \texttt{in} dans la construction let-in.
 \\
+
+Et quelques exemples:
+\\
+
+\begin{tabular}{ *{3}{l} }
+    \hspace*{-1.7cm}
+\begin{tikzpicture}[scale=0.8]
+\Tree[ .\texttt{let a = 11 in 2 * a}
+        [ .names \texttt{ [a] } ]
+        [ .expr [ .\emph{Integer} \texttt{11} ] ]
+        [ .block
+            [ .\emph{Application}
+                [ .\emph{Variable} \texttt{*} ]
+                [ [ .\emph{Integer} \texttt{2} ]
+                  [ .\emph{Variable} \texttt{a} ] ]
+            ]
+        ]
+]
+\end{tikzpicture}
+    &
+\begin{tikzpicture}[scale=0.8]
+\Tree[ .\texttt{let f x = x}
+        [ .names \texttt{ [f] } ]
+        [ .rec \texttt{false} ]
+        [ .params \texttt{ [x] } ]
+        [ .expr [ .\emph{Variable} \texttt{x} ] ]
+]
+\end{tikzpicture}
+    &
+\begin{tikzpicture}[scale=0.8]
+\Tree[ .\texttt{let (x, y) = f a in g x y}
+        [ .names \texttt{ [x;y] } ]
+        [ .expr
+            [ .\emph{Application}
+                [ .\emph{Variable} \texttt{f} ]
+                [ [ .\emph{Variable} \texttt{x} ] ]
+            ]
+        ]
+        [ .block
+            [ .\emph{Application}
+                [ .\emph{Variable} \texttt{g} ]
+                [ [ .\emph{Variable} \texttt{x} ]
+                  [ .\emph{Variable} \texttt{y} ] ]
+            ]
+        ]
+    ]
+\end{tikzpicture}
+
+\end{tabular}
+
+On remarquera que l'opération \texttt{2 * a} est équivalente à l'application \texttt{(*) 2 a}, comme décrit avant.
 
 \newpage
 \section{Annexe 1 : Grammaire}
