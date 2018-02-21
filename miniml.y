@@ -223,7 +223,8 @@ exp_un:
 /* operators */
 
 operator:
-    PLUS | MINUS | MUL | DIV
+    OR | AND
+  | PLUS | MINUS | MUL | DIV
   | FPLUS | FMINUS | FMUL | FDIV
   | NOT | EQUAL | NOTEQU
   | GT | GTE | LT | LTE ;
