@@ -58,7 +58,7 @@ graph:
 
 .PHONY: report
 report:
-	$(MAKE) -C latex-report/
+	$(MAKE) -C latex-report/ once
 
 # Test
 MLFILES = $(wildcard *.ml)

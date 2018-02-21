@@ -42,7 +42,13 @@
 %%% Custom sectioning
 \usepackage{sectsty}
 \allsectionsfont{\centering \normalfont\scshape}
-
+\makeatletter
+\@ifpackagelater{scrbase}{2014/12/12}{ % for newer versions
+    % nothing
+} { % for older versions, use \@startsection instead of \src@startsection
+    \def\scr@startsection{\@startsection}
+}
+\makeatother
 
 %%% Custom headers/footers (fancyhdr package)
 \usepackage{fancyhdr}
@@ -64,6 +70,9 @@
 
 %%% Custom settings
 
+\usepackage[scaled=.85]{FiraMono}
+\DisableLigatures[f]{encoding = *, family = tt* }
+
 \usepackage{syntax}
 \renewcommand{\grammarlabel}[2]{\synt{#1}\hfill#2}
 \setlength{\grammarparsep}{14pt plus 1pt minus 1pt}   % increase separation between rules
@@ -74,6 +83,8 @@
     linkcolor=black,
     urlcolor=blue
 ]{hyperref}
+
+\usepackage{qtree}
 
 
 %%% Maketitle metadata
@@ -111,7 +122,7 @@ La récupération sur erreur s'effectue par instruction, c'est-à-dire qu'une in
 
 La grammaire en annexe contient des conflits décalage/réduction.
 Ces conflits ont été résolus en appliquant des règles de priorité.
-La priorité des opérateurs est définie explicitement, en imbriquant des règles intermédiaires pour former $simple-expr$.
+La priorité des opérateurs est définie explicitement, en imbriquant des règles intermédiaires pour former \texttt{simple-expr}.
 La priorité des non-opérateurs est définie dans le fichier source Bison, grâce aux instructions de priorité/associativé.
 
 Le tableau de priorité/associativité est le suivant, par ordre de priorité de la plus élevée à la plus faible:
@@ -119,20 +130,20 @@ Le tableau de priorité/associativité est le suivant, par ordre de priorité de
 \begin{center}
 \begin{tabular}{ | c | c | }
 \hline
-Production ou symbole & Associativité \\ \hline
-$!$ 							& droite \\ 
-application						& gauche \\ 
-$+$ $-$ $+.$ $-.$ (préfixe)		& droite \\ 
-$*$ $/$ $*.$ $/.$ 				& gauche \\ 
-$+$ $-$ $+.$ $-.$				& gauche \\ 
-$=$ $<>$ $<$ $<=$ $>$ $>=$		& gauche \\ 
-$\&\&$							& droite \\ 
-$||$							& droite \\ 
-$,$								& - \\ 
-$else$							& droite \\ 
-$if$							& - \\ 
-$;$								& droite \\ 
-$let$ $function$				& - \\
+    \textbf{Production ou symbole}  & \textbf{Associativité} \\ \hline
+    \texttt{!} 						& droite \\ 
+    application						& gauche \\ 
+    \texttt{+ - +. -.} (préfixe)	& droite \\ 
+    \texttt{* / *. /.} 				& gauche \\ 
+    \texttt{+ - +. -.}				& gauche \\ 
+    \texttt{= <> < <= > >=}		& gauche \\ 
+    \texttt{\&\&}							& droite \\ 
+    \texttt{||}							& droite \\ 
+    \texttt{,}								& - \\ 
+    \texttt{else}							& droite \\ 
+    \texttt{if}							& - \\ 
+    \texttt{;}								& droite \\ 
+    \texttt{let} \texttt{function}				& - \\
 \hline
 \end{tabular}
 \end{center}
@@ -164,7 +175,7 @@ L'implémentation présente permet 6 types de tokens différents (association d'
 
 \paragraph{Les litéraux:}
 Les nombres entiers, les nombres flottants et les chaînes de caractères ont leur propre catégorie.
-Les lexèmes $true$ et $false$ sont associés dans une même catégorie aux valeurs $1$ et $0$ respectivement.
+Les lexèmes \texttt{true} et \texttt{false} sont associés dans une même catégorie aux valeurs \texttt{1} et \texttt{0} respectivement.
 
 \paragraph{Les identifiants:}
 Les identifiants et les opérateurs appartiennent à la même catégorie des noms.
@@ -172,7 +183,7 @@ En effet, par la nature fonctionnelle des langages ML, les opérateurs sont cons
 
 Une table des noms est mise en place pour associer chaque identifiant à un entier unique afin de simplifier la comparaison d'identifiants. Cette table est implémentée par une table d'association bijective.
 
-Chaque nouveau nom est associé à un entier unique strictement supérieur à $0$. L'entier $0$ est utilisé lorsqu'un identifiant ne peut pas exister (p.ex. une fonction anonyme).
+Chaque nouveau nom est associé à un entier unique strictement supérieur à \texttt{0}. L'entier \texttt{0} est utilisé lorsqu'un identifiant ne peut pas exister (p.ex. une fonction anonyme).
 
 \paragraph{Les autres:}
 Les autres mots-clés et lexèmes restants ne portant pas de valeur particulière, ils forment la dernière catégorie de tokens.
@@ -181,7 +192,7 @@ Les caractères blancs sont ignorés par l'analyseur, et les caractères invalid
 \subsection{Commentaires}
 L'analyseur lexical ignore les commentaires, lesquels peuvent être imbriqués.
 
-Le contexte devient $comment$ en lisant un commentaire.
+Le contexte devient \texttt{comment} en lisant un commentaire.
 Un compteur est incrémenté et décrementé en cas d'ouverture et de fermeture de commentaire respectivement.
 Quand le compteur est nul, le contexte redevient le contexte initial.
 
@@ -192,6 +203,51 @@ Les spécificités dans l'implémentation de cette règle permettent d'optimiser
 Il peut être plus efficace de créer une fonction C pour analyser les commentaires.
 En effet, en pratique, le tampon de lecture de Flex a une capacité limitée, et si la longueur du commentaire dépasse cette capacité, le comportement du programme peut être indéterminé.
 \end{small}
+
+\newpage
+\section{Analyse syntaxique}
+
+\subsection{Structure d'AST}
+
+La structure d'AST utilisée contient un champ d'énumération de type et une union anonyme selon ce champ.
+
+\begin{center}
+\texttt{\begin{tabular}{ | l | p{6cm} | }
+\hline
+    \textnormal{\textbf{Type}} & \textnormal{\textbf{Champs}}   \\ \hline
+    unit            & -                 \\ \hline
+    integer         & value: Int        \\ \hline
+    float           & value: Float      \\ \hline
+    boolean         & value: Bool       \\ \hline
+    string          & value: String     \\ \hline
+    variable        & name: Int         \\ \hline
+    block           & expr: AST         \\ \hline
+    list            & list: List[AST]   \\ \hline
+    application     & function: AST,
+                        args: List[AST]                 \\ \hline
+    let             & names: List[AST],
+                        rec: Bool, params: List[AST],
+                        expr: AST, block: AST           \\ \hline
+    if              & cond: AST, if: AST, else: AST     \\ \hline
+    tuple           & list: List[AST]                   \\
+\hline
+\end{tabular}}
+\end{center}
+
+Voici une explication détaillée pour la construction \texttt{let}:
+\\
+
+Le champ \texttt{names} est une liste des noms liés par cette expression.
+Cette liste est vide si et seulement si l'expression est une déclaration de fonction anonyme avec \texttt{function}. La liste contient plus d'un nom dans le cas où l'expression définit un tuple de noms.
+
+Le champ \texttt{rec} est une valeur booléenne. Elle n'a de sens qu'en déclaration de fonction. Le champ vaut \texttt{true} si et seulement si la définition est récursive.
+
+Le champ \texttt{params} est la liste des noms des paramètres de la fonction déclarée. Cette liste est vide si et seulement s'il s'agit d'une déclaration de variable.
+
+Le champ \texttt{expr} est l'expression du corps de la déclaration.
+
+Le champ \texttt{block} est l'expression suivant cette définition. Il correspond au bloc \texttt{in} dans la construction let-in.
+\\
 
 \newpage
 \section{Annexe 1 : Grammaire}
@@ -274,25 +330,25 @@ En effet, en pratique, le tampon de lecture de Flex a une capacité limitée, et
 
 \paragraph{float:} les nombres flottants, avec décimales et/ou exposant.
 \begin{small}
-(ex: $5.$, $3.1415$, $9e+5$ ou $1.2e-67$)
+    (ex: \texttt{5.}, \texttt{3.1415}, \texttt{9e+5} ou \texttt{1.2e-67})
 \end{small}
 
-\paragraph{boolean:} les valeurs de vérité $true$ et $false$.
+\paragraph{boolean:} les valeurs de vérité \texttt{true} et \texttt{false}.
 
-\paragraph{string:} les chaînes litérales, avec les échappements suivants: \\
+\paragraph{string:} les chaînes litérales, avec les échappements suivants: 
 \begin{small}
-	le guillemet ($\backslash "$),
-	l'apostrophe ($\backslash \textsf{'}$),
-	le retour à la ligne ($\backslash n$),
-	le retour arrière ($\backslash b$),
-	la tabulation ($\backslash t$),
-	le retour chariot ($\backslash r$),
-	l'espace ($\backslash ~~$).
+    le guillemet (\texttt{\textbackslash "}),
+    l'apostrophe (\texttt{\textbackslash '}),
+    le retour à la ligne (\texttt{\textbackslash n}),
+    le retour arrière (\texttt{\textbackslash b}),
+    la tabulation (\texttt{\textbackslash t}),
+    le retour chariot (\texttt{\textbackslash r}),
+    l'espace (\texttt{\textbackslash ~}).
 \end{small}
 
 \paragraph{name:} les identifiants, commencent par une lettre et constitués de lettres, chiffres et/ou tiret du bas.
 
-\paragraph{operator:} les terminaux des opérateurs, $\&\&$, $||$ et les autres terminaux qui apparaissent dans les productions $-op$.
+\paragraph{operator:} les terminaux des opérateurs, \texttt{\&\&}, \texttt{||} et les autres terminaux qui apparaissent dans les productions \texttt{*-op}.
 
 
 \end{document}
