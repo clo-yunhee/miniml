@@ -113,42 +113,6 @@
 \maketitle
 
 \tableofcontents
-\newpage
-
-\section{Grammaire MiniML et Bison}
-
-La grammaire employée pour ce langage est décrite en annexe grâce au méta-langage BNF.
-Certaines adaptations ont été effectuées afin de rendre la grammaire compatible avec Bison.
-
-La récupération sur erreur s'effectue par instruction, c'est-à-dire qu'une instruction est ignorée si une erreur d'analyse survient, ainsi que les symboles restants jusqu'à une nouvelle instruction.
-
-La grammaire en annexe contient des conflits décalage/réduction.
-Ces conflits ont été résolus en appliquant des règles de priorité.
-La priorité des opérateurs est définie explicitement, en imbriquant des règles intermédiaires pour former \texttt{simple-expr}.
-La priorité des non-opérateurs est définie dans le fichier source Bison, grâce aux instructions de priorité/associativé.
-
-Le tableau de priorité/associativité est le suivant, par ordre de priorité de la plus élevée à la plus faible:
-
-\begin{center}
-\begin{tabular}{ | c | c | }
-\hline
-    \textbf{Production ou symbole}  & \textbf{Associativité} \\ \hline
-    \texttt{!} 						& droite \\ 
-    application						& gauche \\ 
-    \texttt{+ - +. -.} (préfixe)	& droite \\ 
-    \texttt{* / *. /.} 				& gauche \\ 
-    \texttt{+ - +. -.}				& gauche \\ 
-    \texttt{= <> < <= > >=}		    & gauche \\ 
-    \texttt{\&\&}					& droite \\ 
-    \texttt{||}						& droite \\ 
-    \texttt{,}						& - \\ 
-    \texttt{else}					& droite \\ 
-    \texttt{if}						& - \\ 
-    \texttt{;}						& droite \\ 
-    \texttt{let function}			& - \\
-\hline
-\end{tabular}
-\end{center}
 
 \newpage
 \section{Analyses}
@@ -160,7 +124,7 @@ La compilation est divisée en quatre étapes:
 \item l'analyse syntaxique (transformation du flot de lexèmes en arbre syntaxique abstrait)
 \item l'analyse sémantique (vérification de la validité des expressions)
 \item l'exécution ou la génération du code
-\end{enumerate}
+\end{enumerate} 
 
 Chaque section traitera un type d'analyse.
 
@@ -255,7 +219,7 @@ Et quelques exemples:
 \\
 
 \begin{tabular}{ *{3}{l} }
-    \hspace*{-1.7cm}
+    \hspace*{-2cm}
 \begin{tikzpicture}[scale=0.8]
 \Tree[ .\texttt{let a = 11 in 2 * a}
         [ .names \texttt{ [a] } ]
@@ -301,6 +265,56 @@ Et quelques exemples:
 \end{tabular}
 
 On remarquera que l'opération \texttt{2 * a} est équivalente à l'application \texttt{(*) 2 a}, comme décrit avant.
+
+
+\subsection{Bison et construction de l'AST}
+
+La grammaire du langage est décrite en annexe dans le méta-langage BNF. Les modifications suivantes ont été effectuées pour l'adapter au générateur Bison.
+
+La récupération sur erreur s'effectue par instruction: en cas d'erreur de syntaxe, l'instruction en cours d'analyse est ignorée et celle-ci reprend à la fin de l'instruction erronée.
+
+La grammaire décrite contient également des conflits décalage/réduction.
+Ceux-ci ont été résolus en appliquant des règles de priorité et d'associativité sur certaines productions et terminaux.
+
+Les priorité des opérations arithmétiques sont définies explicitement, en créant des règles intermédiaires pour former \texttt{simple-expr}, en suivant l'ordre conventionnel des opérations. \\
+
+Voici, pour illustrer, la réduction de l'expression $1 = 2 + 3 * 6$:
+\begin{align*}
+    \left< expr \right> \Longrightarrow \left< or \right> \Longrightarrow \left< and \right>
+        &\Longrightarrow \left< equ \right> \\
+        &\Longrightarrow \left< rel \right> = \left< rel \right> \\
+        &\Longrightarrow \left< add \right> = \left< add \right> \\
+        &\Longrightarrow \left< mul \right> = \big( \left< add \right> + \left< mul \right> \big) \\
+        &\Longrightarrow \left< un \right> = \Big( \left< mul \right> + \big( \left< un \right> * \left< un \right> \big) \Big) \\
+        &\Longrightarrow 1 = \Big( \left< un \right> + \big( 3 * 6 \big) \Big) \\
+        &\Longrightarrow 1 = \Big( 2 + \big( 3 * 6 \big) \Big) .
+\end{align*}
+
+La priorité des non-opérateurs est définie dans le fichier source Bison, grâce aux instructions de priorité/associativé.
+
+Le tableau de priorité/associativité est le suivant, par ordre de priorité de la plus élevée à la plus faible:
+
+\begin{center}
+\begin{tabular}{ | c | c | }
+\hline
+    \textbf{Production ou symbole}  & \textbf{Associativité} \\ \hline
+    \texttt{!} 						& droite \\ 
+    application						& gauche \\ 
+    \texttt{+ - +. -.} (préfixe)	& droite \\ 
+    \texttt{* / *. /.} 				& gauche \\ 
+    \texttt{+ - +. -.}				& gauche \\ 
+    \texttt{= <> < <= > >=}		    & gauche \\ 
+    \texttt{\&\&}					& droite \\ 
+    \texttt{||}						& droite \\ 
+    \texttt{,}						& - \\ 
+    \texttt{else}					& droite \\ 
+    \texttt{if}						& - \\ 
+    \texttt{;}						& droite \\ 
+    \texttt{let function}			& - \\
+\hline
+\end{tabular}
+\end{center}
+
 
 \newpage
 \section{Annexe 1 : Grammaire}
