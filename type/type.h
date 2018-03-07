@@ -1,16 +1,7 @@
 #ifndef _EVAL_H_
 #define _EVAL_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "../list.h"
-#include "../names.h"
-#include "../ast.h"
-#include "../environment.h"
-#include "../types.h"
-#include "../natives.h"
-#include "../visit.h"
+#include "../common.h"
 
 #define TYPE(tn) Type *typing_##tn (Env *env, Ast * tn , NameList **nameptr)
 

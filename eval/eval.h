@@ -1,16 +1,7 @@
 #ifndef _EVAL_H_
 #define _EVAL_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "../list.h"
-#include "../names.h"
-#include "../ast.h"
-#include "../environment.h"
-#include "../values.h"
-#include "../natives.h"
-#include "../visit.h"
+#include "../common.h"
 
 #define EVAL(type) Value *eval_##type (Env *env, Ast * type) 
 
