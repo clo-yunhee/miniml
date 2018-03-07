@@ -6,14 +6,16 @@
 
 typedef struct ast Ast;
 
+typedef enum ast_type { 
+    e_unit, e_int, e_float, e_bool,
+    e_string, e_var,
+    e_block, e_list,
+    e_funcall,
+    e_let, e_if, e_tuple
+} AstType;
+
 struct ast {
-    enum {
-        e_unit, e_int, e_float, e_bool,
-        e_string, e_var,
-        e_block, e_list,
-        e_funcall,
-        e_let, e_if, e_tuple
-    } type;
+    AstType type;
     union {
         // e_int
         int exprInteger;
