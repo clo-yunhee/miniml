@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 LEX   = flex
 YACC  = bison
-CC    = gcc
+CC    = clang
 RM    = rm -f
 MKDIR = mkdir -p
 CFLAGS := -g -std=c11 -pedantic -Wall -Werror
@@ -13,8 +13,8 @@ LDFLAGS := -lfl -lcalg
 LEXOPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
 YACCOPTS = --verbose
 
-CALGDIR := $(HOME)
-#CALGDIR := /usr/local/
+#CALGDIR := $(HOME)
+CALGDIR := /usr/local
 CFLAGS  += -I$(CALGDIR)/include/libcalg-1.0
 LDFLAGS += -L$(CALGDIR)/lib
 
@@ -27,6 +27,7 @@ CFILES += environment.c
 CFILES += $(wildcard natives/*.c)
 CFILES += $(wildcard type/*.c)
 CFILES += $(wildcard eval/*.c)
+CFILES += $(wildcard infer/*.c)
 
 OBJFILES := $(subst .c,.o,$(CFILES))
 

@@ -6,14 +6,9 @@
 #include <stdbool.h>
 
 #include <string.h>
+#include <ctype.h>
 
-#include <libcalg/list.h>
-#include <libcalg/hash-table.h>
-
-#include <libcalg/hash-int.h>
-#include <libcalg/hash-string.h>
-#include <libcalg/compare-int.h>
-#include <libcalg/compare-string.h>
+#include <libcalg.h>
 
 #include "list.h"
 #include "names.h"

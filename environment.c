@@ -88,6 +88,13 @@ Env *env_addlist(NameList *names, TypeList *types, ValueList *values, Env *tail)
     return env;
 }
 
+Env *env_find(int name, Env *env) {
+    if (env == NULL) return NULL;
+    
+    if (env->name == name) return env;
+    else return env_find(name, env->next);
+}
+
 void env_print(Env *env) {
     if (env->name == NO_NAME) {
         printf("-");

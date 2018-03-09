@@ -15,6 +15,7 @@ typedef ListEntry AstList;
 typedef ListEntry NameList;
 typedef ListEntry TypeList;
 typedef ListEntry ValueList;
+typedef ListEntry TypedAstList;
 
 void *nmalloc(int name);
 

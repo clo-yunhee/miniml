@@ -44,6 +44,8 @@ int main(int argc, char *argv[]) {
     while (list_iter_has_more(&progIter)) {
         Ast *expr = list_iter_next(&progIter);
 
+        ArrayList *list = infer_numbering(env, expr);
+/*
         NameList *names;
         Type *type = visit_type(global_env, expr, &names);
 
@@ -61,6 +63,7 @@ int main(int argc, char *argv[]) {
                 env_printrange(global_env, start);
             }
         }
+*/
     }
 
     return EXIT_SUCCESS;
