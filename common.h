@@ -18,6 +18,7 @@
 #include "values.h"
 #include "visit.h"
 #include "natives.h"
-
+#include "infer/infer.h"
+#include "run.h"
 
 #endif // _COMMON_H_

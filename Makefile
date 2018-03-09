@@ -4,7 +4,7 @@ YACC  = bison
 CC    = clang
 RM    = rm -f
 MKDIR = mkdir -p
-CFLAGS := -g -std=c11 -pedantic -Wall -Werror
+CFLAGS := -g -std=c11 -pedantic -Wall -Wextra
 CFLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG 
 LDFLAGS := -lfl -lcalg
 # --nounput: ne génère pas la fonction yyunput() inutile
@@ -18,7 +18,7 @@ CALGDIR := /usr/local
 CFLAGS  += -I$(CALGDIR)/include/libcalg-1.0
 LDFLAGS += -L$(CALGDIR)/lib
 
-CFILES := main.c list.c
+CFILES := main.c run.c list.c
 CFILES += name_table.c name_list.c string_escape.c
 CFILES += ast_make.c ast_free.c ast_print.c
 CFILES += value_make.c value_free.c value_print.c

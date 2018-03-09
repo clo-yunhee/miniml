@@ -35,36 +35,7 @@ int main(int argc, char *argv[]) {
     alist_print(prog);
     printf("\n\n");
     
-
-    Env *global_env = env_init(); 
-
-    // usage example for visitor functions
-    ListIterator progIter;
-    list_iterate(&prog, &progIter);
-    while (list_iter_has_more(&progIter)) {
-        Ast *expr = list_iter_next(&progIter);
-
-        ArrayList *list = infer_numbering(env, expr);
-/*
-        NameList *names;
-        Type *type = visit_type(global_env, expr, &names);
-
-        if (!type_equ(type, terror)) { // if no error, evaluate
-            Value *value = visit_eval(global_env, expr);
-
-            if (list_length(names) == 1) {
-                int name = *(int*) list_data(names);
-                global_env = env_make(name, type, value, global_env);
-                env_print(global_env);
-            } else {
-                Env *start = global_env;
-                global_env = env_addlist(names, type->typeTuple, value->valTuple, global_env);
-
-                env_printrange(global_env, start);
-            }
-        }
-*/
-    }
+    run_list(prog);
 
     return EXIT_SUCCESS;
 }
