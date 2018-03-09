@@ -99,7 +99,12 @@ void env_print(Env *env) {
     if (env->name == NO_NAME) {
         printf("-");
     } else {
-        printf("val %s", names_getnm(env->name));
+        const char *name = names_getnm(env->name);
+        
+        printf("val ");
+
+        // print parentheses if it's a special id
+        printf(isalpha(name[0]) ? "%s" : "( %s )", name);
     }
     printf(" : ");
     type_print(env->type);
