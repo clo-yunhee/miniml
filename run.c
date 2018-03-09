@@ -1,6 +1,11 @@
-#include "common.h"
+#include "common.h" 
 
 Env *run_list(AstList *list) {
+    /*
+    alist_print(list);
+    printf("\n\n");
+    */
+
     Env *env = env_init();
 
     ListIterator it;
@@ -9,10 +14,12 @@ Env *run_list(AstList *list) {
     while (list_iter_has_more(&it)) {
         Ast *expr = list_iter_next(&it);
 
-        Env *start = env;
+        infer_numbering(env, expr);
+
+        /*Env *start = env;
         run_expr(&env, expr);
 
-        env_printrange(env, start);
+        env_printrange(env, start);*/
     }
 
     return env;

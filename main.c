@@ -30,10 +30,6 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Unknown error\n");
         exit(EXIT_FAILURE);
     }
-
-    
-    alist_print(prog);
-    printf("\n\n");
     
     run_list(prog);
 
