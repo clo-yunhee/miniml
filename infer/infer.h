@@ -3,8 +3,10 @@
 
 #include "../common.h"
 
-typedef struct typed_ast TypedAst;
+#define IERR(str)        fprintf(stderr, str "\n")
+#define IERR2(str, ...)  fprintf(stderr, str "\n", __VA_ARGS__);
 
+typedef struct typed_ast TypedAst;
 struct typed_ast {
     AstType type;
     union {
@@ -43,8 +45,12 @@ struct typed_ast {
     Type *xtype;
 };
 
-/* Returns a list of all expressions, numbered, with 'X types. */
-ArrayList *infer_numbering(Env *env, Ast *ast);
+typedef ListEntry SubstList;
+typedef struct { int name; Type *type; } Substitution;
+Substitution *subst_make(int name, Type *type);
 
+typedef ListEntry ConsList;
+typedef struct { Type *first; Type *second; } Constraint;
+Constraint *cons_make(Type *first, Type *second);
 
 #endif // _INFER_H_

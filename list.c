@@ -5,6 +5,25 @@ ListEntry *list_new(ListValue value) {
     return list_append(&list, value);
 }
 
+ListEntry *list_last_entry(ListEntry *list) {
+    if (list == NULL) return NULL;
+
+    ListEntry *next;
+
+    do {
+        next = list_next(list);
+        if (next == NULL) break;
+
+        list = next;
+    } while (list != NULL);
+
+    return list;
+}
+
+ListValue list_last_data(ListEntry *list) {
+    return list_data(list_last_entry(list));
+}
+
 void list_foreach(ListEntry *list, ListConsumer func) {
     ListIterator it;
     list_iterate(&list, &it);
@@ -33,6 +52,8 @@ void list_print(ListEntry *list, ListPrintFunc func, const char *pref, const cha
 
 void *nmalloc(int name) {
     int *p = malloc(sizeof(int));
+    if (p == NULL) return NULL;
+    
     *p = name;
     return p;
 }

@@ -7,6 +7,8 @@ typedef void (*ListPrintFunc)(ListValue value);
 typedef void (*ListConsumer)(ListValue value);
 
 ListEntry *list_new(ListValue value);
+ListEntry *list_last_entry(ListEntry *list);
+ListValue list_last_data(ListEntry *list);
 void list_foreach(ListEntry *list, ListConsumer func);
 void list_print(ListEntry *list, ListPrintFunc func,
         const char *pref, const char *delim, const char *suff);

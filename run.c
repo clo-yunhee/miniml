@@ -14,12 +14,10 @@ Env *run_list(AstList *list) {
     while (list_iter_has_more(&it)) {
         Ast *expr = list_iter_next(&it);
 
-        infer_numbering(env, expr);
-
-        /*Env *start = env;
+        Env *start = env;
         run_expr(&env, expr);
 
-        env_printrange(env, start);*/
+        env_printrange(env, start);
     }
 
     return env;
@@ -28,6 +26,11 @@ Env *run_list(AstList *list) {
 void run_expr(Env **env, Ast *expr) {
     NameList *names;
     Type *type = visit_type(*env, expr, &names);
+
+    //---------------------------------
+    ArrayList *num = infer_numbering(*env, expr);
+    ListEntry *cons = infer_constraints(*env, num);
+    //---------------------------------
 
     if (type_equ(type, terror)) return; // ignore if error
 
