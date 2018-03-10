@@ -66,7 +66,7 @@ void collect_cons(ConsList **lptr, TypedAst *ast) {
         case et_natfun1:
             if (argCount == 1) {
                 list_append(lptr, cons_make(list_nth_data(args, 0), fntype->typeNatfun1.from));
-                list_append(lptr, cons_make(list_nth_data(args, 1), fntype->typeNatfun1.to));
+                list_append(lptr, cons_make(xtype, fntype->typeNatfun1.to));
             } else {
                 IERR("Too many arguments");
             }
