@@ -30,7 +30,7 @@ NATFUN2(and, x, y) {
     RBOOL(x->valBool && y->valBool);
 }
 NATFUN2(or, x, y) {
-    RBOOL(y->valBool || y->valBool);
+    RBOOL(x->valBool || y->valBool);
 }
 
 //structural comparison
