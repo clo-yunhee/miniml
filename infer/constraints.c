@@ -198,6 +198,8 @@ void collect_cons(ConsList **lptr, TypedAst *ast) {
             collect_cons(lptr, bElse);
         }
 
+        list_append(lptr, cons_make(xtype, ast->exprIf.bIf));
+
         break;
     }
     case e_tuple:
