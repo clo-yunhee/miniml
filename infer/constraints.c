@@ -52,7 +52,6 @@ void collect_cons(ConsList **lptr, TypedAst *ast) {
     case e_bool:
     case e_string:
     case e_var:
-    case e_tuple:
         break;
     case e_block:
         list_append(lptr, cons_make(xtype, ast->exprBlock->xtype));
@@ -201,6 +200,9 @@ void collect_cons(ConsList **lptr, TypedAst *ast) {
 
         break;
     }
+    case e_tuple:
+        collect_cons_list(lptr, ast->exprTuple);
+        break;
     default:
         IERR("Inference collect type not implemented");
         break;
