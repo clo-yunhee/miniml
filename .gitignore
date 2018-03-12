@@ -8,3 +8,5 @@
 *.output
 *.out
 *.nfs*
+compile_commands.json
+

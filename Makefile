@@ -6,6 +6,7 @@ RM    = rm -f
 MKDIR = mkdir -p
 CFLAGS := -g -std=c11 -pedantic -Wall -Wextra
 CFLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG 
+CFLAGS += -I.
 LDFLAGS := -lfl -lcalg
 # --nounput: ne génère pas la fonction yyunput() inutile
 # --DYY_NO_INPUT: ne prend pas en compte la fonction input() inutile

@@ -4,8 +4,8 @@
 
 #define ADD(n, t, v) env = env_make(n, t, v, env);
 
-#define ADDNAT1(fn, tx, ty)        ADD(name_##fn, type_natfun1(tx, ty), value_make_natfun1(native_##fn))
-#define ADDNAT2(fn, tx, ty, tz)    ADD(name_##fn, type_natfun2(tx, ty, tz), value_make_natfun2(native_##fn))
+#define ADDNAT1(fn, tx, ty)        ADD(name_##fn, type_fun1(tx, ty), value_make_natfun1(native_##fn))
+#define ADDNAT2(fn, tx, ty, tz)    ADD(name_##fn, type_fun2(tx, ty, tz), value_make_natfun2(native_##fn))
 
 Env *env_init(void) {
     // init standard objects
@@ -35,12 +35,12 @@ Env *env_init(void) {
     /* ( <= ) : 'a -> 'a -> bool */
     /* ( > ) : 'a -> 'a -> bool  */
     /* ( >= ) : 'a -> 'a -> bool */
-    ADDNAT2(compare, tpoly1, tpoly1, tint);
-    ADDNAT2(equal, tpoly1, tpoly1, tbool);
-    ADDNAT2(lt, tpoly1, tpoly1, tbool);
-    ADDNAT2(lte, tpoly1, tpoly1, tbool);
-    ADDNAT2(gt, tpoly1, tpoly1, tbool);
-    ADDNAT2(gte, tpoly1, tpoly1, tbool);
+    ADDNAT2(compare, tpoly, tpoly, tint);
+    ADDNAT2(equal, tpoly, tpoly, tbool);
+    ADDNAT2(lt, tpoly, tpoly, tbool);
+    ADDNAT2(lte, tpoly, tpoly, tbool);
+    ADDNAT2(gt, tpoly, tpoly, tbool);
+    ADDNAT2(gte, tpoly, tpoly, tbool);
 
     /* ( && ) : bool -> bool -> bool */
     /* ( || ) : bool -> bool -> bool */

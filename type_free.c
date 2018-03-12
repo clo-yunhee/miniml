@@ -9,7 +9,7 @@ void type_free(Type *type) {
     if (type == NULL) return;
 
     switch (type->type) {
-    case et_natfun1:
+    /*case et_natfun1:
         type_free(type->typeNatfun1.from);
         type_free(type->typeNatfun1.to);
         break;
@@ -17,7 +17,7 @@ void type_free(Type *type) {
         type_free(type->typeNatfun2.from1);
         type_free(type->typeNatfun2.from2);
         type_free(type->typeNatfun2.to);
-        break;
+        break;*/
     case et_fun:
         tdlist_free(type->typeFun.args);
         type_free(type->typeFun.to);

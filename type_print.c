@@ -26,7 +26,7 @@ void type_print(Type *type) {
     case et_string:
         printf("string");
         break;
-    case et_natfun1:
+    /*case et_natfun1:
         type_print(type->typeNatfun1.from);
         printf(" -> ");
         type_print(type->typeNatfun1.to);
@@ -37,7 +37,7 @@ void type_print(Type *type) {
         type_print(type->typeNatfun2.from2);
         printf(" -> ");
         type_print(type->typeNatfun2.to);
-        break;
+        break;*/
     case et_fun:
         tdlist_print(type->typeFun.args, "", " -> ", "");
         printf(" -> ");

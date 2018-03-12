@@ -1,16 +1,33 @@
 #include "infer.h"
 
-void collect_cons(ConsList **lptr, TypedAst *ast);
-void collect_cons_list(ConsList **lptr, TypedAstList *astlist);
 
-
-ConsList *infer_constraints(Env *env, ArrayList *astlist) {
+ConsList *infer_constraints(TypedAst *expr) {
     ConsList *list = NULL;
-    TypedAst *expr = astlist->data[0];
-
+    
     collect_cons(&list, expr);
 
     return list;
+}
+
+ConsList *cons_zip(TypeList *first, TypeList *second) {
+    if (list_length(first) != list_length(second)) {
+        return NULL;
+    }
+
+    ConsList *zipped = NULL;
+    
+    ListIterator it1, it2;
+    list_iterate(&first, &it1);
+    list_iterate(&second, &it2);
+
+    while (list_iter_has_more(&it1) && list_iter_has_more(&it2)) {
+        Type *type1 = list_iter_next(&it1);
+        Type *type2 = list_iter_next(&it2);
+
+        list_append(&zipped, cons_make(type1, type2));
+    }
+
+    return zipped;
 }
 
 
@@ -63,7 +80,7 @@ void collect_cons(ConsList **lptr, TypedAst *ast) {
            3. a poly type : constraint the function expression to match the args and return types
            4. neither : throw an error  */
         switch (fntype->type) {
-        case et_natfun1:
+        /*case et_natfun1:
             if (argCount == 1) {
                 list_append(lptr, cons_make(list_nth_data(args, 0), fntype->typeNatfun1.from));
                 list_append(lptr, cons_make(xtype, fntype->typeNatfun1.to));
@@ -81,7 +98,7 @@ void collect_cons(ConsList **lptr, TypedAst *ast) {
             } else {
                 IERR("Too many arguments");
             }
-            break;
+            break;*/
         case et_fun:
         {
             TypeList *params = fntype->typeFun.args;
@@ -141,24 +158,34 @@ void collect_cons(ConsList **lptr, TypedAst *ast) {
         
         break;
     }
-    /*case e_let:
+    case e_let:
     {
-        bool rec = ast->exprLet.rec;
-        NameList *params = ast->exprLet.params;
+        Type *declType = ast->exprLet.exprType;
+        TypeList *params = ast->exprLet.params;
+
         TypedAst *expr = ast->exprLet.expr;
         TypedAst *block = ast->exprLet.block;
-
-        Type *retType;
-
-        // variable let
-        if (params == NULL) {
-            retType = expr->xtype;
-        } else {
-            
+        
+        Type *retType = expr->xtype;
+        
+        // in a function let the type is a function
+        if (params != NULL) {
+           retType = type_fun(params, retType);
         }
+        
+        // whether it's a let or a let-in, decl = ret
+        list_append(lptr, cons_make(retType, declType));
+        collect_cons(lptr, expr);
+        
+        if (block != NULL) { // let-in, match block
+            retType = block->xtype;
+            collect_cons(lptr, block);
+        }
+        
+        list_append(lptr, cons_make(xtype, retType));
 
         break;
-    }*/
+    }
     case e_if:
     {
         list_append(lptr, cons_make(tbool, ast->exprIf.cond->xtype));

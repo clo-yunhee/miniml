@@ -24,15 +24,13 @@ Env *run_list(AstList *list) {
 }
 
 void run_expr(Env **env, Ast *expr) {
-    NameList *names;
-    Type *type = visit_type(*env, expr, &names);
+    NameList *names = ast_names(expr);
+    Type *type = infer_type(*env, expr);
 
-    //---------------------------------
-    ArrayList *num = infer_numbering(*env, expr);
-    ListEntry *cons = infer_constraints(*env, num);
-    //---------------------------------
-
-    if (type_equ(type, terror)) return; // ignore if error
+    if (type_equ(type, terror)) {
+        fprintf(stderr, "Typing error\n");
+        return; // ignore if error
+    }
 
     Value *value = visit_eval(*env, expr);
 
@@ -44,3 +42,11 @@ void run_expr(Env **env, Ast *expr) {
     }
 }
 
+NameList *ast_names(Ast *expr) {
+    // needs to be a global let
+    if (expr->type == e_let && expr->exprLet.block == NULL) {
+        return expr->exprLet.names;
+    } else {
+        return list_new(nmalloc(NO_NAME));
+    }
+}

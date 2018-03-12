@@ -31,19 +31,15 @@ MAKETYPE(string) (void) {
     return type;
 }
 
-MAKETYPE(natfun1) (Type *from, Type *to) {
-    DECLTYPE(et_natfun1);
-    type->typeNatfun1.from = from;
-    type->typeNatfun1.to = to;
-    return type;
+MAKETYPE(fun1) (Type *from, Type *to) {
+    TypeList *args = list_new(from);
+    return type_fun(args, to);
 }
 
-MAKETYPE(natfun2) (Type *from1, Type *from2, Type *to) {
-    DECLTYPE(et_natfun2);
-    type->typeNatfun2.from1 = from1;
-    type->typeNatfun2.from2 = from2;
-    type->typeNatfun2.to = to;
-    return type;
+MAKETYPE(fun2) (Type *from1, Type *from2, Type *to) {
+    TypeList *args = list_new(from1);
+    list_append(&args, from2);
+    return type_fun(args, to);
 }
 
 MAKETYPE(fun) (TypeList *args, Type *to) {

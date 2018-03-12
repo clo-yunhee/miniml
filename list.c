@@ -5,6 +5,24 @@ ListEntry *list_new(ListValue value) {
     return list_append(&list, value);
 }
 
+ListEntry *list_concat(ListEntry *first, ListEntry *second) {
+    ListEntry *final = NULL;
+    
+    ListIterator it1;
+    list_iterate(&first, &it1);
+    while (list_iter_has_more(&it1)) {
+        list_append(&final, list_iter_next(&it1));
+    }
+
+    ListIterator it2;
+    list_iterate(&second, &it2);
+    while (list_iter_has_more(&it2)) {
+        list_append(&final, list_iter_next(&it2));
+    }
+
+    return final;
+}
+
 ListEntry *list_last_entry(ListEntry *list) {
     if (list == NULL) return NULL;
 

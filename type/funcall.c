@@ -11,7 +11,7 @@ TYPE(funcall) {
     case et_fun:
         // normal function
         break;
-    case et_natfun1:
+    /*case et_natfun1:
     {
         if (argcount > 1) {
             VERR("Too many arguments"); 
@@ -41,7 +41,7 @@ TYPE(funcall) {
         checktypes(func->typeNatfun2.from2, arg2, "Argument type mismatch");
 
         return func->typeNatfun2.to;
-    }
+    }*/
     default:
         VERR("Expression is not a function and cannot be applied");
     }

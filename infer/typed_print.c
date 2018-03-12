@@ -1,14 +1,18 @@
-#include "common.h"
+#include "infer.h"
 
-void alist_print(AstList *list) {
-    list_print(list, (ListPrintFunc) ast_print, "[", ", ", "]");
+void talist_print(TypedAstList *astlist) {
+    list_print(astlist, (ListPrintFunc) typed_print, "[", ", ", "]");
 }
 
-void ast_print(Ast *ast) {
+void typed_print(TypedAst *ast) {
     if (ast == NULL) {
         printf("<NULL>");
         return;
     }
+
+    printf("<");
+    type_print(ast->xtype);
+    printf("> ");
 
     switch (ast->type) {
     case e_unit:
@@ -31,19 +35,19 @@ void ast_print(Ast *ast) {
         break;
     case e_block:
         printf("Block (");
-        ast_print(ast->exprBlock);
+        typed_print(ast->exprBlock);
         printf(")");
         break;
     case e_list:
         printf("List ");
-        alist_print(ast->exprList);
+        talist_print(ast->exprList);
         break;
     case e_funcall:
         printf("FunCall (");
-        ast_print(ast->exprFunCall.function);
+        typed_print(ast->exprFunCall.function);
         printf(", ");
         printf("Args ");
-        alist_print(ast->exprFunCall.args);
+        talist_print(ast->exprFunCall.args);
         printf(")");
         break;
     case e_let:
@@ -60,19 +64,19 @@ void ast_print(Ast *ast) {
             printf("In");
         }
         printf(" (");
-        if (ast->exprLet.names != NULL) {
-            nmlist_print(ast->exprLet.names);
+        if (ast->exprLet.exprType != NULL) {
+            type_print(ast->exprLet.exprType);
             printf(", ");
         }
         if (ast->exprLet.params != NULL) {
             printf("Params ");
-            nmlist_print(ast->exprLet.params);
+            tdlist_print(ast->exprLet.params, "(", ", ", ")");
             printf(", ");
         }
-        ast_print(ast->exprLet.expr);
+        typed_print(ast->exprLet.expr);
         if (ast->exprLet.block != NULL) {
             printf(", ");
-            ast_print(ast->exprLet.block);
+            typed_print(ast->exprLet.block);
         }
         printf(")");
         break;
@@ -82,18 +86,18 @@ void ast_print(Ast *ast) {
             printf("Else");
         }
         printf(" (");
-        ast_print(ast->exprIf.cond);
+        typed_print(ast->exprIf.cond);
         printf(", ");
-        ast_print(ast->exprIf.bIf);
+        typed_print(ast->exprIf.bIf);
         if (ast->exprIf.bElse != NULL) {
             printf(", ");
-            ast_print(ast->exprIf.bElse);
+            typed_print(ast->exprIf.bElse);
         }
         printf(")");
         break;
     case e_tuple:
         printf("Tuple ");
-        alist_print(ast->exprTuple);
+        talist_print(ast->exprTuple);
         break;
     default:
         printf("Unhandled");
