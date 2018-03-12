@@ -3,8 +3,8 @@
 
 #include "../common.h"
 
-#define IERR(str)        fprintf(stderr, str "\n")
-#define IERR2(str, ...)  fprintf(stderr, str "\n", __VA_ARGS__);
+#define IERR(str)        do { fprintf(stderr, str "\n"); *error = true; } while (false)
+#define IERR2(str, ...)  do { fprintf(stderr, str "\n", __VA_ARGS__); *error = true; } while (false)
 
 
 struct typed_ast {
@@ -50,7 +50,7 @@ struct typed_ast {
 extern int poly;
 #define new_poly()  type_poly(poly++)
 
-Type *type_repoly(Type *type);
+Type *type_repoly(Type *type, bool *error);
 
 //-- constraints
 
@@ -71,28 +71,27 @@ Substitution *subst_make(int poly, Type *type);
 void subst_print(Substitution *sub);
 
 /* Applies a single substitution to the type */
-Type *subst_sub(Substitution *sub, Type *type);
-
-
+Type *subst_sub(Substitution *sub, Type *type, bool *error);
+TypeList *subst_sub_list(Substitution *sub, TypeList *list, bool *error);
 
 //--------------------------
 //-- Type annotation
 
-TypedAst *annotate_ast(Env *env, Ast *ast);
-TypedAstList *annotate_list(Env *env, AstList *astlist);
+TypedAst *annotate_ast(Env *env, Ast *ast, bool *error);
+TypedAstList *annotate_list(Env *env, AstList *astlist, bool *error);
 
 //-- Constraint collection
 
-void collect_cons(ConsList **lptr, TypedAst *ast);
-void collect_cons_list(ConsList **lptr, TypedAstList *astlist);
+void collect_cons(ConsList **lptr, TypedAst *ast, bool *error);
+void collect_cons_list(ConsList **lptr, TypedAstList *astlist, bool *error);
 
 //-- Unification
 
-SubstList *unify_one(Type *first, Type *second);
+SubstList *unify_one(Type *first, Type *second, bool *error);
 
 //-- Apply
 
-Type *apply_one(SubstList *subs, Type *type);
-void apply_list(SubstList *subs, TypedAstList *ast);
+Type *apply_one(SubstList *subs, Type *type, bool *error);
+void apply_list(SubstList *subs, TypedAstList *ast, bool *error);
 
 #endif // _INFER_H_

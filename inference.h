@@ -9,16 +9,16 @@ void talist_print(TypedAstList *astlist);
 
 
 /* Annotates the expression with types. */
-TypedAst *infer_annotate(Env *env, Ast *expr);
+TypedAst *infer_annotate(Env *env, Ast *expr, bool *error);
 
 /* Collects a set of constraints on the types. */
-ConsList *infer_constraints(TypedAst *expr);
+ConsList *infer_constraints(TypedAst *expr, bool *error);
 
 /* Unifies the constraints into a list of ordered substitutions. */
-SubstList *infer_unify(ConsList *constraints);
+SubstList *infer_unify(ConsList *constraints, bool *error);
 
 /* Applies the substitutions to the expression. !!THIS FUNCTION ALTERS THE ORIGINAL EXPRESSION!! */
-TypedAst *infer_apply(SubstList *subs, TypedAst *expr);
+TypedAst *infer_apply(SubstList *subs, TypedAst *expr, bool *error);
 
 
 /* Infer the type of this expression. */

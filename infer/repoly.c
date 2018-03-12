@@ -1,7 +1,7 @@
 #include "infer.h"
 
 
-Type *type_repoly(Type *type) {
+Type *type_repoly(Type *type, bool *error) {
     
     Type *newType = malloc(sizeof(Type));
 
@@ -22,10 +22,10 @@ Type *type_repoly(Type *type) {
         list_iterate(&type->typeFun.args, &it);
         while (list_iter_has_more(&it)) {
             Type *arg = list_iter_next(&it);
-            list_append(&args, type_repoly(arg));
+            list_append(&args, type_repoly(arg, error));
         }
         newType->typeFun.args = args;
-        newType->typeFun.to = type_repoly(type->typeFun.to);
+        newType->typeFun.to = type_repoly(type->typeFun.to, error);
         break;
     }
     case et_tuple:
@@ -35,7 +35,7 @@ Type *type_repoly(Type *type) {
         list_iterate(&type->typeTuple, &it);
         while (list_iter_has_more(&it)) {
             Type *elem = list_iter_next(&it);
-            list_append(&tuple, type_repoly(elem));
+            list_append(&tuple, type_repoly(elem, error));
         }
         newType->typeTuple = tuple;
         break;

@@ -1,24 +1,24 @@
 #include "infer.h"
 
 
-SubstList *infer_unify(ConsList *constraints) {
+SubstList *infer_unify(ConsList *constraints, bool *error) {
     if (constraints == NULL) return NULL;
 
     Constraint *cons = list_data(constraints);
     ConsList *next = list_next(constraints);
 
-    SubstList *subs2 = infer_unify(next);
+    SubstList *subs2 = infer_unify(next, error);
     
-    Type *first = apply_one(subs2, cons->first);
-    Type *second = apply_one(subs2, cons->second);
+    Type *first = apply_one(subs2, cons->first, error);
+    Type *second = apply_one(subs2, cons->second, error);
 
-    SubstList *subs1 = unify_one(first, second);
+    SubstList *subs1 = unify_one(first, second, error);
 
     return list_concat(subs1, subs2);
 }
 
 
-SubstList *unify_one(Type *first, Type *second) {
+SubstList *unify_one(Type *first, Type *second, bool *error) {
     if (type_equ(first, second)) return NULL;
 
     TypeEnum t1 = first->type;
@@ -36,7 +36,7 @@ SubstList *unify_one(Type *first, Type *second) {
 
         list_prepend(&cons, cons_make(first->typeFun.to, second->typeFun.to));
 
-        return infer_unify(cons);
+        return infer_unify(cons, error);
     } 
     
     if (t1 == et_tuple && t2 == et_tuple) {
@@ -46,7 +46,7 @@ SubstList *unify_one(Type *first, Type *second) {
             return NULL;
         }
 
-        return infer_unify(cons);
+        return infer_unify(cons, error);
     }
 
     IERR("Type mismatch");

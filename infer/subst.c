@@ -1,11 +1,11 @@
 #include "infer.h"
 
 
-#define subst(type) subst_sub(sub, type)
-#define substl(list) subst_sub_list(sub, list)
+#define subst(type) subst_sub(sub, type, error)
+#define substl(list) subst_sub_list(sub, list, error)
 
 
-TypeList *subst_sub_list(Substitution *sub, TypeList *list) {
+TypeList *subst_sub_list(Substitution *sub, TypeList *list, bool *error) {
     TypeList *sublist = NULL;
     
     ListIterator it;
@@ -21,7 +21,7 @@ TypeList *subst_sub_list(Substitution *sub, TypeList *list) {
 }
 
 
-Type *subst_sub(Substitution *sub, Type *type) {
+Type *subst_sub(Substitution *sub, Type *type, bool *error) {
     switch (type->type) {
     case et_unit:
     case et_int:

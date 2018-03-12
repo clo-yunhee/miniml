@@ -1,10 +1,10 @@
 #include "infer.h"
 
 
-ConsList *infer_constraints(TypedAst *expr) {
+ConsList *infer_constraints(TypedAst *expr, bool *error) {
     ConsList *list = NULL;
     
-    collect_cons(&list, expr);
+    collect_cons(&list, expr, error);
 
     return list;
 }
@@ -31,17 +31,17 @@ ConsList *cons_zip(TypeList *first, TypeList *second) {
 }
 
 
-void collect_cons_list(ConsList **lptr, TypedAstList *astlist) {
+void collect_cons_list(ConsList **lptr, TypedAstList *astlist, bool *error) {
     ListIterator it;
     list_iterate(&astlist, &it);
 
     while (list_iter_has_more(&it)) {
         TypedAst *ast = list_iter_next(&it);
-        collect_cons(lptr, ast);
+        collect_cons(lptr, ast, error);
     }
 }
 
-void collect_cons(ConsList **lptr, TypedAst *ast) {
+void collect_cons(ConsList **lptr, TypedAst *ast, bool *error) {
 
     Type *xtype = ast->xtype;
 
@@ -55,14 +55,14 @@ void collect_cons(ConsList **lptr, TypedAst *ast) {
         break;
     case e_block:
         list_append(lptr, cons_make(xtype, ast->exprBlock->xtype));
-        collect_cons(lptr, ast->exprBlock);
+        collect_cons(lptr, ast->exprBlock, error);
         break;
     case e_list:
     {
         // list type if the last expression
         TypedAst *last = list_last_data(ast->exprList);
         list_append(lptr, cons_make(xtype, last->xtype));
-        collect_cons_list(lptr, ast->exprList);
+        collect_cons_list(lptr, ast->exprList, error);
         break;
     }
     case e_funcall:
@@ -152,8 +152,8 @@ void collect_cons(ConsList **lptr, TypedAst *ast) {
             break;
         }
 
-        collect_cons(lptr, func);
-        collect_cons_list(lptr, args);
+        collect_cons(lptr, func, error);
+        collect_cons_list(lptr, args, error);
         
         break;
     }
@@ -174,11 +174,11 @@ void collect_cons(ConsList **lptr, TypedAst *ast) {
         
         // whether it's a let or a let-in, decl = ret
         list_append(lptr, cons_make(retType, declType));
-        collect_cons(lptr, expr);
+        collect_cons(lptr, expr, error);
         
         if (block != NULL) { // let-in, match block
             retType = block->xtype;
-            collect_cons(lptr, block);
+            collect_cons(lptr, block, error);
         }
         
         list_append(lptr, cons_make(xtype, retType));
@@ -189,13 +189,13 @@ void collect_cons(ConsList **lptr, TypedAst *ast) {
     {
         list_append(lptr, cons_make(tbool, ast->exprIf.cond->xtype));
 
-        collect_cons(lptr, ast->exprIf.cond); 
-        collect_cons(lptr, ast->exprIf.bIf);
+        collect_cons(lptr, ast->exprIf.cond, error); 
+        collect_cons(lptr, ast->exprIf.bIf, error);
 
         TypedAst *bElse = ast->exprIf.bElse;
         if (bElse != NULL) {
             list_append(lptr, cons_make(ast->exprIf.bIf->xtype, bElse->xtype));
-            collect_cons(lptr, bElse);
+            collect_cons(lptr, bElse, error);
         }
 
         list_append(lptr, cons_make(xtype, ast->exprIf.bIf));
@@ -203,7 +203,7 @@ void collect_cons(ConsList **lptr, TypedAst *ast) {
         break;
     }
     case e_tuple:
-        collect_cons_list(lptr, ast->exprTuple);
+        collect_cons_list(lptr, ast->exprTuple, error);
         break;
     default:
         IERR("Inference collect type not implemented");
