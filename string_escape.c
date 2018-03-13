@@ -15,7 +15,7 @@ char *unescape(const char *str) {
 
     // the resulting string will never exceed the original's length
     char *result = calloc(len + 1, sizeof(char));
-    int k = 0;
+    unsigned int k = 0;
 
     char c;
     int e;
@@ -53,7 +53,7 @@ char *escape(const char *str) {
     // double size to escape safely and the quotes
     size_t len = 2 * strlen(str) + 2;
     char *result = calloc(len + 1, sizeof(char));
-    int k = 0;
+    unsigned int k = 0;
 
     // ignore the leading quote
     ++str;

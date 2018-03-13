@@ -78,7 +78,7 @@ void *nmalloc(int name) {
 
 
 void arraylist_foreach(ArrayList *list, ListConsumer func) {
-    for (int i = 0; i < list->length; ++i) {
+    for (unsigned int i = 0; i < list->length; ++i) {
         func(list->data[i]);
     }
 }
