@@ -3,7 +3,7 @@
 
 #include "../common.h"
 
-#define RUNIT() return value_make_unit()
+#define RUNIT() return vunit
 #define RINT(x) return value_make_int((x))
 #define RFLOAT(x) return value_make_float((x))
 #define RBOOL(x) return value_make_bool((x))

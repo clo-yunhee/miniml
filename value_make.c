@@ -65,3 +65,12 @@ MAKEVAL(error) (void) {
     DECLVAL(et_error);
     return val;
 }
+
+
+static Value _unit = { .type = et_unit };
+static Value _error = { .type = et_error };
+
+Value *vunit = &_unit;
+Value *verror = &_error;
+
+

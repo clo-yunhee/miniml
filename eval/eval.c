@@ -3,7 +3,7 @@
 Value *visit_eval(Env *env, Ast *expr) {
     switch (expr->type) {
     case e_unit:
-        return value_make_unit();
+        return vunit;
     case e_int:
         return value_make_int(expr->exprInteger);
     case e_float:

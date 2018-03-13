@@ -42,12 +42,4 @@ extern Type *tbool;
 extern Type *tstring;
 extern Type *tpoly;
 
-/*#define terror      (type_error())
-#define tunit       (type_unit())
-#define tint        (type_int())
-#define tfloat      (type_float())
-#define tbool       (type_bool())
-#define tstring     (type_string())
-#define tpoly       (type_poly(0))*/
-
 #endif // _TYPES_H_

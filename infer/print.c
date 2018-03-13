@@ -4,7 +4,7 @@
 void cons_print(Constraint *cons) {
     printf("( ");
     type_print(cons->first);
-    printf(", ");
+    printf(" <-> ");
     type_print(cons->second);
     printf(" )");
 
@@ -13,7 +13,7 @@ void cons_print(Constraint *cons) {
 void subst_print(Substitution *sub) {
     printf("[");
     printf("'%c", (char) ('a' + sub->poly - 1));
-    printf(", ");
+    printf(" / ");
     type_print(sub->type);
     printf("]");
 }

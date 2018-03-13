@@ -22,7 +22,6 @@ struct expr_value {
 
 #define MAKEVAL(type) Value *value_make_##type
 
-MAKEVAL(unit) (void);
 MAKEVAL(int) (int value);
 MAKEVAL(float) (float value);
 MAKEVAL(bool) (bool value);
@@ -31,7 +30,6 @@ MAKEVAL(natfun1) (NativeFunc1 fun);
 MAKEVAL(natfun2) (NativeFunc2 fun);
 MAKEVAL(fun) (Env *env, NameList *params, Ast *body);
 MAKEVAL(tuple) (ValueList *elems);
-MAKEVAL(error) (void);
 
 void value_free(Value *value);
 void value_print(Value *value);
@@ -43,5 +41,10 @@ ValueList *vlist_rev(ValueList *list);
 
 void vlist_free(ValueList *list);
 void vlist_print(ValueList *list);
+
+/* primitives */
+
+extern Value *vunit;
+extern Value *verror;
 
 #endif // _VALUES_H_

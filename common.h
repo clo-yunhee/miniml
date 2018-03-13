@@ -16,9 +16,8 @@
 #include "ast.h"
 #include "types.h"
 #include "values.h"
-#include "visit.h"
 #include "natives.h"
-#include "inference.h"
+#include "eval.h"
 #include "run.h"
 
 #endif // _COMMON_H_

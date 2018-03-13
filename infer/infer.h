@@ -94,4 +94,24 @@ SubstList *unify_one(Type *first, Type *second, bool *error);
 Type *apply_one(SubstList *subs, Type *type, bool *error);
 void apply_list(SubstList *subs, TypedAstList *ast, bool *error);
 
+
+//--Main functions
+
+
+/* Annotates the expression with types. */
+TypedAst *infer_annotate(Env *env, Ast *expr, bool *error);
+
+/* Collects a set of constraints on the types. */
+ConsList *infer_constraints(TypedAst *expr, bool *error);
+
+/* Unifies the constraints into a list of ordered substitutions. */
+SubstList *infer_unify(ConsList *constraints, bool *error);
+
+/* Applies the substitutions to the expression. !!THIS FUNCTION ALTERS THE ORIGINAL EXPRESSION!! */
+TypedAst *infer_apply(SubstList *subs, TypedAst *expr, bool *error);
+
+
+
+
+
 #endif // _INFER_H_

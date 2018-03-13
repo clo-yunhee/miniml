@@ -29,7 +29,7 @@ void run_expr(Env **env, Ast *expr) {
         fprintf(stderr, "Typing error\n");
         return; // ignore if error
     }
-
+    
     Value *value = visit_eval(*env, expr);
 
     if (list_length(names) == 1) { // add one entry if it's a single name
