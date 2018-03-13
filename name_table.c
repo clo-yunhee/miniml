@@ -21,12 +21,17 @@ int name_addi, name_addf;
 int name_subi, name_subf;
 int name_muli, name_mulf;
 int name_divi, name_divf;
-int name_print_string;
 int name_equal;
 int name_lt, name_lte;
 int name_gt, name_gte;
 int name_compare;
 int name_and, name_or;
+int name_print_string;
+int name_print_int;
+int name_print_float;
+int name_print_bool;
+int name_int_of_float;
+int name_float_of_int;
 
 
 int names_getid(const char *name) {
@@ -68,9 +73,7 @@ void names_init(void) {
             name_addf = add_name("+.");
             name_subf = add_name("-.");
             name_mulf = add_name("*.");
-            name_divf = add_name("/.");
-            
-            name_print_string = add_name("print_string");
+            name_divf = add_name("/."); 
 
             name_equal = add_name("=");
             name_lt = add_name("<");
@@ -81,6 +84,14 @@ void names_init(void) {
 
             name_and = add_name("&&");
             name_or = add_name("||");
+
+            name_print_string = add_name("print_string");
+            name_print_int = add_name("print_int");
+            name_print_float = add_name("print_float");
+            name_print_bool = add_name("print_bool");
+
+            name_int_of_float = add_name("int_of_float");
+            name_float_of_int = add_name("float_of_int");
         }
     } 
 }

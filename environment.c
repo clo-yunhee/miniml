@@ -1,7 +1,5 @@
 #include "common.h"
 
-#define P(x) (x)
-
 #define ADD(n, t, v) env = env_make(n, t, v, env);
 
 #define ADDNAT1(fn, tx, ty)        ADD(name_##fn, type_fun1(tx, ty), value_make_natfun1(native_##fn))
@@ -48,7 +46,18 @@ Env *env_init(void) {
     ADDNAT2(or, tbool, tbool, tbool);
 
     /* print_string : string -> unit */
+    /* print_int : int -> unit       */
+    /* print_float : float -> unit   */
+    /* print_bool : bool -> unit     */
     ADDNAT1(print_string, tstring, tunit);
+    ADDNAT1(print_int, tint, tunit);
+    ADDNAT1(print_float, tfloat, tunit);
+    ADDNAT1(print_bool, tbool, tunit);
+
+    /* int_of_float : float -> int */
+    /* float_of_int : int -> float */
+    ADDNAT1(int_of_float, tfloat, tint);
+    ADDNAT1(float_of_int, tint, tfloat);
 
     return env;
 }

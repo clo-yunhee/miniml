@@ -25,7 +25,12 @@ NATFUN2(and, x, y);
 NATFUN2(or, x, y);
 
 NATFUN1(print_string, str);
+NATFUN1(print_int, x);
+NATFUN1(print_float, x);
+NATFUN1(print_bool, x);
 
+NATFUN1(int_of_float, x);
+NATFUN1(float_of_int, x);
 
 
 #endif // _NATIVES_H_
