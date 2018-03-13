@@ -1,7 +1,6 @@
 #include "eval.h"
 
 Value *visit_eval(Env *env, Ast *expr) {
-   
     switch (expr->type) {
     case e_unit:
         return value_make_unit();

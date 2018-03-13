@@ -17,6 +17,10 @@ EVAL(funcall) {
     }
     case et_natfun2:
     {
+        if (list_length(args) < 2) {
+            VERR("Native functions cannot be curried");
+        }
+        
         Value *arg1 = visit_eval(env, list_nth_data(args, 0));
         Value *arg2 = visit_eval(env, list_nth_data(args, 1));
 

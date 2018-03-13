@@ -123,7 +123,7 @@ void collect_cons(ConsList **lptr, TypedAst *ast, bool *error) {
 
             // if partial currying, match the return type with the curried function
             if (params != NULL) {
-                retType = type_fun(list_data(params), retType);
+                retType = type_fun(params, retType);
             }
 
             list_append(lptr, cons_make(retType, xtype));
