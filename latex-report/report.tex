@@ -317,6 +317,55 @@ Le tableau de priorité/associativité est le suivant, par ordre de priorité de
 
 
 \newpage
+\section{Évaluation d'une expression}
+
+Le compilateur peut également évaluer directement l'entrée sans produire de fichier C.
+Le fonctionnement du code généré et du mode interpréteur est strictement identique à partir de l'évaluation.
+
+L'évaluation d'une expression se fait en deux étapes distinctes: il faut évaluer le type de l'expression, puis sa valeur.
+Le typage, étant caractéristique des langages ML, sera détaillé dans une section suivante.
+
+On rappelle qu'un programme MiniML est une suite d'instructions, où une instruction est soit une expression, soit une déclaration globale.
+
+L'environnement d'exécution est défini par une liste de définitions.
+Une définition porte un identifiant et un type, une valeur, ou les deux.
+
+Les structure de type et de valeur sont implémentées de la même façon que les AST.
+Le tableau suivant décrit les relations entre les types et les valeurs.
+
+\begin{center}
+    \begin{tabular}{ | l | p{6cm} | p{6cm} | }
+\hline
+    \textbf{Énumération}
+        & \textbf{Type}
+        & \textbf{Valeur} \\ \hline
+    unit     & - & -             \\ \hline
+    int      & - & Un entier        \\ \hline
+    float    & - & Un flottant      \\ \hline
+    bool     & - & Un booléen       \\ \hline
+    string   & - & Une chaîne de caractères     \\ \hline
+        native function 1   & \multirow{2}{*}{La liste des arg}La liste des & name: Int         \\ \hline
+    native function 2          & expr: AST         \\ \hline
+    declared function            & list: List[AST]   \\ \hline
+    tuple     & function: AST,
+    polymorphic                    args: List[AST]                 \\ \hline
+    error             & names: List[AST],
+                        rec: Bool, params: List[AST],
+                        expr: AST, block: AST           \\
+\hline
+\end{tabular}
+\end{center}
+
+
+
+\newpage
+\section{Inférence de types}
+
+Le compilateur utilise le système de typage Hindley-Milner pour inférer le type d'une expression.
+
+
+
+\newpage
 \section{Annexe 1 : Grammaire}
 
 \subsection{Grammaire BNF}
