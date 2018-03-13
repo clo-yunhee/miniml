@@ -198,7 +198,7 @@ void collect_cons(ConsList **lptr, TypedAst *ast, bool *error) {
             collect_cons(lptr, bElse, error);
         }
 
-        list_append(lptr, cons_make(xtype, ast->exprIf.bIf));
+        list_append(lptr, cons_make(xtype, ast->exprIf.bIf->xtype));
 
         break;
     }

@@ -1,6 +1,6 @@
 #include "common.h" 
 
-Env *run_list(AstList *list) {
+void run_list(AstList *list) {
     /*
     alist_print(list);
     printf("\n\n");
@@ -19,8 +19,6 @@ Env *run_list(AstList *list) {
 
         env_printrange(env, start);
     }
-
-    return env;
 }
 
 void run_expr(Env **env, Ast *expr) {

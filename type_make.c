@@ -1,35 +1,13 @@
 #include "common.h"
 
 
-#define DECLTYPE(t) \
-    Type *type = malloc(sizeof(Type)); \
-    if (type == NULL) return NULL; \
-    type->type = t;
-
-MAKETYPE(unit) (void) {
-    DECLTYPE(et_unit);
+Type *new_type(TypeEnum et) {
+    Type *type = malloc(sizeof(Type));
+    if (type == NULL) return NULL;
+    type->type = et;
     return type;
 }
 
-MAKETYPE(int) (void) {
-    DECLTYPE(et_int);
-    return type;
-}
-
-MAKETYPE(float) (void) {
-    DECLTYPE(et_float);
-    return type;
-}
-
-MAKETYPE(bool) (void) {
-    DECLTYPE(et_bool);
-    return type;
-}
-
-MAKETYPE(string) (void) {
-    DECLTYPE(et_string);
-    return type;
-}
 
 MAKETYPE(fun1) (Type *from, Type *to) {
     TypeList *args = list_new(from);
@@ -43,25 +21,39 @@ MAKETYPE(fun2) (Type *from1, Type *from2, Type *to) {
 }
 
 MAKETYPE(fun) (TypeList *args, Type *to) {
-    DECLTYPE(et_fun);
+    Type *type = new_type(et_fun);
     type->typeFun.args = args;
     type->typeFun.to = to;
     return type;
 }
 
 MAKETYPE(tuple) (TypeList *elems) {
-    DECLTYPE(et_tuple);
+    Type *type = new_type(et_tuple);
     type->typeTuple = elems;
     return type;
 }
 
 MAKETYPE(poly) (int number) {
-    DECLTYPE(et_poly);
+    Type *type = new_type(et_poly);
     type->typePoly = number;
     return type;
 }
 
-MAKETYPE(error) (void) {
-    DECLTYPE(et_error);
-    return type;
-}
+
+static Type _error  = { .type = et_error };
+static Type _unit   = { .type = et_unit };
+static Type _int    = { .type = et_int };
+static Type _float  = { .type = et_float };
+static Type _bool   = { .type = et_bool };
+static Type _string = { .type = et_string };
+static Type _poly   = { .type = et_poly, .typePoly = 0 };
+
+Type *terror = &_error;
+Type *tunit = &_unit;
+Type *tint = &_int;
+Type *tfloat = &_float;
+Type *tbool = &_bool;
+Type *tstring = &_string;
+Type *tpoly = &_poly;
+
+

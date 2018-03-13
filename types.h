@@ -13,17 +13,11 @@ struct expr_typedata {
 
 #define MAKETYPE(tname) Type *type_##tname
 
-MAKETYPE(unit) (void);
-MAKETYPE(int) (void);
-MAKETYPE(float) (void);
-MAKETYPE(bool) (void);
-MAKETYPE(string) (void);
 MAKETYPE(fun1) (Type *from, Type *to);
 MAKETYPE(fun2) (Type *from1, Type *from2, Type *to);
 MAKETYPE(fun) (TypeList *args, Type *to);
 MAKETYPE(tuple) (TypeList *elems);
 MAKETYPE(poly) (int number);
-MAKETYPE(error) (void);
 
 void type_free(Type *type);
 void type_print(Type *type);
@@ -40,12 +34,20 @@ bool tdlist_equ(TypeList *first, TypeList *second);
 
 /* shorthands for primitives */
 
-#define terror      (type_error())
+extern Type *terror;
+extern Type *tunit;
+extern Type *tint;
+extern Type *tfloat;
+extern Type *tbool;
+extern Type *tstring;
+extern Type *tpoly;
+
+/*#define terror      (type_error())
 #define tunit       (type_unit())
 #define tint        (type_int())
 #define tfloat      (type_float())
 #define tbool       (type_bool())
 #define tstring     (type_string())
-#define tpoly       (type_poly(0))
+#define tpoly       (type_poly(0))*/
 
 #endif // _TYPES_H_

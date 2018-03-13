@@ -75,3 +75,10 @@ void *nmalloc(int name) {
     *p = name;
     return p;
 }
+
+
+void arraylist_foreach(ArrayList *list, ListConsumer func) {
+    for (int i = 0; i < list->length; ++i) {
+        func(list->data[i]);
+    }
+}

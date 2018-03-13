@@ -123,3 +123,9 @@ void env_printrange(Env *env, Env *from) {
 void env_printall(Env *env) {
     env_printrange(env, NULL);
 }
+
+void env_free(Env *env) {
+    if (env == NULL) return;
+    env_free(env->next);
+    free(env);
+}

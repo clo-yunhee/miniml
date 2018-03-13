@@ -1,7 +1,7 @@
 #ifndef _LIST_H_
 #define _LIST_H_
 
-#include <libcalg/list.h>
+#include <libcalg.h>
 
 typedef void (*ListPrintFunc)(ListValue value);
 typedef void (*ListConsumer)(ListValue value);
@@ -16,6 +16,8 @@ ListValue list_last_data(ListEntry *list);
 void list_foreach(ListEntry *list, ListConsumer func);
 void list_print(ListEntry *list, ListPrintFunc func,
         const char *pref, const char *delim, const char *suff);
+
+void arraylist_foreach(ArrayList *list, ListConsumer func);
 
 typedef ListEntry AstList;
 typedef ListEntry NameList;

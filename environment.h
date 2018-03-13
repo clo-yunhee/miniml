@@ -31,6 +31,7 @@ struct env {
 };
 
 Env *env_init(void);
+void env_free(Env *env);
 
 Env *env_make(int name, Type *type, Value *value, Env *tail);
 Env *env_addlist(NameList *names, TypeList *types, ValueList *values, Env *tail);
