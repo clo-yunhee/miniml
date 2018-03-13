@@ -25,7 +25,6 @@ CFILES += value_make.c value_free.c value_print.c
 CFILES += type_make.c type_free.c type_print.c type_equ.c
 CFILES += environment.c
 CFILES += $(wildcard natives/*.c)
-CFILES += $(wildcard type/*.c)
 CFILES += $(wildcard eval/*.c)
 CFILES += $(wildcard infer/*.c)
 
