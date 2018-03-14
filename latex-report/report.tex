@@ -88,6 +88,8 @@
 \usepackage{graphicx}
 \usepackage{tikz-qtree}
 
+\usepackage{multirow}
+
 
 %%% Maketitle metadata
 \newcommand{\horrule}[1]{\rule{\linewidth}{#1}} 	% Horizontal rule
@@ -191,11 +193,11 @@ La structure d'AST utilisée contient un champ d'énumération de type et une un
     list            & list: List[AST]   \\ \hline
     application     & function: AST,
                         args: List[AST]                 \\ \hline
-    let             & names: List[AST],
-                        rec: Bool, params: List[AST],
+    let             & names: List[Name],
+                        rec: Bool, params: List[Name],
                         expr: AST, block: AST           \\ \hline
     if              & cond: AST, if: AST, else: AST     \\ \hline
-    tuple           & list: List[AST]                   \\
+    tuple           & elems: List[AST]                   \\
 \hline
 \end{tabular}}
 \end{center}
@@ -330,32 +332,30 @@ On rappelle qu'un programme MiniML est une suite d'instructions, où une instruc
 L'environnement d'exécution est défini par une liste de définitions.
 Une définition porte un identifiant et un type, une valeur, ou les deux.
 
-Les structure de type et de valeur sont implémentées de la même façon que les AST.
-Le tableau suivant décrit les relations entre les types et les valeurs.
+Les structure de type et de valeur sont définies, comme les AST, avec une énumération et une union anonyme.
+Leur contenu est décrit dans le tableau ci-dessous.
 
 \begin{center}
-    \begin{tabular}{ | l | p{6cm} | p{6cm} | }
+\texttt{\begin{tabular}{ | l | p{4cm} | p{6cm} | }
 \hline
-    \textbf{Énumération}
-        & \textbf{Type}
-        & \textbf{Valeur} \\ \hline
-    unit     & - & -             \\ \hline
-    int      & - & Un entier        \\ \hline
-    float    & - & Un flottant      \\ \hline
-    bool     & - & Un booléen       \\ \hline
-    string   & - & Une chaîne de caractères     \\ \hline
-        native function 1   & \multirow{2}{*}{La liste des arg}La liste des & name: Int         \\ \hline
-    native function 2          & expr: AST         \\ \hline
-    declared function            & list: List[AST]   \\ \hline
-    tuple     & function: AST,
-    polymorphic                    args: List[AST]                 \\ \hline
-    error             & names: List[AST],
-                        rec: Bool, params: List[AST],
-                        expr: AST, block: AST           \\
+\textnormal{\textbf{Énumération}} & \textnormal{\textbf{Type}}       & \textnormal{\textbf{Valeur}}                            \\ \hline
+unit                 & -                                                 & -                                                   \\ \hline
+int                  & -                                                 & value: Int                                          \\ \hline
+float                & -                                                 & value: Float                                        \\ \hline
+bool                 & -                                                 & value: Bool                                         \\ \hline
+string               & -                                                 & value: String                                       \\ \hline
+nativefun1           & \multirow{3}{4cm}{params: List[Type], to: Type} & fun: Value -> Value                      \\ \cline{1-1} \cline{3-3} 
+nativefun2           &                                                   & fun: Value -> Value -> Value  \\ \cline{1-1} \cline{3-3} 
+fun                  &                                                   & env: Environment, params: List[Name], body: AST \\ \hline
+tuple                & types: List[Type]                             & elems: List[Value]                              \\ \hline
+polymorph            & id: Int                                           & -                                                   \\ \hline
+error                & -                                                 & -                                                   \\ 
 \hline
-\end{tabular}
+\end{tabular}}
 \end{center}
 
+
+L'évaluation s'effectue récursivement
 
 
 \newpage
