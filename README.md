@@ -8,7 +8,7 @@ If you can read French, you can build a PDF file for the report from the main di
 
 Otherwise, here are *very basic* instructions as to how to build the project:
 
-* Install the [https://github.com/fragglet/c-algorithms](c-algorithms library) somewhere on your system.
+* Install the [c-algorithms library](https://github.com/fragglet/c-algorithms) somewhere on your system.
 * Edit the `CALGDIR` variable in the root Makefile to the install directory.
 * Build the compiler with `make` and/or the report with `make report`.
 
