@@ -7,7 +7,7 @@ CC    = gcc
 RM    = rm -f
 MKDIR = mkdir -p
 CFLAGS := -g -std=c11 -pedantic -Wall -Wextra -Wconversion #-Weverything
-CFLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG -Ixxd/
+CFLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG -I.
 LDFLAGS := -lfl -lcalg
 # --nounput: ne génère pas la fonction yyunput() inutile
 # --DYY_NO_INPUT: ne prend pas en compte la fonction input() inutile
@@ -15,8 +15,8 @@ LDFLAGS := -lfl -lcalg
 LEXOPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
 YACCOPTS = --verbose
 
-CALGDIR := $(HOME)
-#CALGDIR := /usr/local
+#CALGDIR := $(HOME)
+CALGDIR := /usr/local
 CFLAGS  += -I$(CALGDIR)/include/libcalg-1.0
 LDFLAGS += -L$(CALGDIR)/lib
 
@@ -61,7 +61,7 @@ codegen_main.xxd: codegen_main.pre
 	xxd -i codegen_main.pre codegen_main.xxd
 
 codegen_main.pre: codegen_main.c
-	gcc -E codegen_main.c -o codegen_main.pre
+	gcc $(CFLAGS) -E codegen_main.c -o codegen_main.pre
 
 .PHONY: graph
 graph:
