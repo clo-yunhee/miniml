@@ -40,20 +40,20 @@ MAKETYPE(poly) (int number) {
 }
 
 
-static Type _error  = { .type = et_error };
-static Type _unit   = { .type = et_unit };
-static Type _int    = { .type = et_int };
-static Type _float  = { .type = et_float };
-static Type _bool   = { .type = et_bool };
-static Type _string = { .type = et_string };
-static Type _poly   = { .type = et_poly, .typePoly = 0 };
+static Type t_error  = { .type = et_error };
+static Type t_unit   = { .type = et_unit };
+static Type t_int    = { .type = et_int };
+static Type t_float  = { .type = et_float };
+static Type t_bool   = { .type = et_bool };
+static Type t_string = { .type = et_string };
+static Type t_poly   = { .type = et_poly, .typePoly = 0 };
 
-Type *terror = &_error;
-Type *tunit = &_unit;
-Type *tint = &_int;
-Type *tfloat = &_float;
-Type *tbool = &_bool;
-Type *tstring = &_string;
-Type *tpoly = &_poly;
+Type *terror = &t_error;
+Type *tunit = &t_unit;
+Type *tint = &t_int;
+Type *tfloat = &t_float;
+Type *tbool = &t_bool;
+Type *tstring = &t_string;
+Type *tpoly = &t_poly;
 
 

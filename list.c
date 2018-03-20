@@ -5,6 +5,22 @@ ListEntry *list_new(ListValue value) {
     return list_append(&list, value);
 }
 
+ListEntry *list_from(ListValue first, ...) {
+    ListEntry *list = list_new(first);
+
+    va_list ap;
+    va_start(ap, first);
+
+    ListValue entry;
+    while ((entry = va_arg(ap, ListValue)) != NULL) {
+        list_append(&list, entry);
+    }
+
+    va_end(ap);
+    
+    return list;
+}
+
 ListEntry *list_concat(ListEntry *first, ListEntry *second) {
     ListEntry *final = NULL;
     

@@ -63,9 +63,9 @@ int main(int argc, char *argv[]) {
     }
     // else, generate the code
     else {
-        FILE *out = fopen(outfile, "w");
-        generate_code(out, prog);
-        fclose(out);
+        FILE *fout = fopen(outfile, "w");
+        generate_code(fout, prog);
+        fclose(fout);
     }
 
     return EXIT_SUCCESS;

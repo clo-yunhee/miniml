@@ -1,7 +1,7 @@
 #ifndef _NAT_H_
 #define _NAT_H_
 
-#include "../common.h"
+#include "common.h"
 
 #define RUNIT() return vunit
 #define RINT(x) return value_make_int((x))

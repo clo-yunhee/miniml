@@ -7,7 +7,7 @@ CC    = gcc
 RM    = rm -f
 MKDIR = mkdir -p
 CFLAGS := -g -std=c11 -pedantic -Wall -Wextra -Wconversion #-Weverything
-CFLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG 
+CFLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG -Ixxd/
 LDFLAGS := -lfl -lcalg
 # --nounput: ne génère pas la fonction yyunput() inutile
 # --DYY_NO_INPUT: ne prend pas en compte la fonction input() inutile
@@ -30,10 +30,10 @@ CFILES += $(wildcard natives/*.c)
 CFILES += $(wildcard eval/*.c)
 CFILES += $(wildcard infer/*.c)
 
-LYHFILES := $(PROG).yy.h $(PROG).tab.h
-HFILES := $(filter-out $(LYHFILES),$(wildcard *.h) $(wildcard */*.h))
+#LYHFILES := $(PROG).yy.h $(PROG).tab.h
+#HFILES := $(filter-out $(LYHFILES),$(wildcard *.h) $(wildcard */*.h))
 
-XXDFILES := $(addsuffix .xxd,$(addprefix xxd/,$(CFILES) $(HFILES)))
+#XXDFILES := $(addsuffix .xxd,$(addprefix xxd/,$(CFILES) $(HFILES)))
 
 OBJFILES := $(subst .c,.o,$(CFILES))
 
@@ -42,8 +42,8 @@ OBJFILES := $(subst .c,.o,$(CFILES))
 
 .SECONDARY:
 
-$(PROG): $(XXDFILES) $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
-	$(CC) $(filter-out $(XXDFILES),$+) -o $@ $(LDFLAGS) 
+$(PROG): codegen_main.xxd $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
+	$(CC) $(filter-out codegen_main.xxd,$+) -o $@ $(LDFLAGS) 
 
 %.yy.c: %.l %.tab.h
 	$(LEX) $(LEXOPTS) --outfile=$@ $<
@@ -57,8 +57,11 @@ $(PROG): $(XXDFILES) $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-xxd/%.xxd: %
-	xxd -i $< $@
+codegen_main.xxd: codegen_main.pre
+	xxd -i codegen_main.pre codegen_main.xxd
+
+codegen_main.pre: codegen_main.c
+	gcc -E codegen_main.c -o codegen_main.pre
 
 .PHONY: graph
 graph:
@@ -75,6 +78,7 @@ MLFILES = $(wildcard *.ml)
 $(MLFILES): $(PROG)
 	"$(CURDIR)"/$(PROG) < "$@"
 
+
 .PHONY: all
 all: $(PROG)
 
@@ -85,6 +89,7 @@ clean-all: clean
 .PHONY: clean
 clean:
 	$(RM) $(OBJFILES) *.yy.* *.tab.* *.err
+	$(RM) codegen_main.pre codegen_main.xxd
 	$(MAKE) -C latex-report/ clean
 
 .PHONY: re

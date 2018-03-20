@@ -1,7 +1,7 @@
 #ifndef _EVAL_H_
 #define _EVAL_H_
 
-#include "../common.h"
+#include "common.h"
 
 #define EVAL(type) Value *eval_##type (Env *env, Ast * type) 
 

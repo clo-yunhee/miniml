@@ -1,6 +1,8 @@
 /miniml
 *.swp
 *.o
+*.pre
+*.xxd
 *.yy.*
 *.tab.*
 *.dot

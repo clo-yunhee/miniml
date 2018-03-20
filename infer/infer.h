@@ -1,7 +1,7 @@
 #ifndef _INFER_H_
 #define _INFER_H_
 
-#include "../common.h"
+#include "common.h"
 
 #define IERR(str)        do { fprintf(stderr, str "\n"); *error = true; } while (false)
 #define IERR2(str, ...)  do { fprintf(stderr, str "\n", __VA_ARGS__); *error = true; } while (false)

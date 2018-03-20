@@ -67,10 +67,10 @@ MAKEVAL(error) (void) {
 }
 
 
-static Value _unit = { .type = et_unit };
-static Value _error = { .type = et_error };
+static Value v_unit = { .type = et_unit };
+static Value v_error = { .type = et_error };
 
-Value *vunit = &_unit;
-Value *verror = &_error;
+Value *vunit = &v_unit;
+Value *verror = &v_error;
 
 

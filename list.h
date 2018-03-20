@@ -7,6 +7,7 @@ typedef void (*ListPrintFunc)(ListValue value);
 typedef void (*ListConsumer)(ListValue value);
 
 ListEntry *list_new(ListValue value);
+ListEntry *list_from(ListValue first, ...);
 
 ListEntry *list_concat(ListEntry *first, ListEntry *second);
 
