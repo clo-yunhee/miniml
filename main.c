@@ -4,18 +4,44 @@
 
 extern int yyparse(void);
 
+void main_args(int argc, char *argv[]);
 void main_init(void);
 void main_free(void);
 
 AstList *prog = NULL;
+extern FILE *yyin;
+
+
+/* argument values */
+static int flag_stdin;
+static int flag_execute;
+static char *infile;
+static char *outfile;
+
+/* arguments */
+static struct option long_options[] = {
+    { "source",  required_argument, NULL, 'i' },
+    { "stdin",   no_argument,       NULL, 's' },
+    { "target",  required_argument, NULL, 'o' },
+    { "execute", no_argument,       NULL, 'e' },
+
+    /* Terminating entry */
+    { NULL, 0, NULL, 0 }
+};
+
+#define USAGE_STRING "Usage: %s [--source infile|--stdin] [--target outfile|--execute]"
+
+
 
 
 int main(int argc, char *argv[]) {
+    main_args(argc, argv);
     // TODO: add option flags...
    
     main_init();
     atexit(main_free);
 
+    yyin = fopen(infile, "r");
     switch (yyparse()) {
     case 0:
         // successful
@@ -31,9 +57,60 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     
-    run_list(prog);
+    // if execute, run the program
+    if (flag_execute) {
+        run_list(prog);
+    }
+    // else, generate the code
+    else {
+        FILE *out = fopen(outfile, "w");
+        generate_code(out, prog);
+        fclose(out);
+    }
 
     return EXIT_SUCCESS;
+}
+
+void main_args(int argc, char *argv[]) {
+    int ch;
+    
+    flag_stdin = false;
+    flag_execute = false;
+    infile = outfile = NULL;
+
+    while ((ch = getopt_long(argc, argv, "i:o:se", long_options, NULL)) != -1) {
+        switch (ch) {
+        // input
+        case 'i':
+            free(infile);
+            infile = strdup(optarg);
+            break;
+        // output
+        case 'o':
+            free(outfile);
+            outfile = strdup(optarg);
+            break;
+        case 's':
+            flag_stdin = true;
+            break;
+        case 'e':
+            flag_execute = true;
+            break;
+        case '?':
+            break;
+        default:
+            fprintf(stderr, USAGE_STRING "\n", argv[0]);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    if (optind < argc
+            || (infile == NULL && !flag_stdin)
+            || (outfile == NULL && !flag_execute)) {
+        fprintf(stderr, USAGE_STRING "\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
 }
 
 void main_init(void) {

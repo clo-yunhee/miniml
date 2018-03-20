@@ -7,6 +7,7 @@
 
 #include <string.h>
 #include <ctype.h>
+#include <getopt.h>
 
 #include <libcalg.h>
 
@@ -19,5 +20,6 @@
 #include "natives.h"
 #include "eval.h"
 #include "run.h"
+#include "codegen.h"
 
 #endif // _COMMON_H_

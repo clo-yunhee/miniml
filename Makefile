@@ -1,10 +1,12 @@
+PROG := miniml
+
 SHELL = /bin/sh
 LEX   = flex
 YACC  = bison
-CC    = clang
+CC    = gcc
 RM    = rm -f
 MKDIR = mkdir -p
-CFLAGS := -g -std=c11 -pedantic -Wall -Wextra
+CFLAGS := -g -std=c11 -pedantic -Wall -Wextra -Wconversion #-Weverything
 CFLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG 
 LDFLAGS := -lfl -lcalg
 # --nounput: ne génère pas la fonction yyunput() inutile
@@ -13,32 +15,35 @@ LDFLAGS := -lfl -lcalg
 LEXOPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
 YACCOPTS = --verbose
 
-#CALGDIR := $(HOME)
-CALGDIR := /usr/local
+CALGDIR := $(HOME)
+#CALGDIR := /usr/local
 CFLAGS  += -I$(CALGDIR)/include/libcalg-1.0
 LDFLAGS += -L$(CALGDIR)/lib
 
-CFILES := main.c run.c list.c
+CFILES := main.c list.c environment.c
 CFILES += name_table.c name_list.c string_escape.c
 CFILES += ast_make.c ast_free.c ast_print.c
 CFILES += value_make.c value_free.c value_print.c
 CFILES += type_make.c type_free.c type_print.c type_equ.c
-CFILES += environment.c
+CFILES += run.c codegen.c
 CFILES += $(wildcard natives/*.c)
 CFILES += $(wildcard eval/*.c)
 CFILES += $(wildcard infer/*.c)
 
+LYHFILES := $(PROG).yy.h $(PROG).tab.h
+HFILES := $(filter-out $(LYHFILES),$(wildcard *.h) $(wildcard */*.h))
+
+XXDFILES := $(addsuffix .xxd,$(addprefix xxd/,$(CFILES) $(HFILES)))
 
 OBJFILES := $(subst .c,.o,$(CFILES))
 
 
-PROG := miniml
 
 
 .SECONDARY:
 
-$(PROG): $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
-	$(CC) $+ -o $@ $(LDFLAGS) 
+$(PROG): $(XXDFILES) $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
+	$(CC) $(filter-out $(XXDFILES),$+) -o $@ $(LDFLAGS) 
 
 %.yy.c: %.l %.tab.h
 	$(LEX) $(LEXOPTS) --outfile=$@ $<
@@ -51,6 +56,9 @@ $(PROG): $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
+
+xxd/%.xxd: %
+	xxd -i $< $@
 
 .PHONY: graph
 graph:
