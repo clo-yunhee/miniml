@@ -8,9 +8,8 @@ static int nb_esc = sizeof(chr_escape) / sizeof(char);
 
 
 char *unescape(const char *str) {
-    // ignore the surrounding quotes
-    size_t len = strlen(str) - 2;
-    char *orig = strndup(str + 1, len);
+    size_t len = strlen(str);
+    char *orig = strndup(str, len);
     char *chptr = orig;
 
     // the resulting string will never exceed the original's length
@@ -50,20 +49,14 @@ char *unescape(const char *str) {
 
 
 char *escape(const char *str) {
-    // double size to escape safely and the quotes
-    size_t len = 2 * strlen(str) + 2;
+    // double size to escape safely
+    size_t len = 2 * strlen(str);
     char *result = calloc(len + 1, sizeof(char));
     unsigned int k = 0;
-
-    // ignore the leading quote
-    ++str;
-    result[k++] = '"'; 
 
     char c;
     int e;
     while ((c = *str++) != '\0' && k <= len) {
-        if (c == '"' && *str == '\0') break; // ignore the trailing quote
-        
         for (e = 2; e < nb_esc; ++e) {
             if (c == chr_notesc[e]) {
                 result[k++] = '\\';
@@ -76,7 +69,6 @@ char *escape(const char *str) {
         }
     }
     
-    result[k++] = '"';
     result[k] = '\0';
 
     return result;

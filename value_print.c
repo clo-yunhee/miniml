@@ -19,7 +19,7 @@ void value_print(Value *value) {
         printf("%s", (value->valBool ? "true" : "false"));
         break;
     case et_string:
-        printf("%s", value->valString);
+        printf("\"%s\"", escape(value->valString));
         break;
     case et_natfun1:
     case et_natfun2:

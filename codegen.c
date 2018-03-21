@@ -49,9 +49,18 @@ void generate_code(FILE *p_fout, AstList *astlist) {
     code_line();
 
     code_iprintln("/* Execute the program */");
-    code_iprintln("run_list(prog);");
+    code_iprintln("int error = 0;");
+    code_line();
+    code_iprintln("run_list(prog, 1, (_Bool *) &error);");
 
     code_line();
+
+    code_iprintln("/* Check for errors */");
+    code_iprintln("if (error) {");
+    ++indent;
+    code_iprintln("printf(\"An error occurred during the execution\\n\");");
+    --indent;
+    code_iprintln("}");
 
     code_iprintln("/* Free resources */");
     code_iprintln("alist_free(prog);");
@@ -114,7 +123,7 @@ void gen_ast(Ast *ast) {
     case e_string:
         /* The string attribute already is escaped, with quotes.
          * Duplicate it because ast_free assumes it is malloc-ed. */
-        code_printf("ast_make_string(strdup(%s))", ast->exprString);
+        code_printf("ast_make_string(strdup(\"%s\"))", escape(ast->exprString));
         break;
     case e_var:
         /* Rebuild the name table at the same time. */

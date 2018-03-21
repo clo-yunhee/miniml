@@ -36,7 +36,6 @@ static struct option long_options[] = {
 
 int main(int argc, char *argv[]) {
     main_args(argc, argv);
-    // TODO: add option flags...
    
     main_init();
     atexit(main_free);
@@ -57,13 +56,32 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     
-    // if execute, run the program
-    if (flag_execute) {
-        run_list(prog);
+    
+    /*
+     * To perfom static analysis at compilation, run the type inference on the expressions.
+     * Since it also checks for sound expressions, this counts as static analysis.
+     * Theoretically, the only error that can remain at runtime is the currying of native functions,
+     * as the actual type of a function can only be determined at runtime.
+     */
+
+    bool error = false;
+
+    // Execute only in interpreter mode.
+    run_list(prog, flag_execute, &error);
+
+    if (error) {
+        fprintf(stderr, "Error in expression\n");
+        exit(EXIT_FAILURE);
     }
-    // else, generate the code
-    else {
+
+    // If compiling, do generate code.
+    if (outfile != NULL) {
         FILE *fout = fopen(outfile, "w");
+        if (fout == NULL) {
+            fprintf(stderr, "Could not open output file: %s\n", strerror(errno));
+            exit(EXIT_FAILURE);
+        }
+
         generate_code(fout, prog);
         fclose(fout);
     }

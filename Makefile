@@ -15,8 +15,8 @@ LDFLAGS := -lfl -lcalg
 LEXOPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
 YACCOPTS = --verbose
 
-#CALGDIR := $(HOME)
-CALGDIR := /usr/local
+CALGDIR := $(HOME)
+#CALGDIR := /usr/local
 CFLAGS  += -I$(CALGDIR)/include/libcalg-1.0
 LDFLAGS += -L$(CALGDIR)/lib
 
@@ -30,10 +30,8 @@ CFILES += $(wildcard natives/*.c)
 CFILES += $(wildcard eval/*.c)
 CFILES += $(wildcard infer/*.c)
 
-#LYHFILES := $(PROG).yy.h $(PROG).tab.h
-#HFILES := $(filter-out $(LYHFILES),$(wildcard *.h) $(wildcard */*.h))
-
-#XXDFILES := $(addsuffix .xxd,$(addprefix xxd/,$(CFILES) $(HFILES)))
+LYHFILES := $(PROG).yy.h $(PROG).tab.h
+HFILES := $(filter-out $(LYHFILES),$(wildcard *.h) $(wildcard */*.h))
 
 OBJFILES := $(subst .c,.o,$(CFILES))
 
@@ -60,7 +58,7 @@ $(PROG): codegen_main.xxd $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
 codegen_main.xxd: codegen_main.pre
 	xxd -i codegen_main.pre codegen_main.xxd
 
-codegen_main.pre: codegen_main.c
+codegen_main.pre: $(CFILES) $(HFILES)
 	gcc $(CFLAGS) -E codegen_main.c -o codegen_main.pre
 
 .PHONY: graph

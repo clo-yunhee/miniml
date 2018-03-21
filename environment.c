@@ -82,14 +82,15 @@ Env *env_addlist(NameList *names, TypeList *types, ValueList *values, Env *tail)
 
     int name;
     Type *type;
-    Value *value;
+    Value *value = vunit;
 
-    while (list_iter_has_more(&nameIt)
-                && list_iter_has_more(&typeIt)
-                && list_iter_has_more(&valueIt)) {
+    while (list_iter_has_more(&nameIt)) {
         name = *(int*) list_iter_next(&nameIt);
         type = list_iter_next(&typeIt);
-        value = list_iter_next(&valueIt);
+        /* this is needed for a type-environment */
+        if (values != NULL) {
+            value = list_iter_next(&valueIt);
+        }
 
         env = env_make(name, type, value, env);
     }

@@ -52,7 +52,12 @@ identifier          [[:alpha:]][[:alnum:]_]*
 {integer}           return ITOKEN(INT);
 {float}             return FTOKEN(FLOAT);
 {boolean}           return (yylval.ival = (strcmp("true", yytext) == 0), TOKEN(BOOL));
-{string}            return STOKEN(STRING, strdup(yytext));
+{string}            {
+                      char *copy = strndup(yytext + 1, strlen(yytext) - 2);
+                      char *unesc = unescape(copy);
+                      free(copy);
+                      return STOKEN(STRING, unesc);
+                    }
 {identifier}        return NTOKEN(NAME);
 
 ";;"                return TOKEN(TWOSEMI);
