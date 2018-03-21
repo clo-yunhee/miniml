@@ -17,7 +17,7 @@ MAKEVAL(int) (int value) {
     return val;
 }
 
-MAKEVAL(float) (float value) {
+MAKEVAL(float) (double value) {
     DECLVAL(et_float);
     val->valFloat = value;
     return val;

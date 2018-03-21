@@ -7,7 +7,7 @@
 
 int cmp_tuple(Value *x, Value *y);
 int cmpi(int x, int y);
-int cmpf(float x, float y);
+int cmpf(double x, double y);
 
 
 NATFUN2(equal, x, y) {
@@ -91,6 +91,6 @@ int cmpi(int x, int y) {
     return (x < y) ? -1 : (x > y);
 }
 
-int cmpf(float x, float y) {
-    return (x < y) ? -1 : (x > y);
+int cmpf(double x, double y) {
+    return (x < y) ? -1.0 : (x > y);
 }

@@ -38,7 +38,7 @@ extern AstList *prog;
 %union {
     /* for lexer */
     int ival;
-    float fval;
+    double fval;
     char *sval;
     /* parser */
     AstList *list;

@@ -20,7 +20,7 @@ struct ast {
         // e_int
         int exprInteger;
         // e_float
-        float exprFloat;
+        double exprFloat;
         // e_bool
         bool exprBool;
         // e_string
@@ -68,7 +68,7 @@ void alist_print(AstList *list);
 
 MAKEAST(unit) (void);
 MAKEAST(integer) (int value);
-MAKEAST(float) (float value);
+MAKEAST(float) (double value);
 MAKEAST(bool) (bool value);
 MAKEAST(string) (char *value);
 MAKEAST(variable) (int name);

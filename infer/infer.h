@@ -13,7 +13,7 @@ struct typed_ast {
         // e_int
         int exprInteger;
         // e_float
-        float exprFloat;
+        double exprFloat;
         // e_bool
         bool exprBool;
         // e_string

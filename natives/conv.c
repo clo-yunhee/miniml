@@ -5,5 +5,5 @@ NATFUN1(int_of_float, x) {
 }
 
 NATFUN1(float_of_int, x) {
-    RFLOAT((float) x->valInt);
+    RFLOAT((double) x->valInt);
 }

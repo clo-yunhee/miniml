@@ -17,7 +17,7 @@ MAKEAST(integer) (int value) {
     return ast;
 }
 
-MAKEAST(float) (float value) {
+MAKEAST(float) (double value) {
     DECLAST(e_float);
     ast->exprFloat = value;
     return ast;

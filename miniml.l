@@ -14,11 +14,11 @@
 void yyerror(const char *s);
 
 int stoi(const char *str);
-float stof(const char *str);
+double stod(const char *str);
 
 #define TOKEN(tok)        (tok)
 #define ITOKEN(tok)       (yylval.ival = stoi(yytext), (tok))
-#define FTOKEN(tok)       (yylval.fval = stof(yytext), (tok))
+#define FTOKEN(tok)       (yylval.fval = stod(yytext), (tok))
 #define NTOKEN(tok)       (yylval.ival = names_getid(yytext), (tok))
 #define STOKEN(tok, str)  (yylval.sval = (str), (tok))
 
@@ -118,14 +118,15 @@ int stoi(const char *str) {
     return v;
 }
 
-float stof(const char *str) {
+double stod(const char *str) {
     char *end;
-    float v;
+    double v;
 
     errno = 0;
-    v = strtof(str, &end);
+    v = strtod(str, &end);
 
-    if (*end != '\0' || (errno == ERANGE && v == HUGE_VALF)) {
+    if (*end != '\0' || (errno == ERANGE
+                        && (v == HUGE_VAL || v == -HUGE_VAL))) {
         yyerror("Error converting string to float");
         exit(EXIT_FAILURE);
     }

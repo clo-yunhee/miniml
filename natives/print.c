@@ -11,7 +11,7 @@ NATFUN1(print_int, x) {
 }
 
 NATFUN1(print_float, x) {
-    printf("%g", (double) x->valFloat);
+    printf("%g", x->valFloat);
     RUNIT();
 }
 

@@ -7,7 +7,7 @@ struct expr_value {
     TypeEnum type;
     union {
         int valInt;
-        float valFloat;
+        double valFloat;
         bool valBool;
         char *valString;
         NativeFunc1 valNatfun1;
@@ -23,7 +23,7 @@ struct expr_value {
 #define MAKEVAL(type) Value *value_make_##type
 
 MAKEVAL(int) (int value);
-MAKEVAL(float) (float value);
+MAKEVAL(float) (double value);
 MAKEVAL(bool) (bool value);
 MAKEVAL(string) (char *value);
 MAKEVAL(natfun1) (NativeFunc1 fun);
