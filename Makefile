@@ -43,13 +43,12 @@ OBJ_FILES := $(C_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o) $(LY_OBJ_FILES)
 DEP_FILES := $(OBJ_FILES:%.o=%.d)
 
 TEST_FILES := $(shell find $(TEST_DIR) -type f -name "*.ml")
+TEST_TMP := $(TEST_DIR)/.test_sout
 
 #--- Functions?
 
-define echo
-	@tput setaf $(1)
-	@echo $(2)
-	@tput sgr0
+define color
+	tput setaf $(1); $(2); tput sgr0;
 endef
 
 define compile
@@ -126,14 +125,15 @@ libcalg:
 $(TEST_DIR)/%.ml: $(PROG)
 	$(eval TEST_C=$(patsubst %.ml,%.c,$@))
 	$(eval TEST_O=$(patsubst %.ml,%,$@))
-ifneq ($($(BIN_DIR)/$(PROG) -i $@ -o $(TEST_C) && \
-	    $(CC) $(TEST_C) -o $(TEST_O) $(TEST_FLAGS) && \
-	    $(TEST_O) 1>/dev/null),0)
-	$(call echo,10," * $@: Passed")
-else
-	$(call echo,9," * $@: Failed")
-endif
-	@$(RM) $(TEST_O) $(TEST_C)
+	@if $(BIN_DIR)/$(PROG) -i $@ -o $(TEST_C) && \
+		$(CC) $(TEST_C) -o $(TEST_O) $(TEST_FLAGS) && \
+		$(TEST_O) 1>/dev/null 2>>$(TEST_TMP) ; then \
+	    $(call color,10,echo " * $@: Passed") \
+	else \
+	    $(call color,9,echo " * $@: Failed") \
+	    $(call color,1,cat $(TEST_TMP)) \
+	fi
+	@$(RM) $(TEST_O) $(TEST_C) $(TEST_TMP)
 
 
 .PHONY: tests

@@ -40,7 +40,11 @@ void run_expr(Env **env, Ast *expr, bool do_value, bool *error) {
     }
 
     /* Default value to unit */
-    value = do_value ? visit_eval(*env, expr) : vunit;
+    value = do_value ? visit_eval(*env, expr, error) : vunit;
+
+    if (*error) {
+        return; // ignore if error
+    }
 
     if (list_length(names) == 1) { // add one entry if it's a single name
         int name = *(int *) list_data(names);

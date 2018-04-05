@@ -10,4 +10,4 @@ let f x y = x + (int_of_float y);;
 
 let f x y = () in f 1.;;
 
-(+) 1;;
+(+) 1 2;;

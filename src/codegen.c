@@ -66,6 +66,9 @@ void generate_code(FILE *p_fout, AstList *astlist) {
     code_iprintln("alist_free(prog);");
     code_iprintln("names_free();");
     
+    code_line();
+    
+    code_iprintln("return error;");
     --indent;
     code_iprintln("}");
     code_line();

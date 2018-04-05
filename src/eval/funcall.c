@@ -2,7 +2,7 @@
 
 
 EVAL(funcall) {
-    Value *func = visit_eval(env, funcall->exprFunCall.function);
+    Value *func = visit_eval(env, funcall->exprFunCall.function, error);
     AstList *args = funcall->exprFunCall.args;
 
     switch (func->type) {
@@ -11,7 +11,7 @@ EVAL(funcall) {
         break;
     case et_natfun1:
     {
-        Value *arg = visit_eval(env, list_data(args));
+        Value *arg = visit_eval(env, list_data(args), error);
         
         return (func->valNatfun1)(arg);
     }
@@ -21,8 +21,8 @@ EVAL(funcall) {
             VERR("Native functions cannot be curried");
         }
         
-        Value *arg1 = visit_eval(env, list_nth_data(args, 0));
-        Value *arg2 = visit_eval(env, list_nth_data(args, 1));
+        Value *arg1 = visit_eval(env, list_nth_data(args, 0), error);
+        Value *arg2 = visit_eval(env, list_nth_data(args, 1), error);
 
         return (func->valNatfun2)(arg1, arg2);
     }
@@ -40,7 +40,7 @@ EVAL(funcall) {
         Ast *arg = list_iter_next(&argIt);
         int param_name = *(int*) list_iter_next(&paramIt);
 
-        Value *value = visit_eval(env, arg);
+        Value *value = visit_eval(env, arg, error);
 
         callsite = env_vmake(param_name, value, callsite); 
     }
@@ -48,7 +48,7 @@ EVAL(funcall) {
     if (list_iter_has_more(&paramIt)) { // partial currying
         return value_make_fun(callsite, params, func->valFun.body);
     } else {
-        return visit_eval(callsite, func->valFun.body);
+        return visit_eval(callsite, func->valFun.body, error);
     }
 }
 

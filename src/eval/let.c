@@ -7,7 +7,7 @@ EVAL(let) {
     Value *valExpr;
 
     if (let->exprLet.params == NULL) { // it's a variable binding
-        valExpr = visit_eval(env, let->exprLet.expr);
+        valExpr = visit_eval(env, let->exprLet.expr, error);
     } else { // it's a function binding
         // a function is never evaluated before it's called
         // only pass the block
@@ -31,7 +31,7 @@ EVAL(let) {
             newEnv = env_addlist(names, NULL, valExpr->valTuple, newEnv);
         }
         
-        return visit_eval(newEnv, let->exprLet.block);
+        return visit_eval(newEnv, let->exprLet.block, error);
     } else { // it's a global let
         return valExpr;
     }

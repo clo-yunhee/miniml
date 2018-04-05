@@ -2,11 +2,11 @@
 
 
 EVAL(ifelse) {
-    Value *cond = visit_eval(env, ifelse->exprIf.cond);
+    Value *cond = visit_eval(env, ifelse->exprIf.cond, error);
     
     if (cond->valBool) {
-        return visit_eval(env, ifelse->exprIf.bIf);
+        return visit_eval(env, ifelse->exprIf.bIf, error);
     } else {
-        return visit_eval(env, ifelse->exprIf.bElse);
+        return visit_eval(env, ifelse->exprIf.bElse, error);
     }
 }

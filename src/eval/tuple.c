@@ -10,7 +10,7 @@ EVAL(tuple) {
     while (list_iter_has_more(&it)) {
         Ast *expr = list_iter_next(&it);
 
-        Value *value = visit_eval(env, expr);
+        Value *value = visit_eval(env, expr, error);
 
         list_append(&elems, value);
     }
