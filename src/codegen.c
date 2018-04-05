@@ -1,6 +1,6 @@
 #include "common.h"
 
-#include "codegen_main.xxd"
+#include "../obj/codegen_main.xxd"
 
 
 #define code_line()            fputc('\n', fout)
@@ -29,7 +29,7 @@ void generate_code(FILE *p_fout, AstList *astlist) {
     fout = p_fout;
     indent = 0;
 
-    fwrite(codegen_main_pre, sizeof(char), codegen_main_pre_len, fout);
+    fwrite(obj_codegen_main_pre, sizeof(char), obj_codegen_main_pre_len, fout);
     code_line();
     code_line();
     

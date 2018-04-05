@@ -1,6 +1,6 @@
 #include "common.h"
 
-#include "miniml.tab.h"
+#include "../obj/miniml.tab.h"
 
 extern int yyparse(void);
 

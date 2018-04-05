@@ -7,63 +7,93 @@ CC    = gcc
 RM    = rm -f
 MKDIR = mkdir -p
 CFLAGS := -g -std=c11 -pedantic -Wall -Wextra -Wconversion #-Weverything
-CFLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG -I.
-LDFLAGS := -lfl -lcalg
+CFLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG -Isrc
+LDFLAGS := -Wl,-Bstatic -lcalg -Wl,-Bdynamic -lfl
 # --nounput: ne génère pas la fonction yyunput() inutile
 # --DYY_NO_INPUT: ne prend pas en compte la fonction input() inutile
 # -D_POSIX_SOURCE: déclare la fonction fileno()
 LEXOPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
 YACCOPTS = --verbose
 
-CFLAGS  += -Ilibcalg/include/
-LDFLAGS += -Llibcalg/lib/
 
-CFILES := main.c list.c environment.c
-CFILES += name_table.c name_list.c string_escape.c
-CFILES += ast_make.c ast_free.c ast_print.c
-CFILES += value_make.c value_free.c value_print.c
-CFILES += type_make.c type_free.c type_print.c type_equ.c
-CFILES += run.c codegen.c
-CFILES += $(wildcard natives/*.c)
-CFILES += $(wildcard eval/*.c)
-CFILES += $(wildcard infer/*.c)
+#--- Libcalg
 
-LYHFILES := $(PROG).yy.h $(PROG).tab.h
-HFILES := $(filter-out $(LYHFILES),$(wildcard *.h) $(wildcard */*.h))
+CALG_DIR := libcalg
+CFLAGS  += -I$(CALG_DIR)/include
+LDFLAGS += -L$(CALG_DIR)/lib
 
-OBJFILES := $(subst .c,.o,$(CFILES))
+#--- Directories
 
-ALLOBJ := $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
+BIN_DIR := bin
+SRC_DIR := src
+OBJ_DIR := obj
 
+#--- Files
+
+C_FILES := $(shell find $(SRC_DIR) -type f -name "*.c") 
+H_FILES := $(shell find $(SRC_DIR) -type f -name "*.h")
+
+C_FILES := $(filter-out $(SRC_DIR)/codegen_main.c,$(C_FILES))
+
+LY_OBJ_FILES := $(OBJ_DIR)/$(PROG).yy.o $(OBJ_DIR)/$(PROG).tab.o
+
+OBJ_FILES := $(C_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o) $(LY_OBJ_FILES)
+DEP_FILES := $(OBJ_FILES:%.o=%.d)
+
+#--- Functions?
+
+define compile
+	$(CC) $(CFLAGS) -MMD -c $(1) -o $(2)
+endef
+
+#--- Rules
 
 .SECONDARY:
-$(PROG): libcalg codegen_main.xxd $(ALLOBJ)
-	$(CC) $(ALLOBJ) -o $@ $(LDFLAGS) 
+$(BIN_DIR)/$(PROG): gendirs $(OBJ_DIR)/codegen_main.xxd $(OBJ_FILES)
+	$(CC) $(OBJ_FILES) -o $@ $(LDFLAGS) 
 
-%.yy.c: %.l %.tab.h
+#--- Lex/Yacc source targets
+
+$(OBJ_DIR)/%.yy.c: $(SRC_DIR)/%.l $(OBJ_DIR)/%.tab.h
 	$(LEX) $(LEXOPTS) --outfile=$@ $<
 
-%.yy.h: %.l
+$(OBJ_DIR)/%.yy.h: $(SRC_DIR)/%.l
 	$(LEX) $(LEXOPTS) --header-file=$@ -t $< 1> /dev/null
 
-%.tab.c %.tab.h: %.y %.yy.h
-	$(YACC) $(YACCOPTS) $< -d
+$(OBJ_DIR)/%.tab.c $(OBJ_DIR)/%.tab.h: $(SRC_DIR)/%.y $(OBJ_DIR)/%.yy.h
+	$(YACC) $(YACCOPTS) $< --defines=$(OBJ_DIR)/$(PROG).tab.h --output=$(OBJ_DIR)/$(PROG).tab.c
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+-include $(OBJ_DIR)/$(PROG).yy.d $(OBJ_DIR)/$(PROG).tab.d
 
-codegen_main.xxd: codegen_main.pre
-	xxd -i codegen_main.pre codegen_main.xxd
+#--- Object file targets
 
-codegen_main.pre: $(CFILES) $(HFILES)
-	gcc $(CFLAGS) -E codegen_main.c -o codegen_main.pre
+-include $(DEP_FILES)
+
+$(OBJ_DIR)/%.yy.o: $(OBJ_DIR)/%.yy.c $(OBJ_DIR)/%.yy.h
+	$(call compile,$<,$@)
+
+$(OBJ_DIR)/%.tab.o: $(OBJ_DIR)/%.tab.c $(OBJ_DIR)/%.tab.h
+	$(call compile,$<,$@)
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(call compile,$<,$@)
+
+#--- Codegen hex targets
+
+%.xxd: %.pre
+	xxd -i $< $@
+
+$(OBJ_DIR)/codegen_main.pre: $(SRC_DIR)/codegen_main.c $(C_FILES) $(H_FILES)
+	gcc $(CFLAGS) -E $< -o $@
+
+#--- LibCalg build
 
 .PHONY: libcalg
 libcalg:
 	ln -srf Makefile.libcalg libcalg/
 	$(MAKE) -C libcalg/ --makefile=Makefile.libcalg
 
-
+#--- Other targets
 
 .PHONY: graph
 graph:
@@ -74,8 +104,13 @@ graph:
 report:
 	$(MAKE) -C latex-report/ once
 
+#--- Grouped utilities
+
 .PHONY: all
-all: $(PROG)
+all: libcalg $(PROG)
+
+.PHONY: $(PROG)
+$(PROG): $(BIN_DIR)/$(PROG)
 
 .PHONY: clean-all
 clean-all: clean clean-libcalg
@@ -83,9 +118,9 @@ clean-all: clean clean-libcalg
 
 .PHONY: clean
 clean:
-	-$(RM) $(OBJFILES) *.yy.* *.tab.* *.err
-	-$(RM) codegen_main.pre codegen_main.xxd
+	-find $(OBJ_DIR)/ -type f -exec $(RM) {} \;
 	-$(MAKE) -C latex-report/ clean
+	-$(RM) *.err
 
 .PHONY: clean-libcalg
 	-$(MAKE) -C libcalg/ clean
@@ -93,5 +128,13 @@ clean:
 	-$(RM) -r libcalg/include/
 
 .PHONY: re
-re: clean-all all
+re: clean $(PROG)
 
+.PHONY: re-all
+re-all: clean-all all
+
+.PHONY: gendirs
+gendirs:
+	@$(MKDIR) $(BIN_DIR)
+	@$(MKDIR) $(OBJ_DIR)
+	@find $(SRC_DIR) -type d | sed -e "s?$(SRC_DIR)?$(OBJ_DIR)?" | xargs $(MKDIR)
