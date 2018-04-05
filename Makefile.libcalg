@@ -1,0 +1,5 @@
+
+default:
+	$(SHELL) -c "./autogen.sh --prefix=$(shell pwd)"
+	$(MAKE) -C .
+	$(MAKE) -C . install

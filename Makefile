@@ -15,10 +15,8 @@ LDFLAGS := -lfl -lcalg
 LEXOPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
 YACCOPTS = --verbose
 
-CALGDIR := $(HOME)
-#CALGDIR := /usr/local
-CFLAGS  += -I$(CALGDIR)/include/libcalg-1.0
-LDFLAGS += -L$(CALGDIR)/lib
+CFLAGS  += -Ilibcalg/include/
+LDFLAGS += -Llibcalg/lib/
 
 CFILES := main.c list.c environment.c
 CFILES += name_table.c name_list.c string_escape.c
@@ -35,13 +33,12 @@ HFILES := $(filter-out $(LYHFILES),$(wildcard *.h) $(wildcard */*.h))
 
 OBJFILES := $(subst .c,.o,$(CFILES))
 
-
+ALLOBJ := $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
 
 
 .SECONDARY:
-
-$(PROG): codegen_main.xxd $(PROG).yy.o $(PROG).tab.o $(OBJFILES)
-	$(CC) $(filter-out codegen_main.xxd,$+) -o $@ $(LDFLAGS) 
+$(PROG): libcalg codegen_main.xxd $(ALLOBJ)
+	$(CC) $(ALLOBJ) -o $@ $(LDFLAGS) 
 
 %.yy.c: %.l %.tab.h
 	$(LEX) $(LEXOPTS) --outfile=$@ $<
@@ -61,6 +58,13 @@ codegen_main.xxd: codegen_main.pre
 codegen_main.pre: $(CFILES) $(HFILES)
 	gcc $(CFLAGS) -E codegen_main.c -o codegen_main.pre
 
+.PHONY: libcalg
+libcalg:
+	ln -srf Makefile.libcalg libcalg/
+	$(MAKE) -C libcalg/ --makefile=Makefile.libcalg
+
+
+
 .PHONY: graph
 graph:
 	$(YACC) $(YACCOPTS) $(PROG).y --graph
@@ -70,25 +74,23 @@ graph:
 report:
 	$(MAKE) -C latex-report/ once
 
-# Test
-MLFILES = $(wildcard *.ml)
-.PHONY: $(MLFILES)
-$(MLFILES): $(PROG)
-	"$(CURDIR)"/$(PROG) < "$@"
-
-
 .PHONY: all
 all: $(PROG)
 
 .PHONY: clean-all
-clean-all: clean
+clean-all: clean clean-libcalg
 	$(RM) $(PROG) *.dot *.dot.png *.output *.out
 
 .PHONY: clean
 clean:
-	$(RM) $(OBJFILES) *.yy.* *.tab.* *.err
-	$(RM) codegen_main.pre codegen_main.xxd
-	$(MAKE) -C latex-report/ clean
+	-$(RM) $(OBJFILES) *.yy.* *.tab.* *.err
+	-$(RM) codegen_main.pre codegen_main.xxd
+	-$(MAKE) -C latex-report/ clean
+
+.PHONY: clean-libcalg
+	-$(MAKE) -C libcalg/ clean
+	-$(RM) -r libcalg/lib/
+	-$(RM) -r libcalg/include/
 
 .PHONY: re
 re: clean-all all
