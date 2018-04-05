@@ -6,27 +6,29 @@ YACC  = bison
 CC    = gcc
 RM    = rm -f
 MKDIR = mkdir -p
-CFLAGS := -g -std=c11 -pedantic -Wall -Wextra -Wconversion #-Weverything
-CFLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG -Isrc
-LDFLAGS := -Wl,-Bstatic -lcalg -Wl,-Bdynamic -lfl
+C_FLAGS := -g -std=c11 -pedantic -Wall -Wextra -Wconversion #-Weverything
+C_FLAGS += -D_XOPEN_SOURCE=700 -DYYDEBUG -Isrc
+LD_FLAGS := -Wl,-Bstatic -lcalg -Wl,-Bdynamic -lfl
 # --nounput: ne génère pas la fonction yyunput() inutile
 # --DYY_NO_INPUT: ne prend pas en compte la fonction input() inutile
 # -D_POSIX_SOURCE: déclare la fonction fileno()
-LEXOPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
-YACCOPTS = --verbose
+LEX_OPTS  = -D_POSIX_SOURCE -DYY_NO_INPUT --nounput
+YACC_OPTS = --verbose
 
+TEST_FLAGS := -std=c11 -D_XOPEN_SOURCE=700 -Wl,-Bstatic -lcalg -Wl,-Bdynamic
 
 #--- Libcalg
 
 CALG_DIR := libcalg
-CFLAGS  += -I$(CALG_DIR)/include/libcalg-1.0
-LDFLAGS += -L$(CALG_DIR)/lib
+C_FLAGS  += -I$(CALG_DIR)/include/libcalg-1.0
+LD_FLAGS += -L$(CALG_DIR)/lib
 
 #--- Directories
 
 BIN_DIR := bin
 SRC_DIR := src
 OBJ_DIR := obj
+TEST_DIR := test
 
 #--- Files
 
@@ -40,28 +42,49 @@ LY_OBJ_FILES := $(OBJ_DIR)/$(PROG).yy.o $(OBJ_DIR)/$(PROG).tab.o
 OBJ_FILES := $(C_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o) $(LY_OBJ_FILES)
 DEP_FILES := $(OBJ_FILES:%.o=%.d)
 
+TEST_FILES := $(shell find $(TEST_DIR) -type f -name "*.ml")
+
 #--- Functions?
 
+define echo
+	@tput setaf $(1)
+	@echo $(2)
+	@tput sgr0
+endef
+
 define compile
-	$(CC) $(CFLAGS) -MMD -c $(1) -o $(2)
+	$(CC) $(C_FLAGS) -MMD -c $(1) -o $(2)
+endef
+
+define gendirs
+	@$(MKDIR) $(BIN_DIR)
+	@$(MKDIR) $(OBJ_DIR)
+	@find $(SRC_DIR) -type d | sed -e "s?$(SRC_DIR)?$(OBJ_DIR)?" | xargs $(MKDIR)
 endef
 
 #--- Rules
 
+.PHONY: $(PROG)
+$(PROG): $(BIN_DIR)/$(PROG)
+
 .SECONDARY:
-$(BIN_DIR)/$(PROG): gendirs $(OBJ_DIR)/codegen_main.xxd $(OBJ_FILES)
-	$(CC) $(OBJ_FILES) -o $@ $(LDFLAGS) 
+$(BIN_DIR)/$(PROG): $(OBJ_DIR)/codegen_main.xxd $(OBJ_FILES)
+	$(call gendirs)
+	$(CC) $(OBJ_FILES) -o $@ $(LD_FLAGS) 
 
 #--- Lex/Yacc source targets
 
 $(OBJ_DIR)/%.yy.c: $(SRC_DIR)/%.l $(OBJ_DIR)/%.tab.h
-	$(LEX) $(LEXOPTS) --outfile=$@ $<
+	$(call gendirs)
+	$(LEX) $(LEX_OPTS) --outfile=$@ $<
 
 $(OBJ_DIR)/%.yy.h: $(SRC_DIR)/%.l
-	$(LEX) $(LEXOPTS) --header-file=$@ -t $< 1> /dev/null
+	$(call gendirs)
+	$(LEX) $(LEX_OPTS) --header-file=$@ -t $< 1> /dev/null
 
 $(OBJ_DIR)/%.tab.c $(OBJ_DIR)/%.tab.h: $(SRC_DIR)/%.y $(OBJ_DIR)/%.yy.h
-	$(YACC) $(YACCOPTS) $< --defines=$(OBJ_DIR)/$(PROG).tab.h --output=$(OBJ_DIR)/$(PROG).tab.c
+	$(call gendirs)
+	$(YACC) $(YACC_OPTS) $< --defines=$(OBJ_DIR)/$(PROG).tab.h --output=$(OBJ_DIR)/$(PROG).tab.c
 
 -include $(OBJ_DIR)/$(PROG).yy.d $(OBJ_DIR)/$(PROG).tab.d
 
@@ -70,28 +93,51 @@ $(OBJ_DIR)/%.tab.c $(OBJ_DIR)/%.tab.h: $(SRC_DIR)/%.y $(OBJ_DIR)/%.yy.h
 -include $(DEP_FILES)
 
 $(OBJ_DIR)/%.yy.o: $(OBJ_DIR)/%.yy.c $(OBJ_DIR)/%.yy.h
+	$(call gendirs)
 	$(call compile,$<,$@)
 
 $(OBJ_DIR)/%.tab.o: $(OBJ_DIR)/%.tab.c $(OBJ_DIR)/%.tab.h
+	$(call gendirs)
 	$(call compile,$<,$@)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(call gendirs)
 	$(call compile,$<,$@)
 
 #--- Codegen hex targets
 
 %.xxd: %.pre
+	$(call gendirs)
 	xxd -i $< $@
 
 $(OBJ_DIR)/codegen_main.pre: $(SRC_DIR)/codegen_main.c $(C_FILES) $(H_FILES)
-	$(CC) $(CFLAGS) -E $< -o $@
+	$(call gendirs)
+	$(CC) $(C_FLAGS) -E $< -o $@
 
 #--- LibCalg build
 
 .PHONY: libcalg
 libcalg:
-	ln -srf Makefile.libcalg libcalg/
+	@ln -srf Makefile.libcalg libcalg/
 	CALG_DIR=$(realpath $(CALG_DIR)) $(MAKE) -C libcalg/ --makefile=Makefile.libcalg
+
+#--- Tests
+
+$(TEST_DIR)/%.ml: $(PROG)
+	$(eval TEST_C=$(patsubst %.ml,%.c,$@))
+	$(eval TEST_O=$(patsubst %.ml,%,$@))
+ifneq ($($(BIN_DIR)/$(PROG) -i $@ -o $(TEST_C) && \
+	    $(CC) $(TEST_C) -o $(TEST_O) $(TEST_FLAGS) && \
+	    $(TEST_O) 1>/dev/null),0)
+	$(call echo,10," * $@: Passed")
+else
+	$(call echo,9," * $@: Failed")
+endif
+	@$(RM) $(TEST_O) $(TEST_C)
+
+
+.PHONY: tests
+tests: $(sort $(TEST_FILES))
 
 #--- Other targets
 
@@ -109,12 +155,9 @@ report:
 .PHONY: all
 all: libcalg $(PROG)
 
-.PHONY: $(PROG)
-$(PROG): $(BIN_DIR)/$(PROG)
-
 .PHONY: clean-all
 clean-all: clean clean-libcalg
-	$(RM) $(PROG) *.dot *.dot.png *.output *.out
+	$(RM) $(BIN_DIR)/$(PROG) *.dot *.dot.png *.output *.out
 
 .PHONY: clean
 clean:
@@ -123,6 +166,7 @@ clean:
 	-$(RM) *.err
 
 .PHONY: clean-libcalg
+clean-libcalg:
 	-$(MAKE) -C libcalg/ clean
 	-$(RM) -r libcalg/lib/
 	-$(RM) -r libcalg/include/
@@ -133,8 +177,4 @@ re: clean $(PROG)
 .PHONY: re-all
 re-all: clean-all all
 
-.PHONY: gendirs
-gendirs:
-	@$(MKDIR) $(BIN_DIR)
-	@$(MKDIR) $(OBJ_DIR)
-	@find $(SRC_DIR) -type d | sed -e "s?$(SRC_DIR)?$(OBJ_DIR)?" | xargs $(MKDIR)
+
