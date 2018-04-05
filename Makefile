@@ -19,7 +19,7 @@ YACCOPTS = --verbose
 #--- Libcalg
 
 CALG_DIR := libcalg
-CFLAGS  += -I$(CALG_DIR)/include
+CFLAGS  += -I$(CALG_DIR)/include/libcalg-1.0
 LDFLAGS += -L$(CALG_DIR)/lib
 
 #--- Directories
@@ -84,14 +84,14 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	xxd -i $< $@
 
 $(OBJ_DIR)/codegen_main.pre: $(SRC_DIR)/codegen_main.c $(C_FILES) $(H_FILES)
-	gcc $(CFLAGS) -E $< -o $@
+	$(CC) $(CFLAGS) -E $< -o $@
 
 #--- LibCalg build
 
 .PHONY: libcalg
 libcalg:
 	ln -srf Makefile.libcalg libcalg/
-	$(MAKE) -C libcalg/ --makefile=Makefile.libcalg
+	CALG_DIR=$(realpath $(CALG_DIR)) $(MAKE) -C libcalg/ --makefile=Makefile.libcalg
 
 #--- Other targets
 

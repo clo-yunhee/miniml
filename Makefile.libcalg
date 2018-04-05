@@ -1,5 +1,5 @@
 
 default:
-	$(SHELL) -c "./autogen.sh --prefix=$(shell pwd)"
+	$(CALG_DIR)/autogen.sh --prefix=$(CALG_DIR)
 	$(MAKE) -C .
 	$(MAKE) -C . install
