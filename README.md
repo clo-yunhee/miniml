@@ -5,7 +5,7 @@ MiniML language compiler with the Lex/Yacc chain
 This README is still on my to-do list, so this is just a placeholder.
 I might add some stuff in the future, but this is by no means a priority, so don't expect it to be up to date.
 
-### Current status (as of March 20th 2018)
+### Current status (as of April 5th 2018)
 
 The compiler generates a single bulky C source file. It compiles and runs fine as a standalone program. (see usage section) 
 
@@ -21,9 +21,24 @@ If you can read French, you can build a PDF file for a detailed report, from the
 
 Otherwise, here are basic instructions as to how to build the project:
 
-* Install the [c-algorithms library](https://github.com/fragglet/c-algorithms) somewhere on your system.
-* Edit the `CALGDIR` variable in the root Makefile to the install directory.
-* Build the compiler with `make` and/or the report with `make report`.
+* Clone this repository recursively (dependency as submodule!).
+```
+git clone --recursive https://github.com/ichi-rika/miniml
+```
+Note that if you already had an older version of the repository, you might need to run a submodule update.
+```
+git submodule update
+```
+
+* Build the libcalg submodule. It will run autogen, build the library and install it in the submodule directory.
+```
+make libcalg
+```
+
+* Build the compiler.
+```
+make miniml
+```
 
 ### Usage
 
@@ -36,7 +51,8 @@ The compiler has four command line options:
 
 There must be only one of either source/stdin and target/execute. Note that not having either is not allowed by the compiler.
 
-When compiling generated code, make sure to link against the c-algorithms library (e.g. on GCC, with `-lcalg`) or you will get linkage errors.
+When compiling generated code, make sure to link against the c-algorithms library, or you will get linking errors.
+It is recommended to link statically, as to not depend on the target system.
 
 The `graph` rule builds a `.dot` and `.png` for the grammar parser.
 Note that the graph is very condensed, and the image generation can take a long time.
