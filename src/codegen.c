@@ -206,6 +206,18 @@ void gen_ast(Ast *ast) {
         code_line();
         code_iprint(")");
         break;
+    case e_list:
+        code_println("ast_make_list(");
+        ++indent;
+        code_indent();
+        gen_ast(ast->exprList.head);
+        code_println(",");
+        code_indent();
+        gen_ast(ast->exprList.tail);
+        --indent;
+        code_line();
+        code_iprint(")");
+        break;
     default:
         fprintf(stderr, "Codegen ast type not implemented yet\n");
         break;

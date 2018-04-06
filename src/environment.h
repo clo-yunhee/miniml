@@ -12,7 +12,7 @@ typedef enum expr_type {
     et_unit,
     et_int, et_float, et_bool, et_string,
     et_natfun1, et_natfun2,
-    et_fun, et_tuple,
+    et_fun, et_tuple, et_list,
 
     et_poly, et_error
 } TypeEnum;

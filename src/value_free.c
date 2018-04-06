@@ -16,6 +16,10 @@ void value_free(Value *value) {
     case et_tuple:
         vlist_free(value->valTuple);
         break;
+    case et_list:
+        value_free(value->valList.head);
+        value_free(value->valList.tail);
+        break;
     default:
         break;
     }

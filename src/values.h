@@ -16,6 +16,8 @@ struct expr_value {
                  NameList *params;
                  Ast *body; } valFun;
         ValueList *valTuple;
+        struct { Value *head;
+                 Value *tail; } valList;
     };
 };
 
@@ -30,6 +32,7 @@ MAKEVAL(natfun1) (NativeFunc1 fun);
 MAKEVAL(natfun2) (NativeFunc2 fun);
 MAKEVAL(fun) (Env *env, NameList *params, Ast *body);
 MAKEVAL(tuple) (ValueList *elems);
+MAKEVAL(list) (Value *head, Value *tail);
 
 void value_free(Value *value);
 void value_print(Value *value);

@@ -40,6 +40,10 @@ Type *type_repoly(Type *type, bool *error) {
         newType->typeTuple = tuple;
         break;
     }
+    case et_list:
+    {
+        newType->typeList = type_repoly(type->typeList, error);
+    }
     case et_poly:
     {
         // poly == 0 is a placeholder

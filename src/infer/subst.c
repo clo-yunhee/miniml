@@ -50,6 +50,8 @@ Type *subst_sub(Substitution *sub, Type *type, bool *error) {
         return type_tuple(
                 substl(type->typeTuple)
         );
+    case et_list:
+        return type_list(subst(type->typeList));
     case et_poly:
         // if the polymorph type is the same as the substitution, substitute 
         if (type->typePoly == sub->poly) {

@@ -11,7 +11,7 @@ EVAL(funcall);
 EVAL(let);
 EVAL(ifelse);
 EVAL(tuple);
-
+EVAL(list);
 
 #define VERR(str)  do { fprintf(stderr, str "\n"); *error = true; return vunit; } while (false)
 #define VERR2(str, ...) do { fprintf(stderr, str "\n", __VA_ARGS__); *error = true; return vunit; } while (false)

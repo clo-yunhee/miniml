@@ -32,6 +32,7 @@ int name_print_float;
 int name_print_bool;
 int name_int_of_float;
 int name_float_of_int;
+int name_hd, name_tl;
 
 
 int names_getid(const char *name) {
@@ -92,6 +93,9 @@ void names_init(void) {
 
             name_int_of_float = add_name("int_of_float");
             name_float_of_int = add_name("float_of_int");
+
+            name_hd = add_name("hd");
+            name_tl = add_name("tl");
         }
     } 
 }

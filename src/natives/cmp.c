@@ -2,10 +2,9 @@
 
 #include "nat.h"
 
-#define CHKTYPES do { if (x->type != y->type) { fprintf(stderr, "Can't compare different types"); return value_make_bool(false); } } while (false)
-
 
 int cmp_tuple(Value *x, Value *y);
+int cmp_list(Value *x, Value *y);
 int cmpi(int x, int y);
 int cmpf(double x, double y);
 
@@ -35,7 +34,10 @@ NATFUN2(or, x, y) {
 
 //structural comparison
 NATFUN2(compare, x, y) {
-    CHKTYPES;
+    if (x->type != y->type) {
+        fprintf(stderr, "Can't compare different types");
+        RINT(-1);
+    }
 
     switch (x->type) {
     case et_unit:
@@ -50,11 +52,13 @@ NATFUN2(compare, x, y) {
         RINT(strcmp(x->valString, y->valString));
     case et_natfun1:
     case et_natfun2:
-    case et_fun:
+        case et_fun:
         fprintf(stderr, "Cannot compare functional values");
         RINT(-1);
     case et_tuple:
         RINT(cmp_tuple(x, y));
+    case et_list:
+        RINT(cmp_list(x, y));
     default:
         fprintf(stderr, "Comparison not implemented yet");
         RINT(-1);
@@ -87,10 +91,32 @@ int cmp_tuple(Value *x, Value *y) {
     return c;
 }
 
+int cmp_list(Value *x, Value *y) {
+    // lexico order
+
+    Value *xHead = x->valList.head; 
+    Value *yHead = y->valList.head;
+
+    if (xHead == NULL) {
+        return (yHead == NULL) ? 0 : -1;
+    }
+    if (yHead == NULL) return 1;
+    
+    Value *xTail = x->valList.tail;
+    Value *yTail = y->valList.tail;
+
+    int c = native_compare(xHead, yHead)->valInt;
+
+    if (c == 0) {
+        return cmp_list(xTail, yTail);
+    }
+    return c;
+}
+
 int cmpi(int x, int y) {
     return (x < y) ? -1 : (x > y);
 }
 
 int cmpf(double x, double y) {
-    return (x < y) ? -1.0 : (x > y);
+    return (x < y) ? -1 : (x > y);
 }

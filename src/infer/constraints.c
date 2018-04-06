@@ -141,9 +141,9 @@ void collect_cons(ConsList **lptr, TypedAst *ast, bool *error) {
                 list_append(&params, arg->xtype);
             }
 
-            Type *dedfntype = type_fun(params, xtype);
+            Type *dedFnType = type_fun(params, xtype);
 
-            list_append(lptr, cons_make(fntype, dedfntype));
+            list_append(lptr, cons_make(fntype, dedFnType));
 
             break;
         }
@@ -205,8 +205,24 @@ void collect_cons(ConsList **lptr, TypedAst *ast, bool *error) {
     case e_tuple:
         collect_cons_list(lptr, ast->exprTuple, error);
         break;
+    case e_list:
+    {
+        TypedAst *head = ast->exprList.head;
+        TypedAst *tail = ast->exprList.tail;
+
+        if (head != NULL) { // not nil
+            collect_cons(lptr, head, error);
+            collect_cons(lptr, tail, error);
+
+            // the list must be homogenous, t(tail) = List(t(head))
+            Type *dedTailType = type_list(head->xtype);
+            list_append(lptr, cons_make(tail->xtype, dedTailType));
+        }
+
+        break;
+    }
     default:
-        IERR("Inference collect type not implemented");
+        IERR("Inference constraint type not implemented");
         break;
     }
 

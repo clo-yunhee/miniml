@@ -1,5 +1,7 @@
 #include "common.h"
 
+void value_print_list(Value *list);
+
 void vlist_print(ValueList *list) {
     list_print(list, (ListPrintFunc) value_print, "(", ", ", ")");
 }
@@ -31,6 +33,11 @@ void value_print(Value *value) {
     case et_tuple:
         vlist_print(value->valTuple);
         break;
+    case et_list:
+        printf("[");
+        value_print_list(value);
+        printf("]");
+        break;
     case et_error:
     default:
         printf("???");
@@ -38,3 +45,20 @@ void value_print(Value *value) {
     }
 }
 
+
+void value_print_list(Value *list) {
+    Value *head = list->valList.head;
+    Value *tail = list->valList.tail;
+    
+    // nil => empty
+    if (head == NULL) return;
+    
+    // print the head
+    value_print(head);
+
+    // and if the tail is not nil
+    if (tail->valList.head != NULL) {
+        printf("; ");
+        value_print_list(tail);
+    }
+}

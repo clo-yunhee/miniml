@@ -99,4 +99,9 @@ MAKEAST(tuple) (AstList *exprs) {
     return ast;
 }
 
-
+MAKEAST(list) (Ast *head, Ast *tail) {
+    DECLAST(e_list);
+    ast->exprList.head = head;
+    ast->exprList.tail = tail;
+    return ast;
+}

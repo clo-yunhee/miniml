@@ -12,7 +12,7 @@ typedef enum ast_type {
     e_block, e_seq,
     e_funcall,
     e_let, e_if,
-    e_tuple//, e_list
+    e_tuple, e_list
 } AstType;
 
 struct ast {
@@ -47,9 +47,9 @@ struct ast {
                  Ast *bElse; } exprIf;
         // e_tuple
         AstList *exprTuple;
-        /*// e_list
+        // e_list
         struct { Ast *head;
-                 Ast *tail; } exprList;*/
+                 Ast *tail; } exprList;
     };
 };
 
@@ -93,7 +93,7 @@ MAKEAST(if) (Ast *cond, Ast *bIf,
 
 MAKEAST(tuple) (AstList *elems);
 
-//MAKEAST(list) (Ast *head, Ast *tail);
+MAKEAST(list) (Ast *head, Ast *tail);
 
 void ast_free(Ast *ast);
 void ast_print(Ast *ast);

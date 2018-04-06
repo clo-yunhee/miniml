@@ -37,5 +37,6 @@ extern int name_print_float;
 extern int name_print_bool;
 extern int name_int_of_float;
 extern int name_float_of_int;
+extern int name_hd, name_tl;
 
 #endif // _NAMES_H_

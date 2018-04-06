@@ -39,9 +39,9 @@ struct typed_ast {
                  TypedAst *bElse; } exprIf;
         // e_tuple
         TypedAstList *exprTuple;
-        /*// e_list
-        struct { Ast *head;
-                 Ast *tail; } exprList;*/
+        // e_list
+        struct { TypedAst *head;
+                 TypedAst *tail; } exprList;
     };
 
     int number;

@@ -46,6 +46,10 @@ void type_print(Type *type) {
     case et_tuple:
         tdlist_print(type->typeTuple, "(", " * ", ")");
         break;
+    case et_list:
+        type_print(type->typeList);
+        printf(" list");
+        break;
     case et_poly:
         printf("'");
         if (type->typePoly <= 26) {

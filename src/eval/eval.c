@@ -26,6 +26,8 @@ Value *visit_eval(Env *env, Ast *expr, bool *error) {
         return eval_ifelse(env, expr, error);
     case e_tuple:
         return eval_tuple(env, expr, error);
+    case e_list:
+        return eval_list(env, expr, error);
     default:
         VERR("Evaluation not implemented yet");
     }

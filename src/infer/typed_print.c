@@ -99,6 +99,19 @@ void typed_print(TypedAst *ast) {
         printf("Tuple ");
         talist_print(ast->exprTuple);
         break;
+    case e_list:
+        printf("List ");
+        if (ast->exprList.head == NULL) {
+            printf("[]");
+        }
+        else {
+            printf("(");
+            typed_print(ast->exprList.head);
+            printf(" :: ");
+            typed_print(ast->exprList.tail);
+            printf(")");
+        }
+        break;
     default:
         printf("Unhandled");
         break;

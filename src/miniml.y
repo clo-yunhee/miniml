@@ -32,6 +32,7 @@ extern AstList *prog;
 %right ELSE 
 
 %right CONS
+%nonassoc RBRACKET
 
 %nonassoc COMMA RPAREN
 %left "funcall"
@@ -53,9 +54,10 @@ extern AstList *prog;
 %type <list> program
 
 %type <ast> instruction expr global_let
-%type <ast> atom funcall_expr arith_expr let_expr fun_expr if_expr
+%type <ast> atom funcall_expr arith_expr let_expr fun_expr if_expr cons_expr
 %type <ast> exp_or exp_and exp_equ exp_rel exp_add exp_mul exp_un
 
+%type <ast> list_expr_list
 %type <list> atom_list expr_list tuple_expr_list
 %type <let> let_prefix let_binding
 %type <names> parameter_list let_pattern tuple_name_list
@@ -95,6 +97,7 @@ expr:
   | let_expr
   | fun_expr
   | if_expr
+  | cons_expr
   ;
 
 funcall_expr:
@@ -129,18 +132,20 @@ if_expr:
 /* atom */
 
 atom:
-    INT                             { $$ = ast_make_integer($1); }
-  | FLOAT                           { $$ = ast_make_float($1); }
-  | BOOL                            { $$ = ast_make_bool($1); }
-  | STRING                          { $$ = ast_make_string($1); }
-  | NAME                            { $$ = ast_make_variable($1); }
-  | LPAREN RPAREN                   { $$ = ast_make_unit(); }
-  | TBEGIN TEND                     { $$ = ast_make_unit(); }
-  | LPAREN operator RPAREN          { $$ = ast_make_variable($2); }
-  | LPAREN expr RPAREN              { $$ = $2; }
-  | LPAREN expr_list RPAREN         { $$ = ast_make_seq($2); }
-  | TBEGIN expr_list TEND           { $$ = ast_make_seq($2); }
-  | LPAREN tuple_expr_list RPAREN   { $$ = ast_make_tuple($2); }
+    INT                               { $$ = ast_make_integer($1); }
+  | FLOAT                             { $$ = ast_make_float($1); }
+  | BOOL                              { $$ = ast_make_bool($1); }
+  | STRING                            { $$ = ast_make_string($1); }
+  | NAME                              { $$ = ast_make_variable($1); }
+  | LPAREN RPAREN                     { $$ = ast_make_unit(); }
+  | TBEGIN TEND                       { $$ = ast_make_unit(); }
+  | LPAREN operator RPAREN            { $$ = ast_make_variable($2); }
+  | LPAREN expr RPAREN                { $$ = $2; }
+  | LPAREN expr_list RPAREN           { $$ = ast_make_seq($2); }
+  | TBEGIN expr_list TEND             { $$ = ast_make_seq($2); }
+  | LPAREN tuple_expr_list RPAREN     { $$ = ast_make_tuple($2); }
+  | LBRACKET RBRACKET                 { $$ = ast_make_list(NULL, NULL); }
+  | LBRACKET list_expr_list RBRACKET  { $$ = $2; }
   ;
 
 atom_list:
@@ -182,8 +187,13 @@ parameter_list:
 
 /* lists */
 
+cons_expr:
+    expr CONS expr    { $$ = ast_make_list($1, $3); }
+  ;
 
-
+list_expr_list:
+    expr %prec "below-semi"     { $$ = ast_make_list($1, ast_make_list(NULL, NULL)); }
+  | expr SEMI list_expr_list    { $$ = ast_make_list($1, $3); }
 
 /* math expressions */
 

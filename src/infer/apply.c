@@ -70,6 +70,17 @@ TypedAst *infer_apply(SubstList *subs, TypedAst *expr, bool *error) {
     case e_tuple:
         applyl(expr->exprTuple);
         break;
+    case e_list:
+    {
+        TypedAst *head = expr->exprList.head;
+        TypedAst *tail = expr->exprList.tail;
+
+        if (head != NULL) { // not nil
+            apply(head);
+            apply(tail);
+        }
+        break;
+    }
     default:
         IERR("Inference apply type not implemented");
         break;

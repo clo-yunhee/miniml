@@ -43,6 +43,8 @@ bool type_equ(Type *first, Type *second) {
                 && type_equ(first->typeFun.to, second->typeFun.to);
     case et_tuple:
         return tdlist_equ(first->typeTuple, second->typeTuple);
+    case et_list:
+        return type_equ(first->typeList, second->typeList);
     case et_poly:
         return first->typePoly == second->typePoly;
     default:

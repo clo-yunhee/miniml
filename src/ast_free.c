@@ -35,6 +35,10 @@ void ast_free(Ast *ast) {
     case e_tuple:
         alist_free(ast->exprTuple);
         break;
+    case e_list:
+        ast_free(ast->exprList.head);
+        ast_free(ast->exprList.tail);
+        break;
     default:
         break;
     }

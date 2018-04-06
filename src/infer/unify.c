@@ -30,7 +30,7 @@ SubstList *unify_one(Type *first, Type *second, bool *error) {
     if (t1 == et_fun && t2 == et_fun) {
         ConsList *cons = cons_zip(first->typeFun.args, second->typeFun.args);
         if (cons == NULL) {
-            IERR("Function type mismatch");
+            IERR("Function argument types mismatch");
             return NULL;
         }
 
@@ -42,11 +42,15 @@ SubstList *unify_one(Type *first, Type *second, bool *error) {
     if (t1 == et_tuple && t2 == et_tuple) {
         ConsList *cons = cons_zip(first->typeTuple, second->typeTuple);
         if (cons == NULL) {
-            IERR("Tuple type mismatch");
+            IERR("Tuple element types mismatch");
             return NULL;
         }
 
         return infer_unify(cons, error);
+    }
+
+    if (t1 == et_list && t2 == et_list) {
+        return unify_one(first->typeList, second->typeList, error);
     }
 
     IERR("Type mismatch");

@@ -198,8 +198,28 @@ TypedAst *infer_annotate(Env *env, Ast *ast, bool *error) {
         xtype = type_tuple(types);
         break;
     }
+    case e_list:
+    {
+        Ast *head = ast->exprList.head;
+        Ast *tail = ast->exprList.tail;
+
+        Type *elemType;
+
+        //not nil
+        if (head != NULL) {
+            typed->exprList.head = infer_annotate(env, head, error);
+            typed->exprList.tail = infer_annotate(env, tail, error);
+
+            elemType = typed->exprList.head->xtype;
+        } else {
+            elemType = new_poly();
+        }
+        
+        xtype = type_list(elemType);
+        break;
+    }
     default:
-        IERR("Inference number type not implemented");
+        IERR("Inference annotate type not implemented");
         break;
     }
    

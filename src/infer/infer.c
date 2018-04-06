@@ -15,11 +15,11 @@ Type *infer_type(Env *env, Ast *expr, bool *error) {
     CHECKERR;
 
     ConsList *constraints = infer_constraints(annotated, error);
-    //list_print(constraints, cons_print, " - Cons: \n", ",\n", "\n***\n\n");
+    //list_print(constraints, (ListPrintFunc) cons_print, " - Cons: \n", ",\n", "\n***\n\n");
     CHECKERR;
 
     SubstList *substitutions = infer_unify(constraints, error);
-    //list_print(substitutions, subst_print, " - Subs: \n", ",\n", "\n***\n\n");
+    //list_print(substitutions, (ListPrintFunc) subst_print, " - Subs: \n", ",\n", "\n***\n\n");
     CHECKERR;
 
     TypedAst *typed = infer_apply(substitutions, annotated, error);

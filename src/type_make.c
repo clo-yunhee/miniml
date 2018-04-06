@@ -33,6 +33,12 @@ MAKETYPE(tuple) (TypeList *elems) {
     return type;
 }
 
+MAKETYPE(list) (Type *elem) {
+    Type *type = new_type(et_list);
+    type->typeList = elem;
+    return type;
+}
+
 MAKETYPE(poly) (int number) {
     Type *type = new_type(et_poly);
     type->typePoly = number;

@@ -7,6 +7,7 @@ struct expr_typedata {
         struct { TypeList *args;
                  Type *to; } typeFun;
         TypeList *typeTuple;
+        Type *typeList;
         int typePoly;
     };
 };
@@ -17,6 +18,7 @@ MAKETYPE(fun1) (Type *from, Type *to);
 MAKETYPE(fun2) (Type *from1, Type *from2, Type *to);
 MAKETYPE(fun) (TypeList *args, Type *to);
 MAKETYPE(tuple) (TypeList *elems);
+MAKETYPE(list) (Type *elem);
 MAKETYPE(poly) (int number);
 
 void type_free(Type *type);

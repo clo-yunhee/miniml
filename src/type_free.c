@@ -25,6 +25,9 @@ void type_free(Type *type) {
     case et_tuple:
         tdlist_free(type->typeTuple);
         break;
+    case et_list:
+        type_free(type->typeList);
+        break;
     default:
         break;
     }

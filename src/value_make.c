@@ -61,6 +61,13 @@ MAKEVAL(tuple) (ValueList *elems) {
     return val;
 }
 
+MAKEVAL(list) (Value *head, Value *tail) {
+    DECLVAL(et_list);
+    val->valList.head = head;
+    val->valList.tail = tail;
+    return val;
+}
+
 MAKEVAL(error) (void) {
     DECLVAL(et_error);
     return val;

@@ -32,5 +32,8 @@ NATFUN1(print_bool, x);
 NATFUN1(int_of_float, x);
 NATFUN1(float_of_int, x);
 
+NATFUN1(hd, lst);
+NATFUN1(tl, lst);
+
 
 #endif // _NATIVES_H_

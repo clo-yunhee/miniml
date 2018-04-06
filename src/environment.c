@@ -59,6 +59,11 @@ Env *env_init(void) {
     ADDNAT1(int_of_float, tfloat, tint);
     ADDNAT1(float_of_int, tint, tfloat);
 
+    /* hd : 'a list -> 'a      */
+    /* tl : 'a list -> 'a list */
+    ADDNAT1(hd, type_list(tpoly), tpoly);
+    ADDNAT1(tl, type_list(tpoly), type_list(tpoly));
+
     return env;
 }
 
