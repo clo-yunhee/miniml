@@ -23,6 +23,9 @@ CALG_DIR := libcalg
 C_FLAGS  += -I$(CALG_DIR)/include/libcalg-1.0
 LD_FLAGS += -L$(CALG_DIR)/lib
 
+TEST_FLAGS += -L$(CALG_DIR)/lib
+
+
 #--- Directories
 
 BIN_DIR := bin
