@@ -31,7 +31,7 @@ TEST_FLAGS += -L$(CALG_DIR)/lib
 BIN_DIR := bin
 SRC_DIR := src
 OBJ_DIR := obj
-TEST_DIR := test
+TEST_DIR := tests
 
 #--- Files
 
