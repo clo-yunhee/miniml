@@ -1,10 +1,10 @@
 #include "eval.h"
 
 
-EVAL(list) {
+EVAL(seq) {
     Value *value;
 
-    AstList *expr = list->exprList;
+    AstList *expr = seq->exprSeq;
 
     ListIterator it;
     list_iterate(&expr, &it);    

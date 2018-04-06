@@ -22,8 +22,8 @@ struct typed_ast {
         int exprVariable;
         // e_block
         TypedAst *exprBlock;
-        // e_list
-        TypedAstList *exprList;
+        // e_seq
+        TypedAstList *exprSeq;
         // e_funcall
         struct { TypedAst *function;
                  TypedAstList *args; } exprFunCall;
@@ -39,6 +39,9 @@ struct typed_ast {
                  TypedAst *bElse; } exprIf;
         // e_tuple
         TypedAstList *exprTuple;
+        /*// e_list
+        struct { Ast *head;
+                 Ast *tail; } exprList;*/
     };
 
     int number;

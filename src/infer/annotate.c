@@ -64,8 +64,8 @@ TypedAst *infer_annotate(Env *env, Ast *ast, bool *error) {
         typed->exprBlock = infer_annotate(env, ast->exprBlock, error);
         xtype = new_poly();
         break;
-    case e_list:
-        typed->exprList = annotate_list(env, ast->exprList, error);
+    case e_seq:
+        typed->exprSeq = annotate_list(env, ast->exprSeq, error);
         xtype = new_poly();
         break;
     case e_funcall:

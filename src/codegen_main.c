@@ -21,7 +21,7 @@
 #include "eval/funcall.c"
 #include "eval/ifelse.c"
 #include "eval/let.c"
-#include "eval/list.c"
+#include "eval/seq.c"
 #include "eval/tuple.c"
 #include "eval/variable.c"
 

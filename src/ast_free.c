@@ -15,8 +15,8 @@ void ast_free(Ast *ast) {
     case e_block:
         ast_free(ast->exprBlock);
         break;
-    case e_list:
-        alist_free(ast->exprList);
+    case e_seq:
+        alist_free(ast->exprSeq);
         break;
     case e_funcall:
         ast_free(ast->exprFunCall.function);

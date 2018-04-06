@@ -21,6 +21,7 @@ extern AstList *prog;
 %token TWOSEMI SEMI LPAREN RPAREN TBEGIN TEND ARROW COMMA
 %token PLUS MINUS MUL DIV FPLUS FMINUS FMUL FDIV
 %token EQUAL NOTEQU NOT GT GTE LT LTE AND OR
+%token LBRACKET RBRACKET CONS
 
 /* precedence rules */
 
@@ -29,6 +30,8 @@ extern AstList *prog;
 %right SEMI
 %nonassoc "simple-if"
 %right ELSE 
+
+%right CONS
 
 %nonassoc COMMA RPAREN
 %left "funcall"
@@ -135,8 +138,8 @@ atom:
   | TBEGIN TEND                     { $$ = ast_make_unit(); }
   | LPAREN operator RPAREN          { $$ = ast_make_variable($2); }
   | LPAREN expr RPAREN              { $$ = $2; }
-  | LPAREN expr_list RPAREN         { $$ = ast_make_list($2); }
-  | TBEGIN expr_list TEND           { $$ = ast_make_list($2); }
+  | LPAREN expr_list RPAREN         { $$ = ast_make_seq($2); }
+  | TBEGIN expr_list TEND           { $$ = ast_make_seq($2); }
   | LPAREN tuple_expr_list RPAREN   { $$ = ast_make_tuple($2); }
   ;
 
@@ -175,6 +178,11 @@ parameter_list:
     NAME                  { $$ = list_new(nmalloc($1)); }
   | parameter_list NAME   { $$ = $1; list_append(&$1, nmalloc($2)); }
   ;
+
+
+/* lists */
+
+
 
 
 /* math expressions */

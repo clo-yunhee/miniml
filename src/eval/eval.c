@@ -16,8 +16,8 @@ Value *visit_eval(Env *env, Ast *expr, bool *error) {
         return eval_var(env, expr, error);
     case e_block:
         return visit_eval(env, expr->exprBlock, error);
-    case e_list:
-        return eval_list(env, expr, error);
+    case e_seq:
+        return eval_seq(env, expr, error);
     case e_funcall:
         return eval_funcall(env, expr, error);
     case e_let:

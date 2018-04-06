@@ -77,6 +77,10 @@ identifier          [[:alpha:]][[:alnum:]_]*
 "*."                return NTOKEN(FMUL);
 "/."                return NTOKEN(FDIV);
 
+"["                 return NTOKEN(LBRACKET);
+"]"                 return NTOKEN(RBRACKET);
+"::"                return NTOKEN(CONS);
+
 "="                 return NTOKEN(EQUAL);
 "<>"                return NTOKEN(NOTEQU);
 "!"                 return NTOKEN(NOT);

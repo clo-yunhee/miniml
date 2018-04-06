@@ -38,9 +38,9 @@ void typed_print(TypedAst *ast) {
         typed_print(ast->exprBlock);
         printf(")");
         break;
-    case e_list:
-        printf("List ");
-        talist_print(ast->exprList);
+    case e_seq:
+        printf("Seq ");
+        talist_print(ast->exprSeq);
         break;
     case e_funcall:
         printf("FunCall (");

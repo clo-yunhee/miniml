@@ -9,9 +9,10 @@ typedef struct ast Ast;
 typedef enum ast_type { 
     e_unit, e_int, e_float, e_bool,
     e_string, e_var,
-    e_block, e_list,
+    e_block, e_seq,
     e_funcall,
-    e_let, e_if, e_tuple
+    e_let, e_if,
+    e_tuple//, e_list
 } AstType;
 
 struct ast {
@@ -29,8 +30,8 @@ struct ast {
         int exprVariable;
         // e_block
         Ast *exprBlock;
-        // e_list
-        AstList *exprList;
+        // e_seq
+        AstList *exprSeq;
         // e_funcall
         struct { Ast *function;
                  AstList *args; } exprFunCall;
@@ -46,6 +47,9 @@ struct ast {
                  Ast *bElse; } exprIf;
         // e_tuple
         AstList *exprTuple;
+        /*// e_list
+        struct { Ast *head;
+                 Ast *tail; } exprList;*/
     };
 };
 
@@ -74,7 +78,7 @@ MAKEAST(string) (char *value);
 MAKEAST(variable) (int name);
 
 MAKEAST(block) (Ast *ast);
-MAKEAST(list) (AstList *list);
+MAKEAST(seq) (AstList *seq);
 
 MAKEAST(funcall) (Ast *fun, AstList *args);
 MAKEAST(unary) (int op, Ast *right);
@@ -88,6 +92,8 @@ MAKEAST(if) (Ast *cond, Ast *bIf,
                           Ast *bElse); // bElse != NULL  ->  if-else
 
 MAKEAST(tuple) (AstList *elems);
+
+//MAKEAST(list) (Ast *head, Ast *tail);
 
 void ast_free(Ast *ast);
 void ast_print(Ast *ast);

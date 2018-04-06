@@ -39,8 +39,8 @@ TypedAst *infer_apply(SubstList *subs, TypedAst *expr, bool *error) {
     case e_block:
         apply(expr->exprBlock);
         break;
-    case e_list:
-        applyl(expr->exprList);
+    case e_seq:
+        applyl(expr->exprSeq);
         break;
     case e_funcall:
         apply(expr->exprFunCall.function);

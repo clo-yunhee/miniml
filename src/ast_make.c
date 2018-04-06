@@ -47,9 +47,9 @@ MAKEAST(block) (Ast *block) {
     return ast;
 }
 
-MAKEAST(list) (AstList *list) {
-    DECLAST(e_list);
-    ast->exprList = list;
+MAKEAST(seq) (AstList *seq) {
+    DECLAST(e_seq);
+    ast->exprSeq = seq;
     return ast;
 }
 

@@ -6,7 +6,7 @@
 #define EVAL(type) Value *eval_##type (Env *env, Ast * type, bool *error) 
 
 EVAL(var);
-EVAL(list);
+EVAL(seq);
 EVAL(funcall);
 EVAL(let);
 EVAL(ifelse);

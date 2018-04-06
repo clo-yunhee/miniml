@@ -34,9 +34,9 @@ void ast_print(Ast *ast) {
         ast_print(ast->exprBlock);
         printf(")");
         break;
-    case e_list:
-        printf("List ");
-        alist_print(ast->exprList);
+    case e_seq:
+        printf("Seq ");
+        alist_print(ast->exprSeq);
         break;
     case e_funcall:
         printf("FunCall (");

@@ -142,11 +142,11 @@ void gen_ast(Ast *ast) {
         code_line();
         code_iprint(")");
         break;
-    case e_list:
-        code_println("ast_make_list(");
+    case e_seq:
+        code_println("ast_make_seq(");
         ++indent;
         code_indent();
-        gen_list(ast->exprList);
+        gen_list(ast->exprSeq);
         --indent;
         code_line();
         code_iprint(")");

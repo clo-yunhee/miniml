@@ -57,12 +57,12 @@ void collect_cons(ConsList **lptr, TypedAst *ast, bool *error) {
         list_append(lptr, cons_make(xtype, ast->exprBlock->xtype));
         collect_cons(lptr, ast->exprBlock, error);
         break;
-    case e_list:
+    case e_seq:
     {
         // list type if the last expression
-        TypedAst *last = list_last_data(ast->exprList);
+        TypedAst *last = list_last_data(ast->exprSeq);
         list_append(lptr, cons_make(xtype, last->xtype));
-        collect_cons_list(lptr, ast->exprList, error);
+        collect_cons_list(lptr, ast->exprSeq, error);
         break;
     }
     case e_funcall:
