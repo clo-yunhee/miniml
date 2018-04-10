@@ -13,4 +13,5 @@ Type *infer_type(Env *env, Ast *expr, bool *error);
 /* Evaluates the value of the expression. */
 Value *visit_eval(Env *env, Ast *expr, bool *error);
 
+
 #endif // _INFERENCE_H_

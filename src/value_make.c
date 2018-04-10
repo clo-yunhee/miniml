@@ -35,15 +35,9 @@ MAKEVAL(string) (char *value) {
     return val;
 }
 
-MAKEVAL(natfun1) (NativeFunc1 fun) {
-    DECLVAL(et_natfun1);
-    val->valNatfun1 = fun;
-    return val;
-}
-
-MAKEVAL(natfun2) (NativeFunc2 fun) {
-    DECLVAL(et_natfun2);
-    val->valNatfun2 = fun;
+MAKEVAL(native) (NativeDesc *fn) {
+    DECLVAL(et_natfun);
+    val->valNative = fn;
     return val;
 }
 

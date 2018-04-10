@@ -1,6 +1,6 @@
 #include "common.h"
 
-#define ADD(n, t, v) env = env_make(n, t, v, env);
+#define ADD(n, t, v) //env = env_make(n, t, v, env);
 
 #define ADDNAT1(fn, tx, ty)        ADD(name_##fn, type_fun1(tx, ty), value_make_natfun1(native_##fn))
 #define ADDNAT2(fn, tx, ty, tz)    ADD(name_##fn, type_fun2(tx, ty, tz), value_make_natfun2(native_##fn))
@@ -8,6 +8,8 @@
 Env *env_init(void) {
     // init standard objects
     Env *env = NULL;
+
+    env = natives_env(env);
 
     /* ( + ) : int -> int -> int */
     /* ( - ) : int -> int -> int */

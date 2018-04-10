@@ -9,22 +9,19 @@ EVAL(funcall) {
     case et_fun:
         // normal function
         break;
-    case et_natfun1:
+    case et_natfun:
     {
-        Value *arg = visit_eval(env, list_data(args), error);
-        
-        return (func->valNatfun1)(arg);
-    }
-    case et_natfun2:
-    {
-        if (list_length(args) < 2) {
-            VERR("Native functions cannot be curried");
-        }
-        
-        Value *arg1 = visit_eval(env, list_nth_data(args, 0), error);
-        Value *arg2 = visit_eval(env, list_nth_data(args, 1), error);
+        ValueList *argValues = NULL;
 
-        return (func->valNatfun2)(arg1, arg2);
+        ListIterator it;
+        list_iterate(&args, &it);
+        while (list_iter_has_more(&it)) {
+            Ast *arg = list_iter_next(&it);
+
+            list_append(&argValues, visit_eval(env, arg, error));
+        }
+
+        return native_apply(func->valNative, argValues);
     }
     default:
         VERR("Expression is not a function and cannot be applied");

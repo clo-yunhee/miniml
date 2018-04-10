@@ -1,32 +1,6 @@
 #include "common.h"
 
-typedef void (*native_func_t)(void);
-typedef Value * (*native_fn1_t)(Value *);
-typedef Value * (*native_fn2_t)(Value *, Value *);
-
-typedef struct native_function NativeDesc;
-
-struct natcons { int i, j; };
-
-struct native_function {
-    /* the name table index for this function */
-    int name;
-    
-    /* a generic function pointer for this function */
-    native_func_t func;
-
-    /* the types of arguments, in an array sized argCount */
-    size_t argCount;
-    Type **argTypes;
-
-    /* the type of return value */
-    Type *retType;
-
-    /* a list of type constraints (pattern with arg index) */
-    size_t consLength;
-    struct natcons *cons;
-};
-
+/*--- Cons functions ---*/
 
 /**
  * Initialises a native function entry, types not initialised
@@ -37,6 +11,7 @@ NativeDesc *native_make(const char *name, native_func_t func) {
 
     fn->name = names_getid(name);
     fn->func = func;
+    fn->consList = NULL;
 
     return fn;
 }
@@ -48,42 +23,83 @@ void native_args(NativeDesc *fn, Type *out, ...) {
     va_list ap;
     va_start(ap, out);
 
-    fn->argCount = 0;
-    int i = 0;
-    size_t arrSize = 0;
+    fn->retType = out;
+    fn->args = NULL;
 
-    Type *cur;
-    while ((cur = va_arg(ap, Type *)) != NULL) {
-        ++fn->argCount;
-        arrSize += fn->argCount * sizeof(Type *);
-            
-        //realloc is kinda costly but eh.
-        fn->argTypes = realloc(fn->argTypes, arrSize);
-        fn->argTypes[i++] = cur;
+    Type *arg;
+    while ((arg = va_arg(ap, Type *)) != NULL) {
+        list_append(&fn->args, arg);
     }
 
-    fn->retType = out;
+    va_end(ap);
 }
 
 /**
  * Sets argument type constraints
  */
-void native_cons(NativeDesc *fn, size_t count, struct natcons cons[]) {
-    fn->consLength = count;
-    fn->cons = malloc(count * sizeof(struct natcons));
+void native_cons(NativeDesc *fn, unsigned int i, unsigned int j) {
+    struct natcons *cons = malloc(sizeof(struct natcons));
+    cons->i = i;
+    cons->j = j;
 
-    for (unsigned int i = 0; i < count; ++i) {
-        memcpy(&fn->cons[i], &cons[i], sizeof(struct natcons));
-    }
+    list_append(&fn->consList, cons);
 }
 
+/**
+ * Turns the index into a type or NULL if error
+ */
+Type *native_actual_type(NativeDesc *fn, unsigned int i) {
+    if (i >= 1 && i <= list_length(fn->args)) { // arg count
+        return list_nth_data(fn->args, i);
+    } else if (i == 0) { // return type
+        return fn->retType;
+    }
+    return NULL;
+}
 
-/// native functions
+/**
+ * Applies the function to the argument list
+ */
+Value *native_apply(NativeDesc *fn, ValueList *args) {
+    fprintf(stderr, "<<< TODO native apply >>>\n");
 
+    return vunit;
+}
+
+/*--- Add functions ---*/
+
+
+static NatfnList *functions = NULL;
+
+
+Env *natives_env(Env *env) {
+    ListIterator it;
+    list_iterate(&functions, &it);
+    
+    while (list_iter_has_more(&it)) {
+        NativeDesc *fn = list_iter_next(&it);
+
+        env = env_make(fn->name, type_native(fn), value_make_native(fn), env);
+    }
+
+    return env;
+}
 
 void natives_init() {
-    NativeDesc *fn = native_make("=", (native_func_t) native_equal);
-    native_args(fn, tbool, tpoly, tpoly);
-    native_cons(fn, 1, (struct natcons[]) { { 0, 1 } });
+    NativeDesc *fn;
+    
+    fn = native_make("=", (native_func_t) native_equal);
+    native_args(fn, tbool, tpoly, tpoly, NULL);
+    native_cons(fn, 1, 2);
+    list_append(&functions, fn);
+
+    fn = native_make("hd", (native_func_t) native_hd);
+    native_args(fn, tpoly, tpoly, NULL);
+    list_append(&functions, fn);
+
+    fn = native_make("tl", (native_func_t) native_tl);
+    native_args(fn, tpoly, tpoly, NULL);
+    native_cons(fn, 1, 0);
+    list_append(&functions, fn);
 }
 

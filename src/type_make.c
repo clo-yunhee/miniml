@@ -9,15 +9,10 @@ Type *new_type(TypeEnum et) {
 }
 
 
-MAKETYPE(fun1) (Type *from, Type *to) {
-    TypeList *args = list_new(from);
-    return type_fun(args, to);
-}
-
-MAKETYPE(fun2) (Type *from1, Type *from2, Type *to) {
-    TypeList *args = list_new(from1);
-    list_append(&args, from2);
-    return type_fun(args, to);
+MAKETYPE(native) (NativeDesc *fn) {
+    Type *type = new_type(et_natfun);
+    type->typeNative = fn;
+    return type;
 }
 
 MAKETYPE(fun) (TypeList *args, Type *to) {

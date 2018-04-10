@@ -15,6 +15,19 @@ Type *type_repoly(Type *type, bool *error) {
     case et_string:
     case et_error:
         break;
+    case et_natfun:
+    {
+        TypeList *args = NULL;
+        ListIterator it;
+        list_iterate(&type->typeNative->args, &it);
+        while (list_iter_has_more(&it)) {
+            Type *arg = list_iter_next(&it);
+            list_append(&args, type_repoly(arg, error));
+        }
+        newType->typeNative->args = args;
+        newType->typeNative->retType = type_repoly(type->typeNative->retType, error);
+        break;
+    }
     case et_fun:
     {
         TypeList *args = NULL;

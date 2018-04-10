@@ -50,9 +50,8 @@ NATFUN2(compare, x, y) {
         RINT(cmpi(x->valBool, y->valBool)); // false < true
     case et_string:
         RINT(strcmp(x->valString, y->valString));
-    case et_natfun1:
-    case et_natfun2:
-        case et_fun:
+    case et_natfun:
+    case et_fun:
         fprintf(stderr, "Cannot compare functional values");
         RINT(-1);
     case et_tuple:
