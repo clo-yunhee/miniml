@@ -43,6 +43,7 @@ Type *type_repoly(Type *type, bool *error) {
     case et_list:
     {
         newType->typeList = type_repoly(type->typeList, error);
+        break;
     }
     case et_poly:
     {
