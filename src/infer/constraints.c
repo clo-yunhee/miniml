@@ -74,30 +74,58 @@ void collect_cons(ConsList **lptr, TypedAst *ast, bool *error) {
         Type *fntype = func->xtype;
 
         /* the function expression can be:
-           1. a function : we match each (param, arg) pair and the return types
-           2. a curried function : we match some (param, arg) pairs and the return type is the remaining pairs
-           3. a poly type : constraint the function expression to match the args and return types
-           4. neither : throw an error  */
+           1. a native function : cannot be curried
+           2. a function : we match each (param, arg) pair and the return types
+           3. a curried function : we match some (param, arg) pairs and the return type is the remaining pairs
+           4. a poly type : constraint the function expression to match the args and return types
+           5. neither : throw an error  */
         switch (fntype->type) {
-        /*case et_natfun1:
-            if (argCount == 1) {
-                list_append(lptr, cons_make(list_nth_data(args, 0), fntype->typeNatfun1.from));
-                list_append(lptr, cons_make(xtype, fntype->typeNatfun1.to));
-            } else {
+        case et_natfun:
+        {
+            NativeDesc *fn = fntype->typeNative;
+
+            TypeList *params = fn->args;
+            Type *retType = fn->retType;
+
+            unsigned int paramCount = list_length(params);
+            if (argCount < paramCount) {
+                IERR("Native function currying is not allowed");
+                return;
+            } else if (argCount > paramCount) {
                 IERR("Too many arguments");
+                return;
             }
+
+            ListIterator argIt;
+            list_iterate(&args, &argIt);
+           
+            while (list_iter_has_more(&argIt)) {
+                TypedAst *arg = list_iter_next(&argIt);
+                Type *paramType = list_data(params);
+
+                list_append(lptr, cons_make(paramType, arg->xtype));
+            }
+
+            list_append(lptr, cons_make(retType, xtype));
+
+            // add built constraints
+            /*ListIterator consIt;
+            list_iterate(&fn->consList, &consIt);
+
+            struct natcons *cons;
+            Type *ti, *tj;
+
+            while (list_iter_has_more(&consIt)) {
+                cons = list_iter_next(&consIt);
+                
+                ti = native_actual_type(fn, cons->i);
+                tj = native_actual_type(fn, cons->j);
+
+                list_append(lptr, cons_make(ti, tj));
+            }*/
+
             break;
-        case et_natfun2:
-            if (argCount == 2) {
-                list_append(lptr, cons_make(list_nth_data(args, 0), fntype->typeNatfun2.from1)); 
-                list_append(lptr, cons_make(list_nth_data(args, 1), fntype->typeNatfun2.from2));
-                list_append(lptr, cons_make(xtype, fntype->typeNatfun2.to));
-            } else if (argCount < 2) {
-                IERR("Native functions cannot be curried");
-            } else {
-                IERR("Too many arguments");
-            }
-            break;*/
+        }
         case et_fun:
         {
             TypeList *params = fntype->typeFun.args;

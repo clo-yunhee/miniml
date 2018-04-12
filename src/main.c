@@ -133,6 +133,7 @@ void main_args(int argc, char *argv[]) {
 
 void main_init(void) {
     names_init();
+    natives_init();
 }
 
 void main_free(void) {

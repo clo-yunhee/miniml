@@ -4,6 +4,7 @@
 struct expr_typedata {
     TypeEnum type;
     union {
+        NativeDesc *typeNative;
         struct { TypeList *args;
                  Type *to; } typeFun;
         TypeList *typeTuple;
@@ -14,8 +15,7 @@ struct expr_typedata {
 
 #define MAKETYPE(tname) Type *type_##tname
 
-MAKETYPE(fun1) (Type *from, Type *to);
-MAKETYPE(fun2) (Type *from1, Type *from2, Type *to);
+MAKETYPE(native) (NativeDesc *fn);
 MAKETYPE(fun) (TypeList *args, Type *to);
 MAKETYPE(tuple) (TypeList *elems);
 MAKETYPE(list) (Type *elem);

@@ -23,8 +23,7 @@ void value_print(Value *value) {
     case et_string:
         printf("\"%s\"", escape(value->valString));
         break;
-    case et_natfun1:
-    case et_natfun2:
+    case et_natfun:
         printf("<native-fun>");
         break;
     case et_fun:

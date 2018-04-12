@@ -26,22 +26,19 @@ void type_print(Type *type) {
     case et_string:
         printf("string");
         break;
-    /*case et_natfun1:
-        type_print(type->typeNatfun1.from);
+    case et_natfun:
+        printf("(");
+        tdlist_print(type->typeNative->args, "", " -> ", "");
         printf(" -> ");
-        type_print(type->typeNatfun1.to);
+        type_print(type->typeNative->retType);
+        printf(")");
         break;
-    case et_natfun2:
-        type_print(type->typeNatfun2.from1);
-        printf(" -> ");
-        type_print(type->typeNatfun2.from2);
-        printf(" -> ");
-        type_print(type->typeNatfun2.to);
-        break;*/
     case et_fun:
+        printf("(");
         tdlist_print(type->typeFun.args, "", " -> ", "");
         printf(" -> ");
         type_print(type->typeFun.to);
+        printf(")");
         break;
     case et_tuple:
         tdlist_print(type->typeTuple, "(", " * ", ")");
