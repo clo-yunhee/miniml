@@ -39,7 +39,8 @@ EVAL(funcall) {
 
         Value *value = visit_eval(env, arg, error);
 
-        callsite = env_vmake(param_name, value, callsite); 
+        callsite = env_vmake(param_name, value, callsite);
+        params = list_next(params);
     }
 
     if (list_iter_has_more(&paramIt)) { // partial currying
