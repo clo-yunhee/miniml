@@ -1,33 +1,7 @@
 #include "common.h"
 
 
-/**
- * Applies the function to the argument list
- */
-Value *native_apply(NativeDesc *fn, ValueList *args) {
-    fprintf(stderr, "<<< TODO native apply >>>\n");
-
-    return vunit;
-}
-
-/*--- Add functions ---*/
-
-
 static NatfnList *functions = NULL;
-
-
-Env *natives_env(Env *env) {
-    ListIterator it;
-    list_iterate(&functions, &it);
-    
-    while (list_iter_has_more(&it)) {
-        NativeDesc *fn = list_iter_next(&it);
-
-        env = env_make(fn->name, type_native(fn), value_make_native(fn), env);
-    }
-
-    return env;
-}
 
 
 #define arg(n) (type_poly(n))
@@ -110,5 +84,19 @@ void natives_init() {
     mk_snat(tl, tpoly, tpoly); PUSH;
     native_cons(fn, arg(0), arg(1));
     PUSH;
+}
+
+
+Env *natives_env(Env *env) {
+    ListIterator it;
+    list_iterate(&functions, &it);
+    
+    while (list_iter_has_more(&it)) {
+        NativeDesc *fn = list_iter_next(&it);
+
+        env = env_make(fn->name, type_native(fn), value_make_native(fn), env);
+    }
+
+    return env;
 }
 

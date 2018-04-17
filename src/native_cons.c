@@ -72,14 +72,14 @@ Type *native_actual_type(NativeDesc *fn, Type *type) {
                 newType = list_nth_data(fn->args, i - 1);
             } else {
                 fprintf(stderr, "Native constraint index out of bounds\n");
-                return NULL;
+                return terror;
             }
         }
         break;
     }
     default:
         fprintf(stderr, "Native constraint visit type not implemented\n");
-        return NULL;
+        return terror;
     }
 
     return newType;
