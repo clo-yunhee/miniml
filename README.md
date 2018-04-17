@@ -5,7 +5,7 @@ MiniML language compiler with the Lex/Yacc chain
 This README is still on my to-do list, so this is just a placeholder.
 I might add some stuff in the future, but this is by no means a priority, so don't expect it to be up to date.
 
-### Current status (as of April 5th 2018)
+### Current status (as of April 17th 2018)
 
 The compiler generates a single bulky C source file. It compiles and runs fine as a standalone program. (see usage section) 
 
@@ -52,7 +52,7 @@ The compiler has four command line options:
 There must be only one of either source/stdin and target/execute. Note that not having either is not allowed by the compiler.
 
 When compiling generated code, make sure to link against the c-algorithms library, or you will get linking errors.
-It is recommended to link statically, as to not depend on the target system.
+It is recommended to link statically, so as to not depend on the target system.
 
 The `graph` rule builds a `.dot` and `.png` for the grammar parser.
 Note that the graph is very condensed, and the image generation can take a long time.
