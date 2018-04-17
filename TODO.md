@@ -9,5 +9,6 @@ FIXME:
 
 - NativeDesc must be copied when modifying the field
 - Native constraints not working well
-
 - Native function types should be known without having to call them
+
+- Currying doesn't return a correct value
