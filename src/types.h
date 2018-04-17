@@ -42,6 +42,7 @@ extern Type *tint;
 extern Type *tfloat;
 extern Type *tbool;
 extern Type *tstring;
+extern Type *tlist;
 extern Type *tpoly;
 
 #endif // _TYPES_H_

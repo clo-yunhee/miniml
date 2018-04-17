@@ -34,27 +34,27 @@ void natives_init() {
 
     //-- comparison
 
-    mk_snat(compare, tpoly, tpoly, tint);
+    mk_snat(compare, tint, tpoly, tpoly);
     native_cons(fn, arg(1), arg(2));
     PUSH;
 
-    mk_nat("=", equal, tpoly, tpoly, tbool);
+    mk_nat("=", equal, tbool, tpoly, tpoly);
     native_cons(fn, arg(1), arg(2));
     PUSH;
 
-    mk_nat("<", lt, tpoly, tpoly, tbool);
+    mk_nat("<", lt, tbool, tpoly, tpoly);
     native_cons(fn, arg(1), arg(2));
     PUSH;
 
-    mk_nat("<=", lte, tpoly, tpoly, tbool);
+    mk_nat("<=", lte, tbool, tpoly, tpoly);
     native_cons(fn, arg(1), arg(2));
     PUSH;
 
-    mk_nat(">", gt, tpoly, tpoly, tbool);
+    mk_nat(">", gt, tbool, tpoly, tpoly);
     native_cons(fn, arg(1), arg(2));
     PUSH;
 
-    mk_nat(">=", gte, tpoly, tpoly, tbool);
+    mk_nat(">=", gte, tbool, tpoly, tpoly);
     native_cons(fn, arg(1), arg(2));
     PUSH;
 
@@ -65,23 +65,23 @@ void natives_init() {
 
     //-- print
     
-    mk_snat(print_string, tstring, tunit); PUSH;
-    mk_snat(print_int, tint, tunit); PUSH;
-    mk_snat(print_float, tfloat, tunit); PUSH;
-    mk_snat(print_bool, tbool, tunit); PUSH;
+    mk_snat(print_string, tunit, tstring); PUSH;
+    mk_snat(print_int, tunit, tint); PUSH;
+    mk_snat(print_float, tunit, tfloat); PUSH;
+    mk_snat(print_bool, tunit, tbool); PUSH;
 
     //-- conversion
 
-    mk_snat(int_of_float, tfloat, tint); PUSH;
-    mk_snat(float_of_int, tint, tfloat); PUSH;
+    mk_snat(int_of_float, tint, tfloat); PUSH;
+    mk_snat(float_of_int, tfloat, tint); PUSH;
 
     //-- lists
 
-    mk_snat(hd, tpoly, tpoly); PUSH;
+    mk_snat(hd, tpoly, tlist); PUSH;
     native_cons(fn, arg(1), type_list(arg(0)));
     PUSH;
 
-    mk_snat(tl, tpoly, tpoly); PUSH;
+    mk_snat(tl, tlist, tlist); PUSH;
     native_cons(fn, arg(0), arg(1));
     PUSH;
 }
