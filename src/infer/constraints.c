@@ -109,20 +109,20 @@ void collect_cons(ConsList **lptr, TypedAst *ast, bool *error) {
             list_append(lptr, cons_make(retType, xtype));
 
             // add built constraints
-            /*ListIterator consIt;
+            ListIterator consIt;
             list_iterate(&fn->consList, &consIt);
 
-            struct natcons *cons;
-            Type *ti, *tj;
+            struct native_cons *cons;
+            Type *first, *second;
 
             while (list_iter_has_more(&consIt)) {
                 cons = list_iter_next(&consIt);
                 
-                ti = native_actual_type(fn, cons->i);
-                tj = native_actual_type(fn, cons->j);
+                first = native_actual_type(fn, cons->first);
+                second = native_actual_type(fn, cons->second);
 
-                list_append(lptr, cons_make(ti, tj));
-            }*/
+                list_append(lptr, cons_make(first, second));
+            }
 
             break;
         }

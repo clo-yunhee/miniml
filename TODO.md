@@ -8,4 +8,4 @@
 
 FIXME:
 
-- Show type precedence when printing types. (parentheses...)
+- NativeDesc must be copied when modifying the field

@@ -9,7 +9,7 @@ typedef Value * (*native_fn2_t)(Value *, Value *);
 typedef ListEntry NatfnList;
 typedef struct native_function NativeDesc;
 
-struct natcons { unsigned int i, j; };
+struct native_cons { Type *first, *second; };
 
 struct native_function {
     /* the name table index for this function */
@@ -38,10 +38,10 @@ NativeDesc *native_make(const char *name, native_func_t func);
 void native_args(NativeDesc *fn, Type *out, ...);
 
 /*Assign fun type constraints*/
-void native_cons(NativeDesc *fn, unsigned int i, unsigned int j);
+void native_cons(NativeDesc *fn, Type *first, Type *second);
 
 /*Get type from pattern*/
-Type *native_actual_type(NativeDesc *fn, unsigned int i);
+Type *native_actual_type(NativeDesc *fn, Type *type);
 
 /*Invoke the function*/
 Value *native_apply(NativeDesc *fn, ValueList *args);

@@ -1,61 +1,5 @@
 #include "common.h"
 
-/*--- Cons functions ---*/
-
-/**
- * Initialises a native function entry, types not initialised
- */
-NativeDesc *native_make(const char *name, native_func_t func) {
-    NativeDesc *fn = malloc(sizeof(NativeDesc));
-    memset(fn, 0, sizeof(NativeDesc));
-
-    fn->name = names_getid(name);
-    fn->func = func;
-    fn->consList = NULL;
-
-    return fn;
-}
-
-/**
- * Sets argument types, NULL terminated vararg list
- */
-void native_args(NativeDesc *fn, Type *out, ...) {
-    va_list ap;
-    va_start(ap, out);
-
-    fn->retType = out;
-    fn->args = NULL;
-
-    Type *arg;
-    while ((arg = va_arg(ap, Type *)) != NULL) {
-        list_append(&fn->args, arg);
-    }
-
-    va_end(ap);
-}
-
-/**
- * Sets argument type constraints
- */
-void native_cons(NativeDesc *fn, unsigned int i, unsigned int j) {
-    struct natcons *cons = malloc(sizeof(struct natcons));
-    cons->i = i;
-    cons->j = j;
-
-    list_append(&fn->consList, cons);
-}
-
-/**
- * Turns the index into a type or NULL if error
- */
-Type *native_actual_type(NativeDesc *fn, unsigned int i) {
-    if (i >= 1 && i <= list_length(fn->args)) { // arg count
-        return list_nth_data(fn->args, i);
-    } else if (i == 0) { // return type
-        return fn->retType;
-    }
-    return NULL;
-}
 
 /**
  * Applies the function to the argument list
@@ -85,21 +29,86 @@ Env *natives_env(Env *env) {
     return env;
 }
 
+
+#define arg(n) (type_poly(n))
+
+#define mk_nat(name, func, ...) do { \
+        fn = native_make((name), (native_func_t) native_##func ); \
+        native_args(fn, __VA_ARGS__, NULL); \
+    } while (false)
+
+#define PUSH  list_append(&functions, fn)
+
+#define mk_snat(name, ...) mk_nat(#name, name , __VA_ARGS__)
+
 void natives_init() {
     NativeDesc *fn;
+ 
+    //-- integer ops
+
+    mk_nat("+", addi, tint, tint, tint); PUSH;
+    mk_nat("-", subi, tint, tint, tint); PUSH;
+    mk_nat("*", muli, tint, tint, tint); PUSH;
+    mk_nat("/", divi, tint, tint, tint); PUSH;
+
+    //-- float ops
+
+    mk_nat("+.", addf, tfloat, tfloat, tfloat); PUSH;
+    mk_nat("-.", subf, tfloat, tfloat, tfloat); PUSH;
+    mk_nat("*.", mulf, tfloat, tfloat, tfloat); PUSH;
+    mk_nat("/.", divf, tfloat, tfloat, tfloat); PUSH;
+
+    //-- comparison
+
+    mk_snat(compare, tpoly, tpoly, tint);
+    native_cons(fn, arg(1), arg(2));
+    PUSH;
+
+    mk_nat("=", equal, tpoly, tpoly, tbool);
+    native_cons(fn, arg(1), arg(2));
+    PUSH;
+
+    mk_nat("<", lt, tpoly, tpoly, tbool);
+    native_cons(fn, arg(1), arg(2));
+    PUSH;
+
+    mk_nat("<=", lte, tpoly, tpoly, tbool);
+    native_cons(fn, arg(1), arg(2));
+    PUSH;
+
+    mk_nat(">", gt, tpoly, tpoly, tbool);
+    native_cons(fn, arg(1), arg(2));
+    PUSH;
+
+    mk_nat(">=", gte, tpoly, tpoly, tbool);
+    native_cons(fn, arg(1), arg(2));
+    PUSH;
+
+    //-- and/or
+
+    mk_nat("&&", and, tbool, tbool, tbool); PUSH;
+    mk_nat("||", or, tbool, tbool, tbool); PUSH;
+
+    //-- print
     
-    fn = native_make("=", (native_func_t) native_equal);
-    native_args(fn, tbool, tpoly, tpoly, NULL);
-    native_cons(fn, 1, 2);
-    list_append(&functions, fn);
+    mk_snat(print_string, tstring, tunit); PUSH;
+    mk_snat(print_int, tint, tunit); PUSH;
+    mk_snat(print_float, tfloat, tunit); PUSH;
+    mk_snat(print_bool, tbool, tunit); PUSH;
 
-    fn = native_make("hd", (native_func_t) native_hd);
-    native_args(fn, tpoly, tpoly, NULL);
-    list_append(&functions, fn);
+    //-- conversion
 
-    fn = native_make("tl", (native_func_t) native_tl);
-    native_args(fn, tpoly, tpoly, NULL);
-    native_cons(fn, 1, 0);
-    list_append(&functions, fn);
+    mk_snat(int_of_float, tfloat, tint); PUSH;
+    mk_snat(float_of_int, tint, tfloat); PUSH;
+
+    //-- lists
+
+    mk_snat(hd, tpoly, tpoly); PUSH;
+    native_cons(fn, arg(1), type_list(arg(0)));
+    PUSH;
+
+    mk_snat(tl, tpoly, tpoly); PUSH;
+    native_cons(fn, arg(0), arg(1));
+    PUSH;
 }
 
