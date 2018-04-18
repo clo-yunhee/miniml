@@ -7,6 +7,8 @@ typedef struct typed_ast TypedAst;
 void typed_print(TypedAst *ast);
 void talist_print(TypedAstList *astlist);
 
+extern int flag_debug;
+
 /* Infer the type of this expression. */
 Type *infer_type(Env *env, Ast *expr, bool *error);
 

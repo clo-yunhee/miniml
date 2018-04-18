@@ -11,19 +11,33 @@ Type *infer_type(Env *env, Ast *expr, bool *error) {
     poly = 1;
 
     TypedAst *annotated = infer_annotate(env, expr, error);
-    //typed_print(annotated); printf("\n***\n\n");
+    if (flag_debug) {
+        printf(" - Pre-AST: \n");
+        typed_print(annotated);
+        printf("\n***\n\n");
+    }
     CHECKERR;
 
     ConsList *constraints = infer_constraints(annotated, error);
-    //list_print(constraints, (ListPrintFunc) cons_print, " - Cons: \n", ",\n", "\n***\n\n");
+    if (flag_debug) {
+        list_print(constraints, (ListPrintFunc) cons_print,
+                " - Cons: \n", ",\n", "\n***\n\n");
+    }
     CHECKERR;
 
     SubstList *substitutions = infer_unify(constraints, error);
-    //list_print(substitutions, (ListPrintFunc) subst_print, " - Subs: \n", ",\n", "\n***\n\n");
+    if (flag_debug) {
+        list_print(substitutions, (ListPrintFunc) subst_print,
+                " - Subs: \n", ",\n", "\n***\n\n");
+    }
     CHECKERR;
 
     TypedAst *typed = infer_apply(substitutions, annotated, error);
-    //typed_print(typed); printf("\n***\n\n");
+    if (flag_debug) {
+        printf(" - Post-AST: \n");
+        typed_print(typed);
+        printf("\n***\n\n");
+    }
     CHECKERR;
     
     return typed->xtype;

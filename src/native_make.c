@@ -42,3 +42,14 @@ void native_cons(NativeDesc *fn, Type *first, Type *second) {
 
     list_append(&fn->consList, cons);
 }
+
+/**
+ * Shallow copy of a native function descriptor. 
+ */
+NativeDesc *native_copy(NativeDesc *fn) {
+    NativeDesc *copy = malloc(sizeof(NativeDesc));
+
+    memcpy(copy, fn, sizeof(NativeDesc));
+
+    return copy;
+}

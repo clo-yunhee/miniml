@@ -28,7 +28,7 @@ struct native_function {
 };
 
 
-/*--- Cons ---*/
+/*--- Make ---*/
 
 /*Init without types*/
 NativeDesc *native_make(const char *name, native_func_t func);
@@ -38,6 +38,11 @@ void native_args(NativeDesc *fn, Type *out, ...);
 
 /*Assign fun type constraints*/
 void native_cons(NativeDesc *fn, Type *first, Type *second);
+
+/*Shallow copy*/
+NativeDesc *native_copy(NativeDesc *fn);
+
+/*--- Cons ---*/
 
 /*Get type from pattern*/
 Type *native_actual_type(NativeDesc *fn, Type *type);

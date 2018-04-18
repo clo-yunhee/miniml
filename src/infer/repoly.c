@@ -17,6 +17,8 @@ Type *type_repoly(Type *type, bool *error) {
         break;
     case et_natfun:
     {
+        newType->typeNative = native_copy(newType->typeNative);
+        
         TypeList *args = NULL;
         ListIterator it;
         list_iterate(&type->typeNative->args, &it);
