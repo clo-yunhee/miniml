@@ -15,9 +15,10 @@ extern FILE *yyin;
 /* argument values */
 static int flag_stdin;
 static int flag_execute;
-int flag_debug;
 static char *infile;
-static char *outfile;
+
+int flag_debug;
+char *outfile;
 
 /* arguments */
 static struct option long_options[] = {

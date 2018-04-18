@@ -8,6 +8,7 @@ void typed_print(TypedAst *ast);
 void talist_print(TypedAstList *astlist);
 
 extern int flag_debug;
+extern char *outfile;
 
 /* Infer the type of this expression. */
 Type *infer_type(Env *env, Ast *expr, bool *error);
