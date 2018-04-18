@@ -41,6 +41,11 @@ void generate_code(FILE *p_fout, AstList *astlist) {
     
     code_line();
 
+    code_iprintln("/* Initialize native functions */");
+    code_iprintln("natives_init();");
+
+    code_line();
+
     code_iprintln("/* Define the program statically */");
     code_iprint("AstList *prog = ");
     gen_list(astlist);

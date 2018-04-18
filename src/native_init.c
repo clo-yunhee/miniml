@@ -1,7 +1,7 @@
 #include "common.h"
 
 
-static NatfnList *functions = NULL;
+static ListEntry *functions = NULL;
 
 
 #define arg(n) (type_poly(n))

@@ -17,24 +17,6 @@ static HashTable *id_table = NULL; // id -> name
 static int last_id = 1;
 
 
-int name_addi, name_addf;
-int name_subi, name_subf;
-int name_muli, name_mulf;
-int name_divi, name_divf;
-int name_equal;
-int name_lt, name_lte;
-int name_gt, name_gte;
-int name_compare;
-int name_and, name_or;
-int name_print_string;
-int name_print_int;
-int name_print_float;
-int name_print_bool;
-int name_int_of_float;
-int name_float_of_int;
-int name_hd, name_tl;
-
-
 int names_getid(const char *name) {
     char *namedup = strdup(name);
     int *id = hash_table_lookup(name_table, namedup);
@@ -64,38 +46,7 @@ void names_init(void) {
                 id_table = NULL;
             }
         } else {
-            hash_table_register_free_functions(name_table, NULL, NULL); // unregister for first table
-            
-            name_addi = add_name("+");
-            name_subi = add_name("-");
-            name_muli = add_name("*");
-            name_divi = add_name("/");
-            
-            name_addf = add_name("+.");
-            name_subf = add_name("-.");
-            name_mulf = add_name("*.");
-            name_divf = add_name("/."); 
-
-            name_equal = add_name("=");
-            name_lt = add_name("<");
-            name_lte = add_name("<=");
-            name_gt = add_name(">");
-            name_gte = add_name(">=");
-            name_compare = add_name("compare");
-
-            name_and = add_name("&&");
-            name_or = add_name("||");
-
-            name_print_string = add_name("print_string");
-            name_print_int = add_name("print_int");
-            name_print_float = add_name("print_float");
-            name_print_bool = add_name("print_bool");
-
-            name_int_of_float = add_name("int_of_float");
-            name_float_of_int = add_name("float_of_int");
-
-            name_hd = add_name("hd");
-            name_tl = add_name("tl");
+            hash_table_register_free_functions(name_table, NULL, NULL);
         }
     } 
 }

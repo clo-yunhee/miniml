@@ -1,9 +1,5 @@
 #include "common.h"
 
-Env *env_init(void) {
-    return natives_env(NULL);
-}
-
 Env *env_make(int name, Type *type, Value *value, Env *tail) {
     Env *env = malloc(sizeof(Env));
     if (env == NULL) return NULL;

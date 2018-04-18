@@ -6,7 +6,6 @@ typedef void (*native_func_t)(void);
 typedef Value * (*native_fn1_t)(Value *);
 typedef Value * (*native_fn2_t)(Value *, Value *);
 
-typedef ListEntry NatfnList;
 typedef struct native_function NativeDesc;
 
 struct native_cons { Type *first, *second; };
