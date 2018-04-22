@@ -131,8 +131,7 @@ La compilation est divisée en quatre étapes:
 Chaque section traitera un type d'analyse.
 
 \paragraph{NB:}
-Le programme final doit être compilé et lié avec libcalg (\href{https://github.com/fragglet/c-algorithms}{à compiler à partir des sources}).
-Il s'agit d'une bibliothèque de structures de données, utilisée dans le but de simplifier les implémentations, i.e. le code relatif aux structures des données de base est abstrait par libcalg.
+Le fichier README.md contient des informations plus pratiques concernant la compilation et l'utilisation du compilateur.
 
 \newpage
 \section{Analyse lexicale}
@@ -190,15 +189,14 @@ La structure d'AST utilisée contient un champ d'énumération de type et une un
     string          & value: String     \\ \hline
     variable        & name: Int         \\ \hline
     block           & expr: AST         \\ \hline
-    list            & list: List[AST]   \\ \hline
+    seq             & seq: Seq[AST]   \\ \hline
     application     & function: AST,
                         args: List[AST]                 \\ \hline
     let             & names: List[Name],
                         rec: Bool, params: List[Name],
                         expr: AST, block: AST           \\ \hline
     if              & cond: AST, if: AST, else: AST     \\ \hline
-    tuple           & elems: List[AST]                   \\
-\hline
+    tuple           & elems: List[AST]                  \\ \hline
 \end{tabular}}
 \end{center}
 
@@ -338,32 +336,72 @@ Leur contenu est décrit dans le tableau ci-dessous.
 \begin{center}
 \texttt{\begin{tabular}{ | l | p{4cm} | p{6cm} | }
 \hline
-\textnormal{\textbf{Énumération}} & \textnormal{\textbf{Type}}       & \textnormal{\textbf{Valeur}}                            \\ \hline
-unit                 & -                                                 & -                                                   \\ \hline
-int                  & -                                                 & value: Int                                          \\ \hline
-float                & -                                                 & value: Float                                        \\ \hline
-bool                 & -                                                 & value: Bool                                         \\ \hline
-string               & -                                                 & value: String                                       \\ \hline
-nativefun1           & \multirow{3}{4cm}{params: List[Type], to: Type} & fun: Value -> Value                      \\ \cline{1-1} \cline{3-3} 
-nativefun2           &                                                   & fun: Value -> Value -> Value  \\ \cline{1-1} \cline{3-3} 
-fun                  &                                                   & env: Environment, params: List[Name], body: AST \\ \hline
-tuple                & types: List[Type]                             & elems: List[Value]                              \\ \hline
-polymorph            & id: Int                                           & -                                                   \\ \hline
-error                & -                                                 & -                                                   \\ 
-\hline
+\textnormal{\textbf{Énumération}} & \textnormal{\textbf{Type}}   & \textnormal{\textbf{Valeur}}    \\ \hline
+unit                 & -                        & -                                                \\ \hline
+int                  & -                        & value: Int                                       \\ \hline
+float                & -                        & value: Float                                     \\ \hline
+bool                 & -                        & value: Bool                                      \\ \hline
+string               & -                        & value: String                                    \\ \hline
+nativefunc           &             \multicolumn{2}{|c|}{descriptor: NativeDescriptor}              \\ \hline
+function             & -                        & env: Environment, params: List[Name], body: AST  \\ \hline
+tuple                & types: List[Type]        & elems: List[Value]                               \\ \hline
+polymorph            & id: Int                  & -                                                \\ \hline
+error                & -                        & -                                                \\ \hline
 \end{tabular}}
 \end{center}
 
-
-L'évaluation s'effectue récursivement
+L'évaluation d'une expression s'effectue récursivement sur l'AST avec un pattern visiteur.
+Les détails de l'implémentation sont dans le sous-dossier \texttt{eval} des fichiers sources.
 
 
 \newpage
 \section{Inférence de types}
+Le système de typage utilise le système de typage Hindley-Milner pour inférer le type d'une expression.
 
-Le compilateur utilise le système de typage Hindley-Milner pour inférer le type d'une expression.
+L'inférence du type d'une expression s'effectue en quatre étapes: annotation, génération des contraintes, substitution et unification, application.
+
+\paragraph{Annotation}
+L'AST est annoté d'un type (définition des structures dans la section précédente), et ce récursivement.
+Une expression est annotée d'un type concret si possible, sinon un type générique polymorphe.
+
+\begin{small}
+    Exemple: \texttt{let x = f 1 2.;;} est annoté en \texttt{<'a>let x = <'b>f <int>1 <float>2.;;}
+    
+    Exemple: \texttt{let f y = y + 1;;} est annoté en \texttt{<'a>let f y = <int->int>(+) <'b>y <int>1;;}
+\end{small}
+
+\paragraph{Génération des contraintes}
+L'AST annoté est parcouru une deuxième fois, afin de collecter des contraintes sur les différentes annotations de type.
+
+\begin{small}
+    Exemple: \texttt{<'a>let x = <'b>f <int>1 <float>2.;;} génère les contraintes suivantes:
+   
+    \texttt{'b} \Longleftrightarrow \texttt{int -> float -> 'c}
+    
+    \texttt{'a} \Longleftrightarrow \texttt{'c}
+\end{small}
+
+\paragraph{Substitution et unification}
+Les contraintes sont transformées en listes de substitutions concrètes pour les types polymorphes.
+
+\begin{small}
+    Exemple: La contrainte \texttt{'a -> 'b} \Longleftrightarrow \texttt{float -> int} génère les substitutions suivantes:
+
+    \texttt{('a := float)} et \texttt{('b := int)}
+\end{small}
+
+\paragraph{Application}
+Cette étape consiste simplement à parcourir l'AST annoté d'origine et appliquer les substitutions générées aux types annotés.
+
+Le type de l'expression racine correspond au type final.
 
 
+Les détails de l'implémentation sont dans le sous-dossier \texttt{infer} du code source.
+
+\newpage
+\section{Fonctions natives}
+
+Manque de temps pour écrire cette section, voir les sources \texttt{native_*} et \texttt{natives/*}
 
 \newpage
 \section{Annexe 1 : Grammaire}
