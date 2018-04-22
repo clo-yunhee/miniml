@@ -14,4 +14,7 @@ let rec map f lst =
     else  f (hd lst) :: map f (tl lst)
 ;;
 
-map (function x -> 2 * x * x) l;;
+ map (function x -> 2 * x * x)  l;;
+
+(map (function x -> 2 * x * x)) l;;
+

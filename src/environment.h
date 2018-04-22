@@ -30,7 +30,6 @@ struct env {
     Env *next;
 };
 
-Env *env_init(void);
 void env_free(Env *env);
 
 Env *env_make(int name, Type *type, Value *value, Env *tail);

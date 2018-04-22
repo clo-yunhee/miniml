@@ -1,4 +1,3 @@
-- Rewrite the native function system, to integrate it better with the type inference system.
 - Add better inference for lists.
 
 - Add variant and record types.
@@ -8,4 +7,7 @@
 
 FIXME:
 
-- Show type precedence when printing types. (parentheses...)
+- NativeDesc must be copied when modifying the field
+- Native constraints not working well
+- Native function types should be known without having to call them
+

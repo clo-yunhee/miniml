@@ -41,7 +41,17 @@ Type *subst_sub(Substitution *sub, Type *type, bool *error) {
                 subst(type->typeNatfun2.from2),
                 subst(type->typeNatfun2.to)
         );*/
-    case et_fun:
+    case et_natfun:
+    {
+        // TODO: copy nativedesc
+        NativeDesc *fn = type->typeNative;
+
+        fn->args = substl(fn->args);
+        fn->retType = subst(fn->retType);
+
+        return type;
+    }
+        case et_fun:
         return type_fun(
                 substl(type->typeFun.args),
                 subst(type->typeFun.to)

@@ -1,7 +1,7 @@
-#include "infer.h"
+#include "common.h"
 
 
-Type *type_repoly(Type *type, bool *error) {
+Type *native_actual_type(NativeDesc *fn, Type *type) {
     
     Type *newType = malloc(sizeof(Type));
 
@@ -17,17 +17,15 @@ Type *type_repoly(Type *type, bool *error) {
         break;
     case et_natfun:
     {
-        newType->typeNative = native_copy(newType->typeNative);
-        
         TypeList *args = NULL;
         ListIterator it;
         list_iterate(&type->typeNative->args, &it);
         while (list_iter_has_more(&it)) {
             Type *arg = list_iter_next(&it);
-            list_append(&args, type_repoly(arg, error));
+            list_append(&args, native_actual_type(fn, arg));
         }
         newType->typeNative->args = args;
-        newType->typeNative->retType = type_repoly(type->typeNative->retType, error);
+        newType->typeNative->retType = native_actual_type(fn, type->typeNative->retType);
         break;
     }
     case et_fun:
@@ -37,10 +35,10 @@ Type *type_repoly(Type *type, bool *error) {
         list_iterate(&type->typeFun.args, &it);
         while (list_iter_has_more(&it)) {
             Type *arg = list_iter_next(&it);
-            list_append(&args, type_repoly(arg, error));
+            list_append(&args, native_actual_type(fn, arg));
         }
         newType->typeFun.args = args;
-        newType->typeFun.to = type_repoly(type->typeFun.to, error);
+        newType->typeFun.to = native_actual_type(fn, type->typeFun.to);
         break;
     }
     case et_tuple:
@@ -50,27 +48,38 @@ Type *type_repoly(Type *type, bool *error) {
         list_iterate(&type->typeTuple, &it);
         while (list_iter_has_more(&it)) {
             Type *elem = list_iter_next(&it);
-            list_append(&tuple, type_repoly(elem, error));
+            list_append(&tuple, native_actual_type(fn, elem));
         }
         newType->typeTuple = tuple;
         break;
     }
     case et_list:
     {
-        newType->typeList = type_repoly(type->typeList, error);
+        newType->typeList = native_actual_type(fn, type->typeList);
         break;
     }
     case et_poly:
     {
-        // poly == 0 is a placeholder
-        if (newType->typePoly == 0) {
-            newType->typePoly = poly++;
+        // poly 0 is return type
+        // poly 1..n are param types
+        free(newType);
+        unsigned int i = (unsigned) newType->typePoly;
+        if (i == 0) {
+            newType = fn->retType;
+        } else {
+            unsigned int size = list_length(fn->args);
+            if (i <= size) {
+                newType = list_nth_data(fn->args, i - 1);
+            } else {
+                fprintf(stderr, "Native constraint index out of bounds\n");
+                return terror;
+            }
         }
         break;
     }
     default:
-        IERR("Inference repoly type not implemented");
-        break;
+        fprintf(stderr, "Native constraint visit type not implemented\n");
+        return terror;
     }
 
     return newType;

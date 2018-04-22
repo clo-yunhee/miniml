@@ -6,7 +6,7 @@ void run_list(AstList *list, bool do_value, bool *error) {
     printf("\n\n");
     */
 
-    Env *env = env_init();
+    Env *env = natives_env(NULL);
 
     ListIterator it;
     list_iterate(&list, &it);

@@ -119,7 +119,7 @@ int stoi(const char *str) {
         exit(EXIT_FAILURE);
     }
 
-    return v;
+    return (int) v;
 }
 
 double stod(const char *str) {

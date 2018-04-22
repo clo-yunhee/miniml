@@ -32,13 +32,23 @@ void generate_code(FILE *p_fout, AstList *astlist) {
     fwrite(obj_codegen_main_pre, sizeof(char), obj_codegen_main_pre_len, fout);
     code_line();
     code_line();
-    
+  
+    code_iprintf("#line %d \"%s\"\n", 0, outfile);
+    code_iprintf("int flag_debug = %d;\n", flag_debug);
+
+    code_line();
+
     code_iprintln("int main(void) {");
     ++indent;
 
     code_iprintln("/* Initialize the name table */");
     code_iprintln("names_init();");
     
+    code_line();
+
+    code_iprintln("/* Initialize native functions */");
+    code_iprintln("natives_init();");
+
     code_line();
 
     code_iprintln("/* Define the program statically */");

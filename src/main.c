@@ -16,7 +16,9 @@ extern FILE *yyin;
 static int flag_stdin;
 static int flag_execute;
 static char *infile;
-static char *outfile;
+
+int flag_debug;
+char *outfile;
 
 /* arguments */
 static struct option long_options[] = {
@@ -24,12 +26,13 @@ static struct option long_options[] = {
     { "stdin",   no_argument,       NULL, 's' },
     { "target",  required_argument, NULL, 'o' },
     { "execute", no_argument,       NULL, 'e' },
+    { "debug",   no_argument,       NULL, 'd' },
 
     /* Terminating entry */
     { NULL, 0, NULL, 0 }
 };
 
-#define USAGE_STRING "Usage: %s [--source infile|--stdin] [--target outfile|--execute]"
+#define USAGE_STRING "Usage: %s [--source infile|--stdin] [--target outfile|--execute] (--debug)"
 
 
 
@@ -94,9 +97,10 @@ void main_args(int argc, char *argv[]) {
     
     flag_stdin = false;
     flag_execute = false;
+    flag_debug = false;
     infile = outfile = NULL;
 
-    while ((ch = getopt_long(argc, argv, "i:o:se", long_options, NULL)) != -1) {
+    while ((ch = getopt_long(argc, argv, "i:o:sed", long_options, NULL)) != -1) {
         switch (ch) {
         // input
         case 'i':
@@ -113,6 +117,9 @@ void main_args(int argc, char *argv[]) {
             break;
         case 'e':
             flag_execute = true;
+            break;
+        case 'd':
+            flag_debug = true;
             break;
         case '?':
             break;

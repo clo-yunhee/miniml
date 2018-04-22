@@ -48,6 +48,7 @@ static Type t_float  = { .type = et_float };
 static Type t_bool   = { .type = et_bool };
 static Type t_string = { .type = et_string };
 static Type t_poly   = { .type = et_poly, .typePoly = 0 };
+static Type t_list   = { .type = et_list, .typeList = &t_poly };
 
 Type *terror = &t_error;
 Type *tunit = &t_unit;
@@ -55,6 +56,7 @@ Type *tint = &t_int;
 Type *tfloat = &t_float;
 Type *tbool = &t_bool;
 Type *tstring = &t_string;
+Type *tlist = &t_list;
 Type *tpoly = &t_poly;
 
 
