@@ -376,18 +376,20 @@ L'AST annoté est parcouru une deuxième fois, afin de collecter des contraintes
 \begin{small}
     Exemple: \texttt{<'a>let x = <'b>f <int>1 <float>2.;;} génère les contraintes suivantes:
    
-    \texttt{'b} \Longleftrightarrow \texttt{int -> float -> 'c}
+    $\texttt{'b} \Longleftrightarrow \texttt{int -> float -> 'c}$
     
-    \texttt{'a} \Longleftrightarrow \texttt{'c}
+    $\texttt{'a} \Longleftrightarrow \texttt{'c}$
 \end{small}
 
 \paragraph{Substitution et unification}
 Les contraintes sont transformées en listes de substitutions concrètes pour les types polymorphes.
 
 \begin{small}
-    Exemple: La contrainte \texttt{'a -> 'b} \Longleftrightarrow \texttt{float -> int} génère les substitutions suivantes:
+    Exemple: La contrainte $\texttt{'a -> 'b} \Longleftrightarrow \texttt{float -> int}$ génère les substitutions suivantes:
 
-    \texttt{('a := float)} et \texttt{('b := int)}
+    $\texttt{('a := float)}$ 
+    
+    $\texttt{('b := int)}$
 \end{small}
 
 \paragraph{Application}
@@ -401,7 +403,77 @@ Les détails de l'implémentation sont dans le sous-dossier \texttt{infer} du co
 \newpage
 \section{Fonctions natives}
 
-Manque de temps pour écrire cette section, voir les sources \texttt{native_*} et \texttt{natives/*}
+En raison de la nature fonctionnelle des langages ML, il est indispensable de disposer de certaines fonctions nativement, et plus que cette implémentation considère les opérateurs infixes comme des fonctions.
+
+Le système a été conçu afin de simplifier l'ajout et la modification de nouvelles fonctions.
+
+Une liste de descripteurs est construite au lancement, avec:
+\begin{itemize}
+\item l'indice du nom de la fonction dans la table des noms;
+\item un pointeur vers la fonction C correspondant à la fonction ML;
+\item la liste des types des arguments de la fonction (polymorphes si nécessaire);
+\item le type de retour de la fonction (polymorphe si nécessaire);
+\item une liste des contraintes éventuelles à appliquer aux types (voir section sur l'inférence)
+\end{itemize}
+
+A l'étape d'annotation, les descripteurs de fonctions natives sont concrétisés en remplaçant les types par des types concrets (ou polymorphes si nécessaire), et de même pour la génération des contraintes.
+
+Cette approche pose un certain problème pour les fonctions polymorphes, comme \texttt{compare}.
+Cette fonction est traitée comme une fonction de type \texttt{'a -> 'a -> int} par l'analyse sémantique, mais la valeur de l'identifiant \texttt{compare} est \texttt{'a -> 'b -> int}.
+
+Voici la liste des fonctions natives implémentées:
+
+\begin{center}
+\begin{tabular}{ | l | p{4.7cm} | }
+    \hline
+\textnormal{\textbf{Identifiant}}  &  \textnormal{\textbf{Type fonctionnel}}  \\ \hline
+
+\texttt{+}              & \texttt{int -> int -> int}        \\ \hline
+\texttt{-}              & \texttt{int -> int -> int}        \\ \hline
+\texttt{*}              & \texttt{int -> int -> int}        \\ \hline
+\texttt{/}              & \texttt{int -> int -> int}        \\ \hline
+
+\texttt{+.}             & \texttt{float -> float -> float}  \\ \hline
+\texttt{-.}             & \texttt{float -> float -> float}  \\ \hline
+\texttt{*.}             & \texttt{float -> float -> float}  \\ \hline
+\texttt{/.}             & \texttt{float -> float -> float}  \\ \hline
+    
+\texttt{compare}        & \texttt{'a -> 'a -> int}          \\ \hline
+\texttt{=}              & \texttt{'a -> 'a -> bool}         \\ \hline
+\texttt{<}              & \texttt{'a -> 'a -> bool}         \\ \hline
+\texttt{>}              & \texttt{'a -> 'a -> bool}         \\ \hline
+\texttt{<=}             & \texttt{'a -> 'a -> bool}         \\ \hline
+\texttt{>=}             & \texttt{'a -> 'a -> bool}         \\ \hline
+    
+\texttt{\&\&}           & \texttt{bool -> bool -> bool}     \\ \hline
+\texttt{||}             & \texttt{bool -> bool -> bool}     \\ \hline
+
+\texttt{print\_string}  & \texttt{string -> unit}           \\ \hline
+\texttt{print\_int}     & \texttt{int -> unit}              \\ \hline
+\texttt{print\_float}   & \texttt{float -> unit}            \\ \hline
+\texttt{print\_bool}    & \texttt{bool -> unit}             \\ \hline
+
+\texttt{int\_of\_float} & \texttt{float -> int}             \\ \hline
+\texttt{float\_of\_int} & \texttt{int -> float}             \\ \hline
+
+\end{tabular}
+\end{center}
+
+\newpage
+\section{Génération de code}
+
+Le compilateur possède deux modes de sortie: interprète et compilateur.
+
+En mode interprète, le typage et l'évaluation s'effectuent en même temps, tandis que seulement l'inférence de type est exécutée en mode compilateur.
+Le but est ici d'effectuer une vérification statique du code ML d'entrée avant de commencer à générer le code C de sortie.
+
+La génération de code en elle-même est très rudimentaire: tous les fichiers sources d'origine sont inclus dans le bon ordre en utilisant le préprocesseur C, et seule la fonction main varie selon le code d'entrée.
+
+Le compilateur génère un AST statique correspondant à l'expression entière du code ML, puis exécute les mêmes instructions que le mode interprète.
+
+Les sources communes sont inclues directement dans le code, par un fichier \texttt{.xxd}, qui contient une définition statique du contenu binaire du fichier source (voir règles .xxd et .pre du Makefile).
+
+Les codes sources du compilateur utilisent la bibliothèque \texttt{libcalg}, ainsi partager ces sources signifie que le programme cible doit être lié contre \texttt{libcalg}.
 
 \newpage
 \section{Annexe 1 : Grammaire}
