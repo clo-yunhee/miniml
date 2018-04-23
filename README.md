@@ -5,7 +5,7 @@ MiniML language compiler with the Lex/Yacc chain
 This README is still on my to-do list, so this is just a placeholder.
 I might add some stuff in the future, but this is by no means a priority, so don't expect it to be up to date.
 
-### Current status (as of April 17th 2018)
+### Current status (as of April 23th 2018)
 
 The compiler generates a single bulky C source file. It compiles and runs fine as a standalone program. (see usage section) 
 
